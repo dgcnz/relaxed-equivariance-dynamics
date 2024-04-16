@@ -6,7 +6,7 @@ from torchmetrics import MaxMetric, MeanMetric
 from torchmetrics.classification.accuracy import Accuracy
 
 
-class MNISTLitModule(LightningModule):
+class ImageLightningModule(LightningModule):
     """Example of a `LightningModule` for MNIST classification.
 
     A `LightningModule` implements 8 key methods:
@@ -46,12 +46,13 @@ class MNISTLitModule(LightningModule):
         scheduler: torch.optim.lr_scheduler,
         compile: bool,
     ) -> None:
-        """Initialize a `MNISTLitModule`.
+        """Initialize a `pl_classifier`.
 
         :param net: The model to train.
-        :param optimizer: The optimizer to use for training.
-        :param scheduler: The learning rate scheduler to use for training.
+        :param optimizer: The optimizer to use for training. TODO not used??
+        :param scheduler: The learning rate scheduler to use for training. TODO not used??
         """
+
         super().__init__()
 
         # this line allows to access init params with 'self.hparams' attribute
@@ -63,10 +64,13 @@ class MNISTLitModule(LightningModule):
         # loss function
         self.criterion = torch.nn.CrossEntropyLoss()
 
+        # num classes
+        num_classes = net.layers[-1].out_features #if this break hardcode to one
+
         # metric objects for calculating and averaging accuracy across batches
-        self.train_acc = Accuracy(task="multiclass", num_classes=10)
-        self.val_acc = Accuracy(task="multiclass", num_classes=10)
-        self.test_acc = Accuracy(task="multiclass", num_classes=10)
+        self.train_acc = Accuracy(task="multiclass", num_classes=num_classes)
+        self.val_acc = Accuracy(task="multiclass", num_classes=num_classes)
+        self.test_acc = Accuracy(task="multiclass", num_classes=num_classes)
 
         # for averaging loss across batches
         self.train_loss = MeanMetric()
@@ -214,4 +218,4 @@ class MNISTLitModule(LightningModule):
 
 
 if __name__ == "__main__":
-    _ = MNISTLitModule(None, None, None, None)
+    _ = ImageLightningModule(None, None, None, None)
