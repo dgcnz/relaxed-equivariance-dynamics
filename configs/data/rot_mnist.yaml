@@ -1,0 +1,6 @@
+_target_: src.data.rotated_mnist_datamodule.RotatedMNISTDataModule
+data_dir: ${paths.data_dir}
+batch_size: 64 # Needs to be divisible by the number of devices (e.g., if in a distributed setup)
+train_val_test_split: [55_000, 5_000, 10_000]
+num_workers: 2
+pin_memory: False
