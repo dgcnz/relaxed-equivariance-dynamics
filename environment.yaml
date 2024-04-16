@@ -38,7 +38,7 @@ dependencies:
  
 
   # --------- loggers --------- #
-  # - wandb
+  - wandb
   # - neptune-client
   # - mlflow
   # - comet-ml
