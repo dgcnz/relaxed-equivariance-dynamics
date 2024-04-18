@@ -205,7 +205,7 @@ class MnistRotDataset(Dataset):
         return image, label
     
     def __len__(self):
-        len(self.labels)
+        return len(self.labels)
     
     def download(self, root):
         # URL of the dataset
