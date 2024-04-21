@@ -194,7 +194,7 @@ class MnistRotDataset(Dataset):
         data = np.loadtxt(file, delimiter=' ')
             
         self.images = data[:, :-1].reshape(-1, 28, 28).astype(np.float32)
-        print(self.images[0].shape)
+        #print(self.images[0].shape)
         self.labels = data[:, -1].astype(np.int64)
         self.num_samples = len(self.labels)
     
@@ -203,7 +203,7 @@ class MnistRotDataset(Dataset):
         image = Image.fromarray(image, mode='F')
         if self.transform is not None:
             image = self.transform(image)
-        print(image.shape)
+        #print(image.shape)
         return image, label
     
     def __len__(self):
