@@ -52,8 +52,8 @@ class CNLiftingConvolution(nn.Module):
 
     def forward(self, x: Tensor) -> Tensor:
         """
-        :param x: input tensor of shape [B, Cin, H, W]
-        :return: output tensor of shape [B, Cout, group_order, H, W]
+        :param x: input tensor of shape [B, #in, H, W]
+        :return: output tensor of shape [B, #out, group_order, H, W]
         """
         filter_bank = generate_rot_filter_bank(self.kernel, self.group_order)
         # filter_bank: Tensor[#out, group_order, #in, k, k]
