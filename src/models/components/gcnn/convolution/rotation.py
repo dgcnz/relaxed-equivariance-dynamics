@@ -1,12 +1,12 @@
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
 import torch.nn.functional as F
 import torchvision.transforms.functional as TTF
 
 
 class GroupConvolution(nn.Module):
-    """Group Convolution Layer for finite rotation group"""
+    """Group Convolution Layer for finite rotation group."""
 
     def __init__(
         self,
@@ -46,10 +46,9 @@ class GroupConvolution(nn.Module):
 
     @classmethod
     def generate_filter_bank(cls, kernel: torch.Tensor) -> torch.Tensor:
-        """Generate a stack of rotated and cyclic shifted filters
-        :param kernel: the kernel tensor of shape [#out, #in, group_order, k, k]
-        :return: a tensor of shape [#out, group_order, #in, group_order, k, k]
-        """
+        """Generate a stack of rotated and cyclic shifted filters :param kernel: the kernel tensor
+        of shape [#out, #in, group_order, k, k] :return: a tensor of shape [#out, group_order, #in,
+        group_order, k, k]"""
         filter_bank = []
         out_channels, in_channels, group_order, k, _ = kernel.shape
         filter = kernel.flatten(0, 1)
@@ -59,18 +58,14 @@ class GroupConvolution(nn.Module):
         for i in range(group_order):
             rot_filter = TTF.rotate(filter, -360 / group_order * i)
             shifted_rot_filter = torch.roll(rot_filter, shifts=i, dims=1)
-            shifted_rot_filter = shifted_rot_filter.unflatten(
-                0, (out_channels, in_channels)
-            )
+            shifted_rot_filter = shifted_rot_filter.unflatten(0, (out_channels, in_channels))
             filter_bank.append(shifted_rot_filter)
         filter_bank = torch.stack(filter_bank, dim=1)
         return filter_bank
 
     def forward(self, x: torch.Tensor):
-        """Forward pass of the group convolution layer
-        :param x: input tensor of shape [B, #in, group_order, H, W]
-        :return: output tensor of shape [B, #out, group_order, H, W]
-        """
+        """Forward pass of the group convolution layer :param x: input tensor of shape [B, #in,
+        group_order, H, W] :return: output tensor of shape [B, #out, group_order, H, W]"""
 
         filter_bank = GroupConvolution.generate_filter_bank(self.kernel)
         # filter_bank: Tensor[#out, group_order, #in, group_order, H, W]

@@ -1,7 +1,8 @@
+import pytest
+import torch
+
 from src.models.components.gcnn.lifting.rotation import CNLiftingConvolution
 from src.models.components.gcnn.lifting.rotation_rui import RuiCNLiftingConvolution
-import torch
-import pytest
 
 
 @pytest.mark.skip

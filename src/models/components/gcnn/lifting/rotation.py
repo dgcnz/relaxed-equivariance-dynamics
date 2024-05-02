@@ -1,25 +1,22 @@
 import math
+
+import numpy as np
 import torch
-from torch import nn
-from torch import Tensor
 import torch.nn.functional as F
 import torchvision.transforms.functional as TTF
-import numpy as np
+from torch import Tensor, nn
 
 
 def generate_rot_filter_bank(kernel: Tensor, group_order: int) -> Tensor:
-    """
-    Generate a stack of rotated filters
-    :param kernel: the kernel tensor of shape [#out, #in, k, k]
-    :param group_order: the order of the rotation group (4 = C4)
-    :return: a tensor of shape [#out, group_order, #in, k, k]
-    """
+    """Generate a stack of rotated filters :param kernel: the kernel tensor of shape [#out, #in, k,
+    k] :param group_order: the order of the rotation group (4 = C4) :return: a tensor of shape
+    [#out, group_order, #in, k, k]"""
     thetas = np.arange(group_order) * (-360 / group_order)
     return torch.stack([TTF.rotate(kernel, theta) for theta in thetas], dim=1)
 
 
 class CNLiftingConvolution(nn.Module):
-    """Lifting Convolution Layer for finite rotation group"""
+    """Lifting Convolution Layer for finite rotation group."""
 
     def __init__(
         self,
@@ -44,9 +41,7 @@ class CNLiftingConvolution(nn.Module):
         self.activation = activation
 
         self.kernel = nn.Parameter(
-            torch.zeros(
-                self.out_channels, self.in_channels, self.kernel_size, self.kernel_size
-            )
+            torch.zeros(self.out_channels, self.in_channels, self.kernel_size, self.kernel_size)
         )
         nn.init.kaiming_uniform_(self.kernel.data, a=math.sqrt(5))
 

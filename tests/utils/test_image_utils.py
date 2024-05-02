@@ -1,17 +1,21 @@
-from src.utils.image_utils import rot_img
-import torchvision.transforms.functional as TTF
-import pytest
-from pathlib import Path
 import math
+from pathlib import Path
+
+import pytest
 import torch
+import torchvision.transforms.functional as TTF
 from torch import Tensor
 
+from src.utils.image_utils import rot_img
+
 IMAGE_FOLDER = Path("tests/resources")
+
 
 @pytest.mark.skip
 @pytest.mark.parametrize("theta", [45])
 def test_rot_img_non_straight(sample_image_tensor: Tensor, theta: float) -> None:
-    """Tests `rot_img` to verify if the function behaves the same as TTF.rotate on non-straight angles angles."""
+    """Tests `rot_img` to verify if the function behaves the same as TTF.rotate on non-straight
+    angles angles."""
     # sample_image_tensor = TTF.rgb_to_grayscale(sample_image_tensor).unsqueeze(0)
     sample_image_tensor = sample_image_tensor.unsqueeze(0)
     theta_radians = math.radians(theta)
@@ -23,10 +27,12 @@ def test_rot_img_non_straight(sample_image_tensor: Tensor, theta: float) -> None
     percentage_wrong = wrong_pixels / total_pixels
     assert percentage_wrong < 0.02
 
+
 @pytest.mark.skip
 @pytest.mark.parametrize("theta", [0, 90, -90, 450])
 def test_rot_img_straight(sample_image_tensor: Tensor, theta: float) -> None:
-    """Tests `rot_img` to verify if the function behaves the same as TTF.rotate on straight angles."""
+    """Tests `rot_img` to verify if the function behaves the same as TTF.rotate on straight
+    angles."""
     # unsqueeze batch dimension
     sample_image_tensor = TTF.rgb_to_grayscale(sample_image_tensor).unsqueeze(0)
     theta_radians = math.radians(theta)

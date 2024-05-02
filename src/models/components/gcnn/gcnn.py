@@ -1,8 +1,9 @@
-from src.models.components.gcnn.lifting.rotation import CNLiftingConvolution
-from src.models.components.gcnn.convolution.rotation import GroupConvolution
-import torch.nn as nn
 import torch
+import torch.nn as nn
 from torch import Tensor
+
+from src.models.components.gcnn.convolution.rotation import GroupConvolution
+from src.models.components.gcnn.lifting.rotation import CNLiftingConvolution
 
 
 class GroupEquivariantCNN(nn.Module):

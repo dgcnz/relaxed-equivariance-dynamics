@@ -1,8 +1,8 @@
+import pytest
+import torch
+
 from src.models.components.gcnn.gcnn import GroupEquivariantCNN
 from src.models.components.gcnn.gcnn_rui import RuiGroupEquivariantCNN
-
-import torch
-import pytest
 
 
 @pytest.mark.skip

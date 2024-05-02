@@ -1,17 +1,15 @@
 # TODO: add LICENSE / CITATION
 import numpy as np
-from torch import Tensor, FloatTensor
-import torch.nn.functional as F
 import torch
-
+import torch.nn.functional as F
+from torch import FloatTensor, Tensor
 
 
 def rot_img(x: Tensor, theta: float) -> Tensor:
-    """ Rotate batch of images by `theta` radians.
+    """Rotate batch of images by `theta` radians.
 
     :param x: batch of images with shape [N, C, H, W]
-    :param theta: angle
-    :returns rotated images
+    :param theta: angle :returns rotated images
     """
     # Rotation Matrix (2 x 3)
     rot_mat = FloatTensor(

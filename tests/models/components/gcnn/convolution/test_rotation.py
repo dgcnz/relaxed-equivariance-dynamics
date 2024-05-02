@@ -1,7 +1,9 @@
 import pytest
-from src.models.components.gcnn.convolution.rotation_rui import RuiGroupConvolution
-from src.models.components.gcnn.convolution.rotation import GroupConvolution
 import torch
+
+from src.models.components.gcnn.convolution.rotation import GroupConvolution
+from src.models.components.gcnn.convolution.rotation_rui import RuiGroupConvolution
+
 
 @pytest.mark.skip
 @pytest.mark.parametrize("group_order", [2, 4])
