@@ -1,13 +1,15 @@
+import math
+
+import numpy as np
 import torch
 import torch.nn as nn
-import math
-import numpy as np
 import torch.nn.functional as F
+
 from src.utils.image_utils import rot_img
 
 
 class RuiGroupConvolution(nn.Module):
-    """Group Convolution Layer for finite rotation group
+    """Group Convolution Layer for finite rotation group.
 
     Attributes:
         in_channels: number of input channels
@@ -25,7 +27,7 @@ class RuiGroupConvolution(nn.Module):
         group_order,
         activation=True,
     ):
-        super(RuiGroupConvolution, self).__init__()
+        super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.kernel_size = kernel_size
@@ -88,9 +90,7 @@ class RuiGroupConvolution(nn.Module):
         # [#out, g_order, #in, g_order, h, w] -> [#out*g_order, #in*g_order, h, w]
         # ==============================
         x = torch.nn.functional.conv2d(
-            input=x.reshape(
-                x.shape[0], x.shape[1] * x.shape[2], x.shape[3], x.shape[4]
-            ),
+            input=x.reshape(x.shape[0], x.shape[1] * x.shape[2], x.shape[3], x.shape[4]),
             weight=filter_bank.reshape(
                 self.out_channels * self.group_order,
                 self.in_channels * self.group_order,
@@ -101,9 +101,7 @@ class RuiGroupConvolution(nn.Module):
         )
 
         # Reshape signal back [bz, #out * g_order, h, w] -> [bz, out, g_order, h, w]
-        x = x.view(
-            x.shape[0], self.out_channels, self.group_order, x.shape[-2], x.shape[-1]
-        )
+        x = x.view(x.shape[0], self.out_channels, self.group_order, x.shape[-2], x.shape[-1])
         # ========================
 
         if self.activation:

@@ -1,13 +1,16 @@
 # Taken as is from: https://github.com/Rui1521/Equivariant-CNNs-Tutorial/tree/main
 import math
+
 import numpy as np
 import torch
-from torch import nn
 import torch.nn.functional as F
+from torch import nn
+
 from src.utils.image_utils import rot_img
 
+
 class RuiCNLiftingConvolution(nn.Module):
-    """Lifting Convolution Layer for finite rotation group
+    """Lifting Convolution Layer for finite rotation group.
 
     Attributes:
         in_channels: number of input channels
@@ -16,13 +19,8 @@ class RuiCNLiftingConvolution(nn.Module):
         group_order: the order of rotation groups
         activation: whether to use relu.
     """
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 kernel_size,
-                 group_order,
-                 activation = True
-                 ):
+
+    def __init__(self, in_channels, out_channels, kernel_size, group_order, activation=True):
         super().__init__()
 
         self.in_channels = in_channels
@@ -32,10 +30,9 @@ class RuiCNLiftingConvolution(nn.Module):
         self.activation = activation
 
         # Initialize an unconstrained kernel.
-        self.kernel = torch.nn.Parameter(torch.zeros(self.out_channels,
-                                                     self.in_channels,
-                                                     self.kernel_size,
-                                                     self.kernel_size))
+        self.kernel = torch.nn.Parameter(
+            torch.zeros(self.out_channels, self.in_channels, self.kernel_size, self.kernel_size)
+        )
 
         # Initialize weights
         torch.nn.init.kaiming_uniform_(self.kernel.data, a=math.sqrt(5))
@@ -44,14 +41,17 @@ class RuiCNLiftingConvolution(nn.Module):
         # Obtain a stack of rotated filters
         # Rotate kernels by 0, 90, 180, and 270 degrees
         # ==============================
-        filter_bank = torch.stack([rot_img(self.kernel, -np.pi*2/self.group_order*i)
-                                   for i in range(self.group_order)])
+        filter_bank = torch.stack(
+            [
+                rot_img(self.kernel, -np.pi * 2 / self.group_order * i)
+                for i in range(self.group_order)
+            ]
+        )
         # ==============================
 
         # [#out, group_order, #in, k, k]
-        filter_bank = filter_bank.transpose(0,1)
+        filter_bank = filter_bank.transpose(0, 1)
         return filter_bank
-
 
     def forward(self, x):
         # input shape: [bz, #in, h, w]
@@ -68,21 +68,15 @@ class RuiCNLiftingConvolution(nn.Module):
                 self.out_channels * self.group_order,
                 self.in_channels,
                 self.kernel_size,
-                self.kernel_size
+                self.kernel_size,
             ),
-            padding = (self.kernel_size-1)//2
+            padding=(self.kernel_size - 1) // 2,
         )
         # ==============================
 
         # reshape output signal to shape [bz, #out, group order, h, w].
         # ==============================
-        x = x.view(
-            x.shape[0],
-            self.out_channels,
-            self.group_order,
-            x.shape[-1],
-            x.shape[-2]
-        )
+        x = x.view(x.shape[0], self.out_channels, self.group_order, x.shape[-1], x.shape[-2])
         # ==============================
         if self.activation:
             return F.leaky_relu(x)

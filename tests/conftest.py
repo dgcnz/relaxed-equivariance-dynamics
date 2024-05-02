@@ -1,7 +1,8 @@
 """This file prepares config fixtures for other tests."""
 
-from pathlib import Path
 from glob import glob
+from pathlib import Path
+
 import pytest
 import rootutils
 from hydra import compose, initialize
@@ -105,7 +106,6 @@ def cfg_eval(cfg_eval_global: DictConfig, tmp_path: Path) -> DictConfig:
     yield cfg
 
     GlobalHydra.instance().clear()
-
 
 
 def refactor(string: str) -> str:

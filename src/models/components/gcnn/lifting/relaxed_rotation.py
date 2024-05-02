@@ -1,12 +1,14 @@
+import math
+
+import numpy as np
 import torch
 import torch.nn.functional as F
-import math
-import numpy as np
+
 from src.utils.image_utils import rot_img
 
 
 class RelaxedRotLiftConv2d(torch.nn.Module):
-    """Relaxed lifting convolution Layer for 2D finite rotation group"""
+    """Relaxed lifting convolution Layer for 2D finite rotation group."""
 
     def __init__(
         self,
@@ -17,7 +19,7 @@ class RelaxedRotLiftConv2d(torch.nn.Module):
         num_filter_banks,
         activation=True,  # whether to apply relu in the end
     ):
-        super(RelaxedRotLiftConv2d, self).__init__()
+        super().__init__()
 
         self.num_filter_banks = num_filter_banks
         self.in_channels = in_channels
@@ -45,7 +47,7 @@ class RelaxedRotLiftConv2d(torch.nn.Module):
         torch.nn.init.kaiming_uniform_(self.kernel.data, a=math.sqrt(5))
 
     def generate_filter_bank(self):
-        """Obtain a stack of rotated filters"""
+        """Obtain a stack of rotated filters."""
         weights = self.kernel.reshape(
             self.num_filter_banks * self.out_channels,
             self.in_channels,
@@ -53,10 +55,7 @@ class RelaxedRotLiftConv2d(torch.nn.Module):
             self.kernel_size,
         )
         filter_bank = torch.stack(
-            [
-                rot_img(weights, -np.pi * 2 / self.group_order * i)
-                for i in range(self.group_order)
-            ]
+            [rot_img(weights, -np.pi * 2 / self.group_order * i) for i in range(self.group_order)]
         )
         filter_bank = filter_bank.transpose(0, 1).reshape(
             self.num_filter_banks,  # Additional dimension
@@ -68,7 +67,7 @@ class RelaxedRotLiftConv2d(torch.nn.Module):
         )
         return filter_bank
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor: 
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         # input shape: [bz, #in, h, w]
         # output shape: [bz, #out, group order, h, w]
 
@@ -96,9 +95,7 @@ class RelaxedRotLiftConv2d(torch.nn.Module):
 
         # reshape output signal to shape [bz, #out, group order, h, w].
         # ==============================
-        x = x.view(
-            x.shape[0], self.out_channels, self.group_order, x.shape[-1], x.shape[-2]
-        )
+        x = x.view(x.shape[0], self.out_channels, self.group_order, x.shape[-1], x.shape[-2])
         # ==============================
 
         if self.activation:

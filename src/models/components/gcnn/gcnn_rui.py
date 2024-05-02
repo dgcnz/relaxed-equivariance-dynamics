@@ -1,7 +1,8 @@
-from src.models.components.gcnn.lifting.rotation_rui import RuiCNLiftingConvolution
-from src.models.components.gcnn.convolution.rotation_rui import RuiGroupConvolution
-import torch.nn as nn
 import torch
+import torch.nn as nn
+
+from src.models.components.gcnn.convolution.rotation_rui import RuiGroupConvolution
+from src.models.components.gcnn.lifting.rotation_rui import RuiCNLiftingConvolution
 
 
 class RuiGroupEquivariantCNN(nn.Module):
