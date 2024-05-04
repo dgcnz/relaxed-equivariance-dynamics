@@ -1,0 +1,75 @@
+from src.models.components.gcnn.convolution.relaxed_rotation_rui import (
+    RuiRelaxedRotGroupConv2d,
+)
+from src.models.components.gcnn.lifting.relaxed_rotation_rui import (
+    RuiCNRelaxedLiftingConvolution,
+)
+import torch
+
+
+class RuiRelaxedRotCNN2d(torch.nn.Module):
+    """A small relaxed rotation 2d CNN model"""
+
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel_size,
+        hidden_dim,
+        group_order,  # the order of 2d finite rotation group
+        num_gconvs,  # number of group conv layers
+        num_filter_banks,
+        classifier=False,
+        sigmoid=False,
+    ):
+        super().__init__()
+
+        self.gconvs = []
+        self.classifier = classifier
+        self.sigmoid = sigmoid
+
+        self.gconvs = [
+            RuiCNRelaxedLiftingConvolution(
+                in_channels,
+                hidden_dim,
+                kernel_size,
+                group_order,
+                num_filter_banks,
+                True,
+            )
+        ]
+
+        for i in range(num_gconvs - 2):
+            self.gconvs.append(
+                RuiRelaxedRotGroupConv2d(
+                    hidden_dim,
+                    hidden_dim,
+                    kernel_size,
+                    group_order,
+                    num_filter_banks,
+                    True,
+                )
+            )
+
+        self.gconvs.append(
+            RuiRelaxedRotGroupConv2d(
+                hidden_dim,
+                out_channels,
+                kernel_size,
+                group_order,
+                num_filter_banks,
+                False,
+            )
+        )
+
+        self.gconvs = torch.nn.Sequential(*self.gconvs)
+
+    def forward(self, x):
+        # average over h axis or not
+        out = self.gconvs(x).mean(2)
+
+        if self.classifier:
+            out = out.mean((2, 3))
+        if self.sigmoid:
+            out = out.sigmoid()
+        return out

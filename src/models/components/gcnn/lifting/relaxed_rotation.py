@@ -1,24 +1,31 @@
-import math
-
 import numpy as np
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 
-from src.utils.image_utils import rot_img
+from src.models.components.gcnn.lifting.utils import generate_rot_filter_bank
 
 
-class RelaxedRotLiftConv2d(torch.nn.Module):
-    """Relaxed lifting convolution Layer for 2D finite rotation group."""
+class CNRelaxedLiftingConvolution(torch.nn.Module):
+    """Relaxed lifting convolution Layer for 2D finite rotation group"""
 
     def __init__(
         self,
-        in_channels,
-        out_channels,
-        kernel_size,
-        group_order,  # the order of 2d finite rotation group
-        num_filter_banks,
-        activation=True,  # whether to apply relu in the end
+        in_channels: int,
+        out_channels: int,
+        kernel_size: int,
+        group_order: int,
+        num_filter_banks: int,
+        activation: bool = True,
     ):
+        """
+        :param in_channels: number of input channels
+        :param out_channels: number of output channels
+        :param kernel_size: kernel size
+        :param group_order: the order of 2d finite rotation group (e.g., 4 for C4 group)
+        :param num_filter_banks: number of filter banks
+        :param activation: whether to apply relu in the end
+        """
         super().__init__()
 
         self.num_filter_banks = num_filter_banks
@@ -27,14 +34,12 @@ class RelaxedRotLiftConv2d(torch.nn.Module):
         self.kernel_size = kernel_size
         self.group_order = group_order
         self.activation = activation
+        self.padding = ((self.kernel_size - 1) // 2,)
 
-        # The relaxed weights are initialized as equal
-        # they do not need to be equal across different filter bank
         self.relaxed_weights = torch.nn.Parameter(
-            torch.ones(num_filter_banks, group_order).float()
+            torch.ones(num_filter_banks, group_order)
         )
 
-        # Initialize an unconstrained kernel.
         self.kernel = torch.nn.Parameter(
             torch.zeros(
                 self.num_filter_banks,  # Additional dimension
@@ -44,60 +49,43 @@ class RelaxedRotLiftConv2d(torch.nn.Module):
                 self.kernel_size,
             )
         )
-        torch.nn.init.kaiming_uniform_(self.kernel.data, a=math.sqrt(5))
+        torch.nn.init.kaiming_uniform_(self.kernel.data, a=np.sqrt(5))
 
     def generate_filter_bank(self):
-        """Obtain a stack of rotated filters."""
-        weights = self.kernel.reshape(
-            self.num_filter_banks * self.out_channels,
-            self.in_channels,
-            self.kernel_size,
-            self.kernel_size,
+        """Obtain a stack of rotated filters.
+        :return: a tensor of shape [num_filter_banks, #out, group_order, #in, k, k]
+        """
+        # self.kernel: [num_filter_banks, #out, #in, k, k]
+        weights = self.kernel.flatten(0, 1)
+        # weights: [num_filter_banks * #out, #in, k, k]
+        filter_bank = generate_rot_filter_bank(weights, self.group_order)
+        # filter_bank: [num_filter_banks * #out, group_order, #in, k, k]
+        filter_bank = filter_bank.unflatten(
+            0, (self.num_filter_banks, self.out_channels)
         )
-        filter_bank = torch.stack(
-            [rot_img(weights, -np.pi * 2 / self.group_order * i) for i in range(self.group_order)]
-        )
-        filter_bank = filter_bank.transpose(0, 1).reshape(
-            self.num_filter_banks,  # Additional dimension
-            self.out_channels,
-            self.group_order,
-            self.in_channels,
-            self.kernel_size,
-            self.kernel_size,
-        )
+        # filter_bank: [num_filter_banks, #out, group_order, #in, k, k]
         return filter_bank
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # input shape: [bz, #in, h, w]
-        # output shape: [bz, #out, group order, h, w]
-
-        # generate filter bank given input group order
+    def forward(self, x: Tensor) -> Tensor:
+        """
+        :param x: input tensor of shape [B, #in, H, W]
+        :return: output tensor of shape [B, #out, group_order, H, W]
+        """
         filter_bank = self.generate_filter_bank()
+        # filter_bank: Tensor[num_filter_banks, #out, group_order, #in, k, k]
 
-        # for each rotation, we have a linear combination of multiple filters with different coefficients.
-        relaxed_conv_weights = torch.einsum(
-            "na, noa... -> oa...", self.relaxed_weights, filter_bank
+        # For each rotation, we have a linear combination of multiple filters with different coefficients
+        relaxed_conv_weights = torch.sum(
+            self.relaxed_weights.view(  # reshape for broadcast mult
+                self.num_filter_banks, 1, self.group_order, 1, 1, 1
+            )
+            * filter_bank,
+            dim=0,
         )
-
-        # concatenate the first two dims before convolution.
-        # ==============================
-        x = F.conv2d(
-            input=x,
-            weight=relaxed_conv_weights.reshape(
-                self.out_channels * self.group_order,
-                self.in_channels,
-                self.kernel_size,
-                self.kernel_size,
-            ),
-            padding=(self.kernel_size - 1) // 2,
-        )
-        # ==============================
-
-        # reshape output signal to shape [bz, #out, group order, h, w].
-        # ==============================
-        x = x.view(x.shape[0], self.out_channels, self.group_order, x.shape[-1], x.shape[-2])
-        # ==============================
-
+        x = F.conv2d(x, relaxed_conv_weights.flatten(0, 1), padding=self.padding)
+        # x: Tensor[B, #out * group_order, H, W]
+        x = x.unflatten(1, (self.out_channels, self.group_order))
+        # x: Tensor[B, #out, group_order, H, W]
         if self.activation:
             return F.leaky_relu(x)
         return x
