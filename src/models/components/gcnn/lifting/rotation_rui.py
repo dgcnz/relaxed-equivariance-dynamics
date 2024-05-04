@@ -9,7 +9,7 @@ from torch import nn
 from src.utils.image_utils import rot_img
 
 
-class RuiCNLiftingConvolution(nn.Module):
+class RuiLiftingConvCn(nn.Module):
     """Lifting Convolution Layer for finite rotation group.
 
     Attributes:

@@ -6,7 +6,7 @@ from torch import Tensor
 from src.models.components.gcnn.lifting.utils import generate_rot_filter_bank
 
 
-class CNRelaxedLiftingConvolution(torch.nn.Module):
+class RLiftingConvCn(torch.nn.Module):
     """Relaxed lifting convolution Layer for 2D finite rotation group"""
 
     def __init__(

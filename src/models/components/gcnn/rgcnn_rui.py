@@ -1,8 +1,8 @@
 from src.models.components.gcnn.convolution.relaxed_rotation_rui import (
-    RuiRelaxedRotGroupConv2d,
+    RuiRGroupConvCn,
 )
 from src.models.components.gcnn.lifting.relaxed_rotation_rui import (
-    RuiCNRelaxedLiftingConvolution,
+    RuiRLiftingConvCn,
 )
 import torch
 
@@ -29,7 +29,7 @@ class RuiCnRGCNN(torch.nn.Module):
         self.sigmoid = sigmoid
 
         self.gconvs = [
-            RuiCNRelaxedLiftingConvolution(
+            RuiRLiftingConvCn(
                 in_channels,
                 hidden_dim,
                 kernel_size,
@@ -41,7 +41,7 @@ class RuiCnRGCNN(torch.nn.Module):
 
         for i in range(num_gconvs - 2):
             self.gconvs.append(
-                RuiRelaxedRotGroupConv2d(
+                RuiRGroupConvCn(
                     hidden_dim,
                     hidden_dim,
                     kernel_size,
@@ -52,7 +52,7 @@ class RuiCnRGCNN(torch.nn.Module):
             )
 
         self.gconvs.append(
-            RuiRelaxedRotGroupConv2d(
+            RuiRGroupConvCn(
                 hidden_dim,
                 out_channels,
                 kernel_size,

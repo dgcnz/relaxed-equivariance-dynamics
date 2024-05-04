@@ -1,7 +1,7 @@
 import torch
 import pytest
-from src.models.components.gcnn.convolution.relaxed_rotation import RelaxedRotGroupConv2d
-from src.models.components.gcnn.convolution.relaxed_rotation_rui import RuiRelaxedRotGroupConv2d
+from src.models.components.gcnn.convolution.relaxed_rotation import RGroupConvCn
+from src.models.components.gcnn.convolution.relaxed_rotation_rui import RuiRGroupConvCn
 
 
 @pytest.mark.skip
@@ -111,14 +111,14 @@ def test_benchmark_conv(
 def test_relaxed_convolution_forward_even(group_order: int):
     num_filter_banks, in_channels, out_channels, kernel_size = 2, 3, 4, 5
     # Create the relaxed rotation group convolution layer
-    conv1 = RelaxedRotGroupConv2d(
+    conv1 = RGroupConvCn(
         num_filter_banks=num_filter_banks,
         in_channels=in_channels,
         out_channels=out_channels,
         kernel_size=kernel_size,
         group_order=group_order,
     )
-    conv2 = RuiRelaxedRotGroupConv2d(
+    conv2 = RuiRGroupConvCn(
         num_filter_banks=num_filter_banks,
         in_channels=in_channels,
         out_channels=out_channels,

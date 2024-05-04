@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 from torch import Tensor
 
-from src.models.components.gcnn.convolution.rotation import GroupConvolution
-from src.models.components.gcnn.lifting.rotation import CNLiftingConvolution
+from src.models.components.gcnn.convolution.rotation import GroupConvCn
+from src.models.components.gcnn.lifting.rotation import LiftingConvCn
 
 
 class CnGCNN(nn.Module):
@@ -33,7 +33,7 @@ class CnGCNN(nn.Module):
         assert num_gconvs >= 2
         super().__init__()
         self.gconvs = nn.Sequential(
-            CNLiftingConvolution(
+            LiftingConvCn(
                 in_channels=in_channels,
                 out_channels=hidden_dim,
                 kernel_size=kernel_size,
@@ -41,7 +41,7 @@ class CnGCNN(nn.Module):
                 activation=True,
             ),
             *[
-                GroupConvolution(
+                GroupConvCn(
                     in_channels=hidden_dim,
                     out_channels=hidden_dim,
                     kernel_size=kernel_size,
@@ -50,7 +50,7 @@ class CnGCNN(nn.Module):
                 )
                 for _ in range(num_gconvs - 2)
             ],
-            GroupConvolution(
+            GroupConvCn(
                 in_channels=hidden_dim,
                 out_channels=out_channels,
                 kernel_size=kernel_size,

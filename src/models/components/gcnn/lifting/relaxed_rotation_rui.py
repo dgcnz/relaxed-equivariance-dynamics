@@ -7,7 +7,7 @@ import torch.nn.functional as F
 from src.utils.image_utils import rot_img
 
 
-class RuiCNRelaxedLiftingConvolution(torch.nn.Module):
+class RuiRLiftingConvCn(torch.nn.Module):
     """Relaxed lifting convolution Layer for 2D finite rotation group"""
 
     def __init__(

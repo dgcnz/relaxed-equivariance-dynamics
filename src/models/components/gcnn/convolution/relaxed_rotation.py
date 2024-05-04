@@ -5,7 +5,7 @@ import torchvision.transforms.functional as TTF
 from torch import Tensor
 
 
-class RelaxedRotGroupConv2d(torch.nn.Module):
+class RGroupConvCn(torch.nn.Module):
     """Relaxed group convolution Layer for 2D finite rotation group"""
 
     def __init__(
@@ -82,7 +82,7 @@ class RelaxedRotGroupConv2d(torch.nn.Module):
         :return: output tensor of shape [B, #out, group_order, H, W]
         """
 
-        filter_bank = RelaxedRotGroupConv2d.generate_filter_bank(self.kernel)
+        filter_bank = RGroupConvCn.generate_filter_bank(self.kernel)
         # filter_bank: Tensor[num_filter_banks, #out, group_order, #in, group_order, k, k]
 
         relaxed_conv_weights = torch.sum(

@@ -1,16 +1,16 @@
 import torch
 import pytest
-from src.models.components.gcnn.lifting.relaxed_rotation import CNRelaxedLiftingConvolution
-from src.models.components.gcnn.lifting.relaxed_rotation_rui import RuiCNRelaxedLiftingConvolution
+from src.models.components.gcnn.lifting.relaxed_rotation import RLiftingConvCn
+from src.models.components.gcnn.lifting.relaxed_rotation_rui import RuiRLiftingConvCn
 
 @pytest.mark.skip
 @pytest.mark.parametrize("group_order", [2, 4])
 def test_relaxed_lifting_forward_even(group_order: int):
     in_channels, out_channels, kernel_size, num_filter_banks = 3, 5, 3, 2
-    net1 = RuiCNRelaxedLiftingConvolution(
+    net1 = RuiRLiftingConvCn(
         in_channels, out_channels, kernel_size, group_order, num_filter_banks
     )
-    net2 = CNRelaxedLiftingConvolution(
+    net2 = RLiftingConvCn(
         in_channels, out_channels, kernel_size, group_order, num_filter_banks
     )
     net2.kernel = net1.kernel

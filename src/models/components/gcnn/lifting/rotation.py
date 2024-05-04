@@ -6,7 +6,7 @@ from torch import Tensor, nn
 from src.models.components.gcnn.lifting.utils import generate_rot_filter_bank
 
 
-class CNLiftingConvolution(nn.Module):
+class LiftingConvCn(nn.Module):
     """Lifting Convolution Layer for finite rotation group."""
 
     def __init__(

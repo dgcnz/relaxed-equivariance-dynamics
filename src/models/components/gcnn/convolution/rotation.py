@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import torchvision.transforms.functional as TTF
 
 
-class GroupConvolution(nn.Module):
+class GroupConvCn(nn.Module):
     """Group Convolution Layer for finite rotation group."""
 
     def __init__(
@@ -74,7 +74,7 @@ class GroupConvolution(nn.Module):
         :return: output tensor of shape [B, #out, group_order, H, W]
         """
 
-        filter_bank = GroupConvolution.generate_filter_bank(self.kernel)
+        filter_bank = GroupConvCn.generate_filter_bank(self.kernel)
         # filter_bank: Tensor[#out, group_order, #in, group_order, H, W]
 
         x = torch.nn.functional.conv2d(

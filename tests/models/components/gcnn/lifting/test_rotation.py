@@ -1,16 +1,16 @@
 import pytest
 import torch
 
-from src.models.components.gcnn.lifting.rotation import CNLiftingConvolution
-from src.models.components.gcnn.lifting.rotation_rui import RuiCNLiftingConvolution
+from src.models.components.gcnn.lifting.rotation import LiftingConvCn
+from src.models.components.gcnn.lifting.rotation_rui import RuiLiftingConvCn
 
 
 @pytest.mark.skip
 @pytest.mark.parametrize("group_order", [2, 4])
 def test_lifting_forward_even(group_order: int):
     in_channels, out_channels, kernel_size = 3, 5, 3
-    net1 = RuiCNLiftingConvolution(in_channels, out_channels, kernel_size, group_order)
-    net2 = CNLiftingConvolution(in_channels, out_channels, kernel_size, group_order)
+    net1 = RuiLiftingConvCn(in_channels, out_channels, kernel_size, group_order)
+    net2 = LiftingConvCn(in_channels, out_channels, kernel_size, group_order)
     net2.kernel = net1.kernel  # Copy the kernel
     B, H, W = 2, 5, 5
     x = torch.rand(B, in_channels, H, W)
@@ -26,8 +26,8 @@ def test_lifting_forward_even(group_order: int):
 @pytest.mark.parametrize("group_order", [5])
 def test_lifting_forward_odd(group_order: int):
     in_channels, out_channels, kernel_size = 3, 5, 3
-    net1 = RuiCNLiftingConvolution(in_channels, out_channels, kernel_size, group_order)
-    net2 = CNLiftingConvolution(in_channels, out_channels, kernel_size, group_order)
+    net1 = RuiLiftingConvCn(in_channels, out_channels, kernel_size, group_order)
+    net2 = LiftingConvCn(in_channels, out_channels, kernel_size, group_order)
     net2.kernel = net1.kernel  # Copy the kernel
     B, H, W = 2, 5, 5
     x = torch.rand(B, in_channels, H, W)
