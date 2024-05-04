@@ -9,8 +9,8 @@ from torch import Tensor
 import torch.nn as nn
 
 
-class RelaxedRotCNN2d(nn.Module):
-    """A small relaxed rotation 2d CNN model"""
+class CnRGCNN(nn.Module):
+    """C(n) equivariant relaxed group convolutional neural network"""
 
     def __init__(
         self,

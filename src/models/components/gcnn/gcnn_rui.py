@@ -5,7 +5,9 @@ from src.models.components.gcnn.convolution.rotation_rui import RuiGroupConvolut
 from src.models.components.gcnn.lifting.rotation_rui import RuiCNLiftingConvolution
 
 
-class RuiGroupEquivariantCNN(nn.Module):
+class RuiCnGCNN(nn.Module):
+    """Rui's implementation of C(n) equivariant  group convolutional neural network"""
+
     def __init__(
         self,
         in_channels: int,

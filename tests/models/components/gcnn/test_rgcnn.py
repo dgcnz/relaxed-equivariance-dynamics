@@ -1,8 +1,8 @@
 import pytest
 import torch
 
-from src.models.components.gcnn.rgcnn import RelaxedRotCNN2d
-from src.models.components.gcnn.rgcnn_rui import RuiRelaxedRotCNN2d
+from src.models.components.gcnn.rgcnn import CnRGCNN
+from src.models.components.gcnn.rgcnn_rui import RuiCnRGCNN
 
 
 @pytest.mark.skip
@@ -18,7 +18,7 @@ def test_rgcnn_even(group_order: int):
     )
     B, H, W = 2, 5, 5
     x = torch.rand(B, in_channels, H, W)
-    net1 = RelaxedRotCNN2d(
+    net1 = CnRGCNN(
         in_channels,
         out_channels,
         kernel_size,
@@ -27,7 +27,7 @@ def test_rgcnn_even(group_order: int):
         num_gconvs,
         num_filter_banks,
     )
-    net2 = RuiRelaxedRotCNN2d(
+    net2 = RuiCnRGCNN(
         in_channels,
         out_channels,
         kernel_size,
