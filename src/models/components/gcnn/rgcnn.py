@@ -1,12 +1,17 @@
+from src.models.components.gcnn.convolution.relaxed_rotation import (
+    RelaxedRotGroupConv2d,
+)
+from src.models.components.gcnn.lifting.relaxed_rotation import (
+    CNRelaxedLiftingConvolution,
+)
 import torch
-import torch.nn as nn
 from torch import Tensor
-
-from src.models.components.gcnn.convolution.rotation import GroupConvolution
-from src.models.components.gcnn.lifting.rotation import CNLiftingConvolution
+import torch.nn as nn
 
 
-class GroupEquivariantCNN(nn.Module):
+class RelaxedRotCNN2d(nn.Module):
+    """A small relaxed rotation 2d CNN model"""
+
     def __init__(
         self,
         in_channels: int,
@@ -15,7 +20,8 @@ class GroupEquivariantCNN(nn.Module):
         hidden_dim: int,
         group_order: int,
         num_gconvs: int,
-        classifer: bool = False,
+        num_filter_banks: int,
+        classifier: bool = False,
         sigmoid: bool = False,
     ):
         """
@@ -25,43 +31,49 @@ class GroupEquivariantCNN(nn.Module):
         :param hidden_dim: Number of hidden dimensions.
         :param group_order: Order of the group.
         :param num_gconvs: Number of group convolution layers. Must be at least 2 (counting lifting conv).
-        :param classifer: If True, the output is averaged over the spatial dimensions.
+        :param num_filter_banks: Number of filter banks.
+        :param classifier: If True, the output is averaged over the spatial dimensions.
         :param sigmoid: If True, the output is passed through a sigmoid function.
         """
         assert num_gconvs >= 2
         super().__init__()
+
+        self.classifier = classifier
+        self.sigmoid = sigmoid
+
         self.gconvs = nn.Sequential(
-            CNLiftingConvolution(
+            CNRelaxedLiftingConvolution(
                 in_channels=in_channels,
                 out_channels=hidden_dim,
                 kernel_size=kernel_size,
                 group_order=group_order,
+                num_filter_banks=num_filter_banks,
                 activation=True,
             ),
             *[
-                GroupConvolution(
+                RelaxedRotGroupConv2d(
                     in_channels=hidden_dim,
                     out_channels=hidden_dim,
                     kernel_size=kernel_size,
                     group_order=group_order,
+                    num_filter_banks=num_filter_banks,
                     activation=True,
                 )
                 for _ in range(num_gconvs - 2)
             ],
-            GroupConvolution(
+            RelaxedRotGroupConv2d(
                 in_channels=hidden_dim,
                 out_channels=out_channels,
                 kernel_size=kernel_size,
                 group_order=group_order,
+                num_filter_banks=num_filter_banks,
                 activation=False,
             ),
         )
-        self.classifer = classifer
-        self.sigmoid = sigmoid
 
     def forward(self, x: Tensor) -> Tensor:
         """
-        Forward pass
+        Forward pass of the group convolution layer
         :param x: input tensor of shape [B, #in, H, W]
         """
         out = self.gconvs(x)
@@ -69,10 +81,8 @@ class GroupEquivariantCNN(nn.Module):
         out = torch.mean(out, dim=2)
         # out: [N, #out, H, W]
 
-        # If we want to have a invariant classifer,
-        # we can average over the spatial dimensions.
-        if self.classifer:
-            out = torch.mean(out, dim=(2, 3))
+        if self.classifier:
+            out = out.mean((2, 3))
         if self.sigmoid:
             out = out.sigmoid()
         return out
