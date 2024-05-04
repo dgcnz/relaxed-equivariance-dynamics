@@ -7,8 +7,8 @@ from src.models.components.gcnn.lifting.relaxed_rotation_rui import (
 import torch
 
 
-class RuiRelaxedRotCNN2d(torch.nn.Module):
-    """A small relaxed rotation 2d CNN model"""
+class RuiCnRGCNN(torch.nn.Module):
+    """Rui's implementation of C(n) equivariant relaxed group convolutional neural network"""
 
     def __init__(
         self,

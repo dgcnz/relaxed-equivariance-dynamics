@@ -6,7 +6,9 @@ from src.models.components.gcnn.convolution.rotation import GroupConvolution
 from src.models.components.gcnn.lifting.rotation import CNLiftingConvolution
 
 
-class GroupEquivariantCNN(nn.Module):
+class CnGCNN(nn.Module):
+    """C(n) equivariant group convolutional neural network"""
+
     def __init__(
         self,
         in_channels: int,
