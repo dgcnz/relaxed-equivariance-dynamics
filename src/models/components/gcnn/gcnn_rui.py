@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
 
-from src.models.components.gcnn.convolution.rotation_rui import RuiGroupConvolution
-from src.models.components.gcnn.lifting.rotation_rui import RuiCNLiftingConvolution
+from src.models.components.gcnn.convolution.rotation_rui import RuiGroupConvCn
+from src.models.components.gcnn.lifting.rotation_rui import RuiLiftingConvCn
 
 
 class RuiCnGCNN(nn.Module):
@@ -24,7 +24,7 @@ class RuiCnGCNN(nn.Module):
         self.gconvs = []
         # First Layer
         self.gconvs.append(
-            RuiCNLiftingConvolution(
+            RuiLiftingConvCn(
                 in_channels=in_channels,
                 out_channels=hidden_dim,
                 kernel_size=kernel_size,
@@ -36,7 +36,7 @@ class RuiCnGCNN(nn.Module):
 
         for i in range(num_gconvs - 2):
             self.gconvs.append(
-                RuiGroupConvolution(
+                RuiGroupConvCn(
                     in_channels=hidden_dim,
                     out_channels=hidden_dim,
                     kernel_size=kernel_size,
@@ -47,7 +47,7 @@ class RuiCnGCNN(nn.Module):
 
         # Final Layer # To generate equivariant outputs
         self.gconvs.append(
-            RuiGroupConvolution(
+            RuiGroupConvCn(
                 in_channels=hidden_dim,
                 out_channels=out_channels,
                 kernel_size=kernel_size,

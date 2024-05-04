@@ -4,8 +4,7 @@ import math
 import numpy as np
 from src.utils.image_utils import rot_img
 
-##### 2D Relaxed Rotation Group Convolution Layer #####
-class RuiRelaxedRotGroupConv2d(torch.nn.Module):
+class RuiRGroupConvCn(torch.nn.Module):
     """Relaxed group convolution Layer for 2D finite rotation group"""
     def __init__(self,
                  in_channels,

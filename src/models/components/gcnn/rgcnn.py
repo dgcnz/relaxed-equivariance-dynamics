@@ -1,8 +1,8 @@
 from src.models.components.gcnn.convolution.relaxed_rotation import (
-    RelaxedRotGroupConv2d,
+    RGroupConvCn,
 )
 from src.models.components.gcnn.lifting.relaxed_rotation import (
-    CNRelaxedLiftingConvolution,
+    RLiftingConvCn,
 )
 import torch
 from torch import Tensor
@@ -42,7 +42,7 @@ class CnRGCNN(nn.Module):
         self.sigmoid = sigmoid
 
         self.gconvs = nn.Sequential(
-            CNRelaxedLiftingConvolution(
+            RLiftingConvCn(
                 in_channels=in_channels,
                 out_channels=hidden_dim,
                 kernel_size=kernel_size,
@@ -51,7 +51,7 @@ class CnRGCNN(nn.Module):
                 activation=True,
             ),
             *[
-                RelaxedRotGroupConv2d(
+                RGroupConvCn(
                     in_channels=hidden_dim,
                     out_channels=hidden_dim,
                     kernel_size=kernel_size,
@@ -61,7 +61,7 @@ class CnRGCNN(nn.Module):
                 )
                 for _ in range(num_gconvs - 2)
             ],
-            RelaxedRotGroupConv2d(
+            RGroupConvCn(
                 in_channels=hidden_dim,
                 out_channels=out_channels,
                 kernel_size=kernel_size,

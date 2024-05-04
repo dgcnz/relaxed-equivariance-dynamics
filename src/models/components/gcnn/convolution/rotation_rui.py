@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from src.utils.image_utils import rot_img
 
 
-class RuiGroupConvolution(nn.Module):
+class RuiGroupConvCn(nn.Module):
     """Group Convolution Layer for finite rotation group.
 
     Attributes:
