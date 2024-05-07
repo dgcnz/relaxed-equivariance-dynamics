@@ -35,7 +35,7 @@ dependencies:
   - joblib
   - jupyter
   - lightning
- 
+
 
   # --------- loggers --------- #
   - wandb
