@@ -1,31 +1,29 @@
+import os
+import zipfile
 from typing import Any, Dict, Optional, Tuple
 
+import numpy as np
+import requests
 import torch
 from lightning import LightningDataModule
+from PIL import Image
 from torch.utils.data import ConcatDataset, DataLoader, Dataset, random_split
 from torchvision.datasets import MNIST
-from torchvision.transforms import transforms
 
 ##imports for second class
-from torchvision.transforms import RandomRotation
-from torchvision.transforms import Pad
-from torchvision.transforms import Resize
-from torchvision.transforms import ToTensor
-from torchvision.transforms import Compose
-from torchvision.transforms import InterpolationMode
-
-import numpy as np
-
-from PIL import Image
-
-import requests
-import zipfile
-import os
+from torchvision.transforms import (
+    Compose,
+    InterpolationMode,
+    Pad,
+    RandomRotation,
+    Resize,
+    ToTensor,
+    transforms,
+)
 
 
 class RotatedMNISTDataModule(LightningDataModule):
-    """`LightningDataModule` for the MNIST dataset.
-    """
+    """`LightningDataModule` for the MNIST dataset."""
 
     def __init__(
         self,
@@ -34,7 +32,7 @@ class RotatedMNISTDataModule(LightningDataModule):
         batch_size: int = 64,
         num_workers: int = 0,
         pin_memory: bool = False,
-        transforms = None
+        transforms=None,
     ) -> None:
         """Initialize a `MNISTDataModule`.
 
@@ -49,7 +47,7 @@ class RotatedMNISTDataModule(LightningDataModule):
         # this line allows to access init params with 'self.hparams' attribute
         # also ensures init params will be stored in ckpt
         self.save_hyperparameters(logger=False)
-        
+
         self.transforms = transforms
 
         self.data_train: Optional[Dataset] = None
@@ -97,11 +95,15 @@ class RotatedMNISTDataModule(LightningDataModule):
 
         # load and split datasets only if not loaded already
         if not self.data_train and not self.data_val and not self.data_test:
-            trainset = MnistRotDataset(self.hparams.data_dir, train=True, transform=self.transforms)
-            testset = MnistRotDataset(self.hparams.data_dir, train=False, transform=self.transforms)
+            trainset = MnistRotDataset(
+                self.hparams.data_dir, train=True, transform=self.transforms
+            )
+            testset = MnistRotDataset(
+                self.hparams.data_dir, train=False, transform=self.transforms
+            )
             dataset = ConcatDataset(datasets=[trainset, testset])
 
-            #I changed this because I want to keep the same test set as them I think instead of random? maybe not TODO
+            # I changed this because I want to keep the same test set as them I think instead of random? maybe not TODO
             self.data_train, self.data_val, self.data_test = random_split(
                 dataset=dataset,
                 lengths=self.hparams.train_val_test_split,
@@ -175,40 +177,40 @@ class RotatedMNISTDataModule(LightningDataModule):
 class MnistRotDataset(Dataset):
     """
     Implements rotMnist like MNIST in the other file
-    -> I implented in a way where you dont have to give a datadir 
+    -> I implented in a way where you dont have to give a datadir
     """
-    
-    def __init__(self, root, train = True, transform = None, download = False):
+
+    def __init__(self, root, train=True, transform=None, download=False):
         if download == True:
             self.download(root)
-        
+
         if train:
             file = "mnist_rotation_new/mnist_all_rotation_normalized_float_train_valid.amat"
         else:
             file = "mnist_rotation_new/mnist_all_rotation_normalized_float_test.amat"
-        
+
         self.transform = transform
 
         file = os.path.join(root, file)
 
-        data = np.loadtxt(file, delimiter=' ')
-            
+        data = np.loadtxt(file, delimiter=" ")
+
         self.images = data[:, :-1].reshape(-1, 28, 28).astype(np.float32)
-        #print(self.images[0].shape)
+        # print(self.images[0].shape)
         self.labels = data[:, -1].astype(np.int64)
         self.num_samples = len(self.labels)
-    
+
     def __getitem__(self, index):
         image, label = self.images[index], self.labels[index]
-        image = Image.fromarray(image, mode='F')
+        image = Image.fromarray(image, mode="F")
         if self.transform is not None:
             image = self.transform(image)
-        #print(image.shape)
+        # print(image.shape)
         return image, label
-    
+
     def __len__(self):
         return len(self.labels)
-    
+
     def download(self, root):
         # URL of the dataset
         url = "http://www.iro.umontreal.ca/~lisa/icml2007data/mnist_rotation_new.zip"
@@ -217,7 +219,6 @@ class MnistRotDataset(Dataset):
 
         # Check if the final unzipped folder exists
         if not os.path.exists(destination_dir):
-
             # Check if the directory already exists, if not, create it
             os.makedirs(destination_dir)
 

@@ -1,5 +1,6 @@
 """This file prepares config fixtures for other tests."""
 
+from glob import glob
 from pathlib import Path
 
 import pytest
@@ -105,3 +106,12 @@ def cfg_eval(cfg_eval_global: DictConfig, tmp_path: Path) -> DictConfig:
     yield cfg
 
     GlobalHydra.instance().clear()
+
+
+def refactor(string: str) -> str:
+    return string.replace("/", ".").replace("\\", ".").replace(".py", "")
+
+
+pytest_plugins = [
+    refactor(fixture) for fixture in glob("tests/fixtures/*.py") if "__" not in fixture
+]

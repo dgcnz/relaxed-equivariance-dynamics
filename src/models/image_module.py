@@ -65,7 +65,7 @@ class ImageLightningModule(LightningModule):
         self.criterion = torch.nn.CrossEntropyLoss()
 
         # num classes
-        num_classes = net.layers[-1].out_features #if this break hardcode to one
+        num_classes = net.layers[-1].out_features  # if this break hardcode to one
 
         # metric objects for calculating and averaging accuracy across batches
         self.train_acc = Accuracy(task="multiclass", num_classes=num_classes)
