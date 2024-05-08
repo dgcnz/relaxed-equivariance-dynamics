@@ -1,0 +1,27 @@
+_target_: src.models.image_module.ImageLightningModule
+
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: 0.001
+  weight_decay: 0.0
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+  _partial_: true
+  mode: min
+  factor: 0.1
+  patience: 10
+
+net:
+  _target_: src.models.components.gcnn_classifier.GCNNClassifier
+  in_channels: 1
+  kernel_size: 3
+  hidden_dim: 4
+  group_order: 4
+  num_gconvs: 2
+  num_classes: 10
+
+# compile model for faster training with pytorch 2.0
+compile: false
+num_classes: 10
