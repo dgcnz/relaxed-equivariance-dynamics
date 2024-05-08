@@ -45,6 +45,7 @@ class ImageLightningModule(LightningModule):
         optimizer: torch.optim.Optimizer,
         scheduler: torch.optim.lr_scheduler,
         compile: bool,
+        num_classes: int,
     ) -> None:
         """Initialize a `pl_classifier`.
 
@@ -63,9 +64,6 @@ class ImageLightningModule(LightningModule):
 
         # loss function
         self.criterion = torch.nn.CrossEntropyLoss()
-
-        # num classes
-        num_classes = net.layers[-1].out_features  # if this break hardcode to one
 
         # metric objects for calculating and averaging accuracy across batches
         self.train_acc = Accuracy(task="multiclass", num_classes=num_classes)

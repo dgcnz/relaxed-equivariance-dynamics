@@ -27,7 +27,7 @@ def test_relaxed_lifting_forward_even(group_order: int):
 
 
 @pytest.mark.skip
-def test_einsum_equivalence():
+def test_einsum_equivalence_lifting():
     # Create mock tensors
     num_filter_banks, out_channels, group_order, in_channels, kernel_size = (
         2,
