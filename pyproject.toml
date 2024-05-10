@@ -30,6 +30,9 @@ version = "0.1.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
+packages = [
+  { include = "src", from = "." }
+]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -52,6 +55,7 @@ setuptools = "^69.5.1"
 wheel = "^0.43.0"
 h5py = "^3.11.0"
 datasets = "^2.19.1"
+e2cnn = {git = "https://github.com/QUVA-Lab/e2cnn"}
 
 
 [tool.poetry.group.dev.dependencies]
@@ -59,6 +63,7 @@ isort = "^5.13.2"
 black = "^24.4.2"
 flake8 = "^7.0.0"
 pytest-benchmark = "^4.0.0"
+jupyter = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core"]
