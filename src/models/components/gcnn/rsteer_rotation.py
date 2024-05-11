@@ -1,15 +1,23 @@
 import torch
+from torch import nn, Tensor
 from src.models.components.gcnn.steerable.relaxed_rotation_steer import (
     Relaxed_Rot_SteerConv,
 )
 import torch.nn.functional as F
 
 
-class Relaxed_Rot_SteerConvNet(torch.nn.Module):
+class Relaxed_Rot_SteerConvNet(nn.Module):
     def __init__(
-        self, in_frames, out_frames, hidden_dim, kernel_size, num_layers, N, alpha=1
+        self,
+        in_frames: int,
+        out_frames: int,
+        hidden_dim: int,
+        kernel_size: int,
+        num_layers: int,
+        N: int,
+        alpha: float = 1.0,
     ):
-        super(Relaxed_Rot_SteerConvNet, self).__init__()
+        super().__init__()
         self.alpha = alpha
 
         layers = [
@@ -32,7 +40,7 @@ class Relaxed_Rot_SteerConvNet(torch.nn.Module):
                 first_layer=False,
                 last_layer=False,
             )
-            for i in range(num_layers - 2)
+            for _ in range(num_layers - 2)
         ]
 
         layers += [
@@ -45,9 +53,9 @@ class Relaxed_Rot_SteerConvNet(torch.nn.Module):
                 last_layer=True,
             )
         ]
-        self.model = torch.nn.Sequential(*layers)
+        self.model = nn.Sequential(*layers)
 
-    def rot_vector(self, inp, theta):
+    def rot_vector(self, inp: Tensor, theta: float) -> Tensor:
         # inp shape: c x 2 x 64 x 64
         theta = torch.tensor(theta).float()
         rot_matrix = torch.tensor(
@@ -61,7 +69,7 @@ class Relaxed_Rot_SteerConvNet(torch.nn.Module):
         ).transpose(0, 1)
         return out
 
-    def get_rot_mat(self, theta):
+    def get_rot_mat(self, theta: float) -> Tensor:
         theta = torch.tensor(theta).float()
         return torch.tensor(
             [
@@ -70,14 +78,14 @@ class Relaxed_Rot_SteerConvNet(torch.nn.Module):
             ]
         ).float()
 
-    def rot_img(self, x, theta):
+    def rot_img(self, x: Tensor, theta: float) -> Tensor:
         rot_mat = self.get_rot_mat(theta)[None, ...].float().repeat(x.shape[0], 1, 1)
         grid = F.affine_grid(rot_mat, x.size()).float()
         x = F.grid_sample(x, grid)
         return x.float()
 
-    def get_weight_constraint(self):
+    def get_weight_constraint(self) -> float:
         return self.alpha * sum([layer.get_weight_constraint() for layer in self.model])
 
-    def forward(self, xx):
+    def forward(self, xx: Tensor) -> Tensor:
         return self.model(xx)
