@@ -3,7 +3,6 @@ from torch.utils.data import Dataset as TorchDataset
 from typing import Union
 
 
-
 class Wang2022Dataset(TorchDataset):
     def __init__(
         self,
@@ -49,17 +48,17 @@ class Wang2022Dataset(TorchDataset):
                 self.sample_list[sample_idx] + self.mid + self.output_length
             )
         ]
-        if not self.stack:
-            x = self.data_lists[task_idx][
-                (self.mid - self.input_length + self.sample_list[sample_idx]) : (
-                    self.mid + self.sample_list[sample_idx]
-                )
-            ]
-        else:
-            x = self.data_lists[task_idx][
-                (self.mid - self.input_length + self.sample_list[sample_idx]) : (
-                    self.mid + self.sample_list[sample_idx]
-                )
-            ].reshape(-1, y.shape[-2], y.shape[-1])
+        x = self.data_lists[task_idx][
+            (self.mid - self.input_length + self.sample_list[sample_idx]) : (
+                self.mid + self.sample_list[sample_idx]
+            )
+        ]
+        if self.stack:
+            # x: (input_length, channels, H, W)
+            # Comments:
+            #   I think channels can be interpreted here as the dimensionality of the vector
+            #   For smokeplume we are tracking velocity so v = [dx/dt, dy/dt]
+            #   Thus x: (1, 2, 64, 64)
+            x = x.reshape(-1, y.shape[-2], y.shape[-1])
+            # x: (input_length * channels, H, W)
         return x.float(), y.float()
-
