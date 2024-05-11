@@ -1,7 +1,7 @@
 import e2cnn
 import numpy as np
 import torch
-import torch.nn as nn
+from torch import nn, Tensor
 import torch.nn.functional as F
 from e2cnn.nn.modules.r2_conv.basisexpansion_singleblock import block_basisexpansion
 from e2cnn.nn.modules.r2_conv.r2convolution import compute_basis_params
@@ -9,9 +9,15 @@ from e2cnn.nn.modules.r2_conv.r2convolution import compute_basis_params
 
 class Relaxed_Rot_SteerConv(torch.nn.Module):
     def __init__(
-        self, in_frames, out_frames, kernel_size, N, first_layer=False, last_layer=False
+        self,
+        in_frames: int,
+        out_frames: int,
+        kernel_size: int,
+        N: int,
+        first_layer: bool = False,
+        last_layer: bool = False,
     ):
-        super(Relaxed_Rot_SteerConv, self).__init__()
+        super().__init__()
         r2_act = e2cnn.gspaces.Rot2dOnR2(N=N)
         self.last_layer = last_layer
         self.first_layer = first_layer
@@ -64,12 +70,12 @@ class Relaxed_Rot_SteerConv(torch.nn.Module):
         self.bias = nn.Parameter(torch.zeros(out_frames * self.basis_kernels.shape[1]))
         self.bias.data.uniform_(-stdv, stdv)
 
-    def get_weight_constraint(self):
+    def get_weight_constraint(self) -> Tensor:
         return torch.mean(
             torch.abs(self.relaxed_weights[..., :-1] - self.relaxed_weights[..., 1:])
         )
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         conv_filters = torch.einsum(
             "bpqk,obik->opiqk", self.basis_kernels, self.relaxed_weights
         )
