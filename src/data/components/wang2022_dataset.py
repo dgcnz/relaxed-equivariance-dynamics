@@ -1,4 +1,3 @@
-from src.data.components.wang2022_dataset import Wang2022Dataset
 import requests
 import zipfile
 from pathlib import Path

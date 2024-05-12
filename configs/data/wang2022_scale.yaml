@@ -1,4 +1,4 @@
-_target_: src.data.wang2022_datamodule.py
+_target_: src.data.wang2022_datamodule.Wang2022Datamodule
 root_dir: ${paths.data_dir}
 symmetry: "Scale"
 input_length: 10
