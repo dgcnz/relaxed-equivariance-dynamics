@@ -10,9 +10,9 @@ from typing import Union
 
 
 class Wang2022Dataset(TorchDataset):
-    ETURL_dict = {"Translation": "https://huggingface.co/datasets/dl2-g32/Smoke/resolve/main/Translation.zip?download=true",
-                  "Scale": "https://huggingface.co/datasets/dl2-g32/Smoke/resolve/main/Scale.zip?download=true",
-                  "Rotation": "https://huggingface.co/datasets/dl2-g32/Smoke/resolve/main/Rotation.zip?download=true"}
+    ETURL_dict = {"Translation": "https://huggingface.co/datasets/dl2-g32/smokeplume/resolve/main/Smoke/Translation.zip?download=true ",
+                  "Scale": "https://huggingface.co/datasets/dl2-g32/smokeplume/resolve/main/Smoke/Scale.zip?download=true ",
+                  "Rotation": "https://huggingface.co/datasets/dl2-g32/smokeplume/resolve/main/Smoke/Rotation.zip?download=true "}
     data_dir: Path
 
     def __init__(
@@ -28,7 +28,7 @@ class Wang2022Dataset(TorchDataset):
         self.input_length = input_length
         self.mid = mid
         self.output_length = output_length
-        self.direc = direc
+        self.direc = str(direc)
         self.task_list = task_list
         self.sample_list = sample_list
         self.stack = stack
