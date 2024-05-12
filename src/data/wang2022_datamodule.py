@@ -13,6 +13,7 @@ class Wang2022Datamodule(LightningDataModule):
     def __init__(
         self,
         symmetry: str,
+        future: bool = False,
         input_length: int = 1,
         mid: int = 3,
         output_length: int = 6,
@@ -28,7 +29,7 @@ class Wang2022Datamodule(LightningDataModule):
         self.save_hyperparameters(logger=False)
         self.logger = logging.getLogger(__name__)
 
-        self.train_task, self.train_time, self.valid_task, self.valid_time, self.test_domain_task, self.test_domain_time, self.test_future_task, self.test_future_time = self.get_task_and_sample_list(self.hparams.symmetry)
+        self.train_task, self.train_time, self.val_task, self.val_time, self.test_domain_task, self.test_domain_time, self.test_future_task, self.test_future_time = self.get_task_and_sample_list(self.hparams.symmetry)
 
         # data transformations
         self.data_train: Optional[Dataset] = None
@@ -82,7 +83,7 @@ class Wang2022Datamodule(LightningDataModule):
 
 
     def prepare_data(self) -> None:
-        Wang2022Dataset.download_and_extract(root_dir=self.hparams.root_dir, direc=self.symmetry)
+        Wang2022Dataset.download_and_extract(root_dir=self.hparams.root_dir, direc=self.hparams.symmetry)
 
     def setup(self, stage: Optional[str] = None) -> None:
         # Divide batch size by the number of devices.
@@ -100,19 +101,20 @@ class Wang2022Datamodule(LightningDataModule):
             direc = Wang2022Dataset.download_and_extract(
                 root_dir=self.hparams.root_dir, logger=self.logger, direc=self.hparams.symmetry
             )
-            direc = direc / self.hparams.symmetry
 
             params = {
                 'input_length': self.hparams.input_length,
                 'mid': self.hparams.mid,
-                'output_length': self.hparams.output_length,
                 'direc': direc,
                 'stack': True
             }
 
             self.data_train = Wang2022Dataset(**params, sample_list=self.train_time, task_list=self.train_task, output_length=self.hparams.output_length)
             self.data_val = Wang2022Dataset(**params, sample_list=self.val_time, task_list=self.val_task, output_length=self.hparams.output_length)
-            self.data_test = Wang2022Dataset(**params, sample_list=self.test_time, task_list=self.test_task, output_length=20)
+            if self.hparams.future:
+                self.data_test = Wang2022Dataset(**params, sample_list=self.test_future_time, task_list=self.test_future_task, output_length=20)
+            else: 
+                self.data_test = Wang2022Dataset(**params, sample_list=self.test_domain_time, task_list=self.test_domain_task, output_length=20)
 
     def train_dataloader(self) -> DataLoader[Any]:
         """Create and return the train dataloader.

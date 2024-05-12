@@ -15,13 +15,16 @@ scheduler:
 
 net:
   _target_: src.models.components.wang2022.rgroup.RuiCnRGCNN
-  in_frames: 1
-  out_frames: 1
+  in_channels: 1
+  out_channels: 1
   hidden_dim: 32
   kernel_size: 3 
-  num_layers: 5
-  N: 4
-  alpha: 0
+  num_gconvs: 5
+  num_filter_banks: 2
+  group_order: 4
 
+#group order is 4 because c4
+#num_gconvs is num layers
+#num filter banks is either 3 according to the paper or 2 following the translation equivariant code
 # compile model for faster training with pytorch 2.0
 compile: false
