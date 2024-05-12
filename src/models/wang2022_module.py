@@ -3,10 +3,14 @@ from typing import Any, Dict, Tuple
 import torch
 from lightning import LightningModule
 from torchmetrics import MinMetric, MeanMetric
+import logging
+
+
 
 class RootMeanMetric(MeanMetric):
     def compute(self):
         return super().compute().sqrt()
+
 
 class Wang2022LightningModule(LightningModule):
     def __init__(
@@ -29,6 +33,7 @@ class Wang2022LightningModule(LightningModule):
         # also ensures init params will be stored in ckpt
         self.save_hyperparameters(logger=False)
 
+        self.cli_logger = logging.getLogger(self.__class__.__name__)
         self.net = net
 
         # loss function
@@ -44,8 +49,19 @@ class Wang2022LightningModule(LightningModule):
         self.val_loss = MeanMetric()
         self.test_loss = MeanMetric()
 
+        # for tracking weight constraint
+        self.with_weight_constraint = hasattr(self.net, "get_weight_constraint")
+        if self.with_weight_constraint:
+            self.with_weight_constraint = True
+            self.train_weight_constraint = MeanMetric()
+            self.val_weight_constraint = MeanMetric()
+            self.test_weight_constraint = MeanMetric()
+            self.cli_logger.info(f"Network {self.net.__class__.__name__} has weight constraint")
+        else:
+            self.cli_logger.info(f"Network {self.net.__class__.__name__} does not have weight constraint")
+
         # for tracking best so far validation accuracy
-        self.val_rmse_best = MinMetric()
+        self.val_rmse_best = MinMetric() 
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Perform a forward pass through the model `self.net`.
@@ -65,24 +81,27 @@ class Wang2022LightningModule(LightningModule):
 
     def model_step(
         self, batch: Tuple[torch.Tensor, torch.Tensor]
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """Perform a single model step on a batch of data.
 
         :param batch: A batch of data (a tuple) containing the input tensor of images and target labels.
-
-        :return: A tuple containing (in order):
-            - A tensor of losses.
-            - A tensor of predictions.
-            - A tensor of target labels.
         """
         xx, yy = batch
-        loss = torch.tensor(0.0)
+        mse = torch.tensor(0.0)
         for y in yy.transpose(0, 1):
             im = self.forward(xx)
             xx = torch.cat([xx[:, im.shape[1] :], im], 1)
-            loss += self.criterion(im, y)
-        # loss: number
-        return loss, yy
+            mse += self.criterion(im, y)
+
+        if self.with_weight_constraint:
+            weight_constraint = self.criterion(
+                self.net.get_weight_constraint(), torch.tensor(0.0)
+            )
+            loss = mse + weight_constraint
+        else:
+            weight_constraint = None
+            loss = mse
+        return mse, weight_constraint, loss, yy
 
     def training_step(
         self, batch: Tuple[torch.Tensor, torch.Tensor], batch_idx: int
@@ -94,11 +113,21 @@ class Wang2022LightningModule(LightningModule):
         :param batch_idx: The index of the current batch.
         :return: A tensor of losses between model predictions and targets.
         """
-        loss, targets = self.model_step(batch)
+        mse, weight_constraint, loss, targets = self.model_step(batch)
+
+        if weight_constraint is not None:
+            self.train_weight_constraint(weight_constraint)
+            self.log(
+                "train/weight_constraint",
+                self.train_weight_constraint,
+                on_step=False,
+                on_epoch=True,
+                prog_bar=True,
+            )
 
         # update and log metrics
         self.train_loss(loss)
-        self.train_rmse(loss.item() / targets.shape[1])
+        self.train_rmse(mse.item() / targets.shape[1])
         self.log(
             "train/loss", self.train_loss, on_step=False, on_epoch=True, prog_bar=True
         )
@@ -122,11 +151,20 @@ class Wang2022LightningModule(LightningModule):
             labels.
         :param batch_idx: The index of the current batch.
         """
-        loss, targets = self.model_step(batch)
+        mse, weight_constraint, loss, targets = self.model_step(batch)
+        if weight_constraint is not None:
+            self.val_weight_constraint(weight_constraint)
+            self.log(
+                "val/weight_constraint",
+                self.val_weight_constraint,
+                on_step=False,
+                on_epoch=True,
+                prog_bar=True,
+            )
 
         # update and log metrics
         self.val_loss(loss)
-        self.val_rmse(loss.item() / targets.shape[1])
+        self.val_rmse(mse.item() / targets.shape[1])
         self.log("val/loss", self.val_loss, on_step=False, on_epoch=True, prog_bar=True)
         self.log("val/rmse", self.val_rmse, on_step=False, on_epoch=True, prog_bar=True)
 
@@ -149,7 +187,16 @@ class Wang2022LightningModule(LightningModule):
             labels.
         :param batch_idx: The index of the current batch.
         """
-        loss, targets = self.model_step(batch)
+        mse, weight_constraint, loss, targets = self.model_step(batch)
+        if weight_constraint is not None:
+            self.test_weight_constraint(weight_constraint)
+            self.log(
+                "test/weight_constraint",
+                self.test_weight_constraint,
+                on_step=False,
+                on_epoch=True,
+                prog_bar=True,
+            )
 
         # update and log metrics
         self.test_loss(loss)
