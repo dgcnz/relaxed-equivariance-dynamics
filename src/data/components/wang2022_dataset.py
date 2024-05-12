@@ -1,9 +1,21 @@
+from src.data.components.wang2022_dataset import Wang2022Dataset
+import requests
+import zipfile
+from pathlib import Path
+import logging
+from typing import Optional
+
 import torch
 from torch.utils.data import Dataset as TorchDataset
 from typing import Union
 
 
 class Wang2022Dataset(TorchDataset):
+    ETURL_dict = {"Translation": "https://huggingface.co/datasets/dl2-g32/Smoke/resolve/main/Translation.zip?download=true",
+                  "Scale": "https://huggingface.co/datasets/dl2-g32/Smoke/resolve/main/Scale.zip?download=true",
+                  "Rotation": "https://huggingface.co/datasets/dl2-g32/Smoke/resolve/main/Rotation.zip?download=true"}
+    data_dir: Path
+
     def __init__(
         self,
         input_length: int,
@@ -62,3 +74,34 @@ class Wang2022Dataset(TorchDataset):
             x = x.reshape(-1, y.shape[-2], y.shape[-1])
             # x: (input_length * channels, H, W)
         return x.float(), y.float()
+    
+    @classmethod
+    def get_data_dir(cls, root_dir: Path):
+        data_dir = root_dir / "wang2022relaxed"
+        data_dir.mkdir(parents=True, exist_ok=True)
+        return data_dir
+
+    @classmethod
+    def download_and_extract(
+        cls, root_dir: str, direc: str, logger: Optional[logging.Logger] = None 
+    ):
+        if logger is None:
+            logger = logging.getLogger(__name__)
+            logger.setLevel(logging.INFO)
+        root_dir = Path(root_dir)
+        data_dir = cls.get_data_dir(root_dir)
+
+        out_folder = data_dir / direc
+        if out_folder.exists():
+            logger.info(f"Data already downloaded and extracted at {out_folder}")
+            return out_folder
+
+        logger.info(f"Downloading and extracting data to {out_folder}")
+        r = requests.get(Wang2022Dataset.ETURL_dict[direc], allow_redirects=True)
+        with open(data_dir / "equivariance_test.zip", "wb") as f:
+            f.write(r.content)
+        with zipfile.ZipFile(data_dir / "equivariance_test.zip", "r") as zip_ref:
+            zip_ref.extractall(data_dir)
+        # remove the zip file
+        (data_dir / "equivariance_test.zip").unlink()
+        return out_folder
