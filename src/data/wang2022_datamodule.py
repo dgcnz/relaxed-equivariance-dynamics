@@ -110,9 +110,9 @@ class Wang2022Datamodule(LightningDataModule):
                 'stack': True
             }
 
-            self.data_train = Wang2022Dataset(**params, sample_list=self.train_time, task_list=self.train_task)
-            self.data_val = Wang2022Dataset(**params, sample_list=self.val_time, task_list=self.val_task)
-            self.data_test = Wang2022Dataset(**params, sample_list=self.test_time, task_list=self.test_task)
+            self.data_train = Wang2022Dataset(**params, sample_list=self.train_time, task_list=self.train_task, output_length=self.hparams.output_length)
+            self.data_val = Wang2022Dataset(**params, sample_list=self.val_time, task_list=self.val_task, output_length=self.hparams.output_length)
+            self.data_test = Wang2022Dataset(**params, sample_list=self.test_time, task_list=self.test_task, output_length=20)
 
     def train_dataloader(self) -> DataLoader[Any]:
         """Create and return the train dataloader.

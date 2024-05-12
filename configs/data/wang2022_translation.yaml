@@ -1,0 +1,9 @@
+_target_: src.data.smokeplume_datamodule.wang2022_datamodule.py
+root_dir: ${paths.data_dir}
+symmetry: "Translation"
+input_length: 10
+mid: 12
+output_length: 6
+batch_size: 8 # Needs to be divisible by the number of devices (e.g., if in a distributed setup)
+num_workers: 0
+pin_memory: False
