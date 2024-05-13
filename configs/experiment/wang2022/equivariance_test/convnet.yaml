@@ -1,0 +1,54 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /data: wang2022/equivariance_test
+  - override /model: wang2022/convnet
+  - override /callbacks: early_stopping_rmse
+  - override /trainer: default
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["wang2022", "equivariance_test"]
+
+seed: 0
+
+trainer:
+  min_epochs: 1
+  max_epochs: 1
+
+data:
+  batch_size: 64
+
+model:
+  net:
+    _target_: src.models.components.wang2022.convnet.ConvNet
+    in_channels: 2
+    out_channels: 2
+    hidden_dim: 64
+    kernel_size: 3
+    num_layers: 5
+
+  optimizer:
+    _target_: torch.optim.Adam
+    _partial_: true
+    lr: 0.001
+    weight_decay: 0.0004
+    betas: [0.9, 0.999]
+
+  scheduler:
+    _target_: torch.optim.lr_scheduler.StepLR
+    _partial_: true
+    step_size: 1
+    gamma: 0.9
+
+
+logger:
+  wandb:
+    tags: ${tags}
+    group: "wang2022/equivariance_test"
+  aim:
+    experiment: "wang2022/equivariance_test"
