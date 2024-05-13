@@ -1,5 +1,6 @@
 # DL2
 
+
 ## Setup 
 
 Make virtual environment and install dependencies:
@@ -14,12 +15,22 @@ source .venv/bin/activate
 
 ## SLURM Usage
 
-Print slurm logs given job id
+### Pre-requisites
+- ssh into snellius
+- Move into the project root
+    ```sh
+    cd ~/development/dl2
+    ```
+
+### Train model based on experiment config
+
+Let's say you want to run the experiment at `configs/experiment/wang2022/equivariance_test/convnet.yaml`. You can make use of the shortcut `slurmtrain` as follows:
 
 ```sh
-make slurmtrain experiment=
+make slurmtrain experiment=wang2022/equivariance_test/convnet
 ```
 
+### Print slurm logs given job id
 ```sh
 make slurmcat id=6246500
 ```
