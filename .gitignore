@@ -152,3 +152,4 @@ configs/local/default.yaml
 
 # Aim logging
 .aim
+scripts/slurm_logs
