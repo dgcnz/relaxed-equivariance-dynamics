@@ -26,6 +26,8 @@ data:
 logger:
   wandb:
     tags: ${tags}
-    group: "wang2022_rotation"
+    group: "rotation"
+    project: "wang2022"
+    entity: "uva-dl2"
   aim:
-    experiment: "wang2022_rotation"
+    experiment: "wang2022/rotation"
