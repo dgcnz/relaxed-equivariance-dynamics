@@ -22,6 +22,7 @@ net:
   num_gconvs: 5
   num_filter_banks: 2
   group_order: 4
+  alpha: 0
 
 #group order is 4 because c4
 #num_gconvs is num layers
