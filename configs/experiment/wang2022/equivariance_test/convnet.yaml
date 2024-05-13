@@ -49,6 +49,8 @@ model:
 logger:
   wandb:
     tags: ${tags}
-    group: "wang2022/equivariance_test"
+    group: "equivariance_test"
+    project: "wang2022"
+    entity: "uva-dl2"
   aim:
     experiment: "wang2022/equivariance_test"
