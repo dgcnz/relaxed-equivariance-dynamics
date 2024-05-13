@@ -11,5 +11,5 @@
 cd $HOME/development/dl2
 source .venv/bin/activate
 # run script from above
-srun python train.py --experiment=$1
+srun python -m src.train experiment=$1
 deactivate
