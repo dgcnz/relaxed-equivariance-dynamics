@@ -94,8 +94,6 @@ class Wang2022LightningModule(LightningModule):
         :param batch_idx: The index of the current batch.
         :return: A tensor of losses between model predictions and targets.
         """
-        img, target = batch[0]
-        print(img.shape)
         loss, targets = self.model_step(batch)
 
         # update and log metrics
