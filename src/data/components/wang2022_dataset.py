@@ -1,9 +1,11 @@
 import torch
 from torch.utils.data import Dataset as TorchDataset
 from typing import Union
+from torch import Tensor
 
 
 class Wang2022Dataset(TorchDataset):
+    data_lists: list[Tensor]
     def __init__(
         self,
         input_length: int,
@@ -43,11 +45,13 @@ class Wang2022Dataset(TorchDataset):
     def __getitem__(self, index: int):
         task_idx = index // len(self.sample_list)
         sample_idx = index % len(self.sample_list)
+        # next output_length frames
         y = self.data_lists[task_idx][
             (self.sample_list[sample_idx] + self.mid) : (
                 self.sample_list[sample_idx] + self.mid + self.output_length
             )
         ]
+        # previous input_length frames
         x = self.data_lists[task_idx][
             (self.mid - self.input_length + self.sample_list[sample_idx]) : (
                 self.mid + self.sample_list[sample_idx]
