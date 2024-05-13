@@ -21,9 +21,10 @@ class RuiCnRGCNN(torch.nn.Module):
         num_filter_banks,
         classifier=False,
         sigmoid=False,
+        alpha= 0
     ):
         super().__init__()
-
+        self.alpha = alpha
         self.gconvs = []
         self.classifier = classifier
         self.sigmoid = sigmoid
@@ -63,6 +64,9 @@ class RuiCnRGCNN(torch.nn.Module):
         )
 
         self.gconvs = torch.nn.Sequential(*self.gconvs)
+
+    def get_weight_constraint(self) -> float:
+        return self.alpha * sum([gconv.get_weight_constraint() for gconv in self.gconvs])
 
     def forward(self, x):
         # average over h axis or not
