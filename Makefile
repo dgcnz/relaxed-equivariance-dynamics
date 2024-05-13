@@ -1,5 +1,5 @@
 VENV           = .venv
-VENV_PYTHON    = $(VENV_PYTHON)/bin/python
+VENV_PYTHON    = $(VENV)/bin/python
 SYSTEM_PYTHON  = $(or $(shell which python3), $(shell which python))
 PYTHON = $(VENV_PYTHON)
 
