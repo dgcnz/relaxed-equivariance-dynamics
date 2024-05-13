@@ -28,3 +28,27 @@ test-full: ## Run all tests
 
 train: ## Train the model
 	python src/train.py
+
+
+send_key: ## Sends public key to snellius
+	ssh -i ~/.ssh/surf dl2
+
+
+module_avail: ## greppable module avail
+	module -t avail 2>&1
+
+load_modules:
+	module load 2023
+	module load Python/3.11.3-GCCcore-12.3.0
+
+unload_modlues:
+	module unload Python/3.11.3-GCCcore-12.3.0
+	module unload 2023
+
+setup_env:
+	python -m venv .venv
+	source .venv/bin/activate
+	pip install poetry
+	poetry install
+
+
