@@ -51,7 +51,6 @@ unload_modlues:
 
 setup_env:
 	$(SYSTEM_PYTHON) -m venv .venv
-	. .venv/bin/activate
 	$(PYTHON) -m pip install poetry
 	$(PYTHON) -m poetry install
 
