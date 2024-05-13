@@ -1,0 +1,10 @@
+_target_: src.data.wang2022_datamodule.Wang2022Datamodule
+root_dir: ${paths.data_dir}
+symmetry: "Rotation"
+input_length: 10
+mid: 12
+output_length: 6
+batch_size: 8 # Needs to be divisible by the number of devices (e.g., if in a distributed setup)
+num_workers: 0
+pin_memory: False
+future: False

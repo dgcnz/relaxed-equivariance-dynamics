@@ -1,0 +1,1 @@
+from src.models.components.gcnn.rgcnn_rui import RuiCnRGCNN
