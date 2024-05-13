@@ -14,7 +14,7 @@ class SmokePlumeDataset(Wang2022Dataset):
 
     def __init__(
         self,
-        root: str,
+        root: str, # "./data"
         equivariance_level: int,
         sample_list: list[int],
         input_length: int = 1,
