@@ -58,4 +58,5 @@ setup_env: # setup the virtual environment and download dependencies
 	$(PYTHON) -m pip install poetry
 	$(PYTHON) -m poetry install
 
-
+catslurm: ## cat slurm log with param
+	cat scripts/slurm_logs/slurm_output_$(id).out
