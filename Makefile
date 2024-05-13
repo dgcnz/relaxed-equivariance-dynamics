@@ -39,8 +39,7 @@ train: ## Train the model
 
 
 send_key: ## Sends public key to snellius
-	ssh -i ~/.ssh/surf dl2
-
+	ssh-copy-id -i ~/.ssh/surf dl2
 
 module_avail: ## greppable module avail
 	module -t avail 2>&1
