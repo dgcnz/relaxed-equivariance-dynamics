@@ -1,3 +1,7 @@
+VENV           = .venv
+VENV_PYTHON    = $(VENV_PYTHON)/bin/python
+SYSTEM_PYTHON  = $(or $(shell which python3), $(shell which python))
+PYTHON = $(VENV_PYTHON)
 
 help:  ## Show help
 	@grep -E '^[.a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -46,9 +50,9 @@ unload_modlues:
 	module unload 2023
 
 setup_env:
-	python -m venv .venv
-	source .venv/bin/activate
-	pip install poetry
-	poetry install
+	$(SYSTEM_PYTHON) -m venv .venv
+	. .venv/bin/activate
+	$(PYTHON) -m pip install poetry
+	$(PYTHON) -m poetry install
 
 
