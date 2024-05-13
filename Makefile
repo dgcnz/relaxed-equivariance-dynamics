@@ -1,5 +1,9 @@
 VENV           = .venv
 VENV_PYTHON    = $(VENV)/bin/python
+# make it work on windows too
+ifeq ($(OS), Windows_NT)
+    VENV_PYTHON=$(VENV)/Scripts/python
+endif
 SYSTEM_PYTHON  = $(or $(shell which python3), $(shell which python))
 PYTHON = $(VENV_PYTHON)
 
@@ -25,13 +29,13 @@ sync: ## Merge changes from main branch to your current branch
 	git pull origin main
 
 test: ## Run not slow tests
-	pytest -k "not slow"
+	$(PYTHON) -m pytest -k "not slow"
 
 test-full: ## Run all tests
-	pytest
+	$(PYTHON) -m pytest
 
 train: ## Train the model
-	python src/train.py
+	$(PYTHON) src/train.py
 
 
 send_key: ## Sends public key to snellius
@@ -49,7 +53,7 @@ unload_modlues:
 	module unload Python/3.11.3-GCCcore-12.3.0
 	module unload 2023
 
-setup_env:
+setup_env: # setup the virtual environment and download dependencies
 	$(SYSTEM_PYTHON) -m venv .venv
 	$(PYTHON) -m pip install poetry
 	$(PYTHON) -m poetry install
