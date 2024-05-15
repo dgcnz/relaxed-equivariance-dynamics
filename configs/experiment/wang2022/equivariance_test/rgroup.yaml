@@ -4,7 +4,7 @@
 # python train.py experiment=example
 
 defaults:
-  - override /data: wang2022/rotation
+  - override /data: wang2022/equivariance_test
   - override /model: wang2022/rgroup
   - override /callbacks: early_stopping_rmse
   - override /trainer: default
@@ -12,25 +12,26 @@ defaults:
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
-tags: ["wang2022", "rotation", "table1"]
+tags: ["wang2022", "equivariance_test"]
 
 seed: 0
 
 model:
   net:
-    in_channels: 20
+    in_channels: 2
     out_channels: 2
-    # we don't have info on the following parameters but this is our best guess
-    hidden_dim: 92  # fixing hidden dim across models
-    num_gconvs: 5 # layers fixed accross models
-    num_filter_banks: 2 # we have no idea about this
-    # group_order: 4 # C4
+    hidden_dim: 64
+    alpha: 0
+    # we don't have info on other parameters
+
+  # default optimizer params
+  # default scheduler params
 
 logger:
   wandb:
     tags: ${tags}
-    group: "rotation"
+    group: "equivariance_test"
     project: "wang2022"
     entity: "uva-dl2"
   aim:
-    experiment: "wang2022/rotation"
+    experiment: "wang2022/equivariance_test"
