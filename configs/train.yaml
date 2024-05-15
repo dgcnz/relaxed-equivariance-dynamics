@@ -6,7 +6,7 @@ defaults:
   - _self_
   - data: mnist
   - model: mnist
-  - callbacks: default
+  - callbacks: [early_stopping_rmse, model_checkpoint]
   - logger: wandb # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
   - trainer: default
   - paths: default
