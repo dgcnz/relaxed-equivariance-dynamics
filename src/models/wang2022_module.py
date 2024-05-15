@@ -6,7 +6,6 @@ from torchmetrics import MinMetric, MeanMetric
 import logging
 
 
-
 class RootMeanMetric(MeanMetric):
     def compute(self):
         return super().compute().sqrt()
@@ -56,12 +55,16 @@ class Wang2022LightningModule(LightningModule):
             self.train_weight_constraint = MeanMetric()
             self.val_weight_constraint = MeanMetric()
             self.test_weight_constraint = MeanMetric()
-            self.cli_logger.info(f"Network {self.net.__class__.__name__} has weight constraint")
+            self.cli_logger.info(
+                f"Network {self.net.__class__.__name__} has weight constraint"
+            )
         else:
-            self.cli_logger.info(f"Network {self.net.__class__.__name__} does not have weight constraint")
+            self.cli_logger.info(
+                f"Network {self.net.__class__.__name__} does not have weight constraint"
+            )
 
         # for tracking best so far validation accuracy
-        self.val_rmse_best = MinMetric() 
+        self.val_rmse_best = MinMetric()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Perform a forward pass through the model `self.net`.
@@ -200,7 +203,7 @@ class Wang2022LightningModule(LightningModule):
 
         # update and log metrics
         self.test_loss(loss)
-        self.test_rmse(loss.item() / targets.shape[1])
+        self.test_rmse(mse.item() / targets.shape[1])
         self.log(
             "test/loss", self.test_loss, on_step=False, on_epoch=True, prog_bar=True
         )
