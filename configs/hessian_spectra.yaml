@@ -23,7 +23,7 @@ max_iter: 1000
 cuda: False
 verbose: True
 
-# passing checkpoint path is necessary for evaluation
+# passing checkpoint path dict is necessary for computation 
 ckpt_path_dict: ???
 
 
