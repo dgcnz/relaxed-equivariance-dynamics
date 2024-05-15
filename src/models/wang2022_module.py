@@ -94,9 +94,8 @@ class Wang2022LightningModule(LightningModule):
             mse += self.criterion(im, y)
 
         if self.with_weight_constraint:
-            weight_constraint = self.criterion(
-                self.net.get_weight_constraint(), torch.tensor(0.0)
-            )
+            weight_constraint = self.net.get_weight_constraint()
+            
             loss = mse + weight_constraint
         else:
             weight_constraint = None
