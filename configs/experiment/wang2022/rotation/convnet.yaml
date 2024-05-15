@@ -20,7 +20,7 @@ model:
   net:
     in_channels: 20
     out_channels: 2
-    hidden_dim: 92
+    hidden_dim: 92 # fixing hidden dim across models
     num_layers: 5 # layers fixed accross models
 
 logger:

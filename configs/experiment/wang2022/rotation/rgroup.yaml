@@ -24,6 +24,7 @@ model:
     hidden_dim: 92  # fixing hidden dim across models
     num_gconvs: 5 # layers fixed accross models
     num_filter_banks: 2 # we have no idea about this
+    alpha: 0.00001
     # group_order: 4 # C4
 
 logger:
