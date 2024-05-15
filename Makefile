@@ -66,10 +66,12 @@ strain:
 secho: # check that there is experiment
 	sbatch scripts/slurm/echo.sh $(experiment)
 
-test_wang2022:
-	python -m src.train experiment=wang2022/equivariance_test/rgroup +trainer.fast_dev_run=True data.batch_size=8
-	python -m src.train experiment=wang2022/equivariance_test/rsteer +trainer.fast_dev_run=True data.batch_size=8
-	python -m src.train experiment=wang2022/equivariance_test/convnet +trainer.fast_dev_run=True data.batch_size=8
+test_wang2022_table_1:
 	python -m src.train experiment=wang2022/rotation/rgroup +trainer.fast_dev_run=True data.batch_size=8
 	python -m src.train experiment=wang2022/rotation/rsteer +trainer.fast_dev_run=True data.batch_size=8
 	python -m src.train experiment=wang2022/rotation/convnet +trainer.fast_dev_run=True data.batch_size=8
+
+test_wang2022_figure_4:
+	python -m src.train experiment=wang2022/equivariance_test/rgroup +trainer.fast_dev_run=True data.batch_size=8
+	python -m src.train experiment=wang2022/equivariance_test/rsteer +trainer.fast_dev_run=True data.batch_size=8
+	python -m src.train experiment=wang2022/equivariance_test/convnet +trainer.fast_dev_run=True data.batch_size=8
