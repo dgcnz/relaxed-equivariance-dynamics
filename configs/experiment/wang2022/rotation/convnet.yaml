@@ -5,7 +5,7 @@
 
 defaults:
   - override /data: wang2022/rotation
-  - override /model: wang2022/rgroup
+  - override /model: wang2022/convnet
   - override /callbacks: early_stopping_rmse
   - override /trainer: default
 
@@ -20,11 +20,8 @@ model:
   net:
     in_channels: 20
     out_channels: 2
-    # we don't have info on the following parameters but this is our best guess
-    hidden_dim: 92  # fixing hidden dim across models
-    num_gconvs: 5 # layers fixed accross models
-    num_filter_banks: 2 # we have no idea about this
-    # group_order: 4 # C4
+    hidden_dim: 92
+    num_layers: 5 # layers fixed accross models
 
 logger:
   wandb:
