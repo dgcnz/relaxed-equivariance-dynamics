@@ -18,7 +18,7 @@ scheduler:
 # DO NOT CHANGE THIS FILE, OVERWRITE model.net IN THE EXPERIMENT
 net:
   _target_: src.models.components.wang2022.rsteer.Relaxed_Rot_SteerConvNet
-  in_frames: 1
+  in_frames: 10
   out_frames: 1
   hidden_dim: 32
   kernel_size: 3 
