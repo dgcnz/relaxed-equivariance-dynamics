@@ -52,5 +52,5 @@ def get_model_and_data_modules_from_config(
     :param wandb_config: The config file downloaded by `download_config_file`.
     """
     model = hydra.utils.instantiate(wandb_config.model.value)
-    datamodule = hydra.utils.instantiate(wandb_config.data.value)
+    datamodule = hydra.utils.instantiate(wandb_config.data.value, root_dir="data")
     return model, datamodule
