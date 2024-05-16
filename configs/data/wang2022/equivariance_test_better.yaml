@@ -1,0 +1,11 @@
+_target_: src.data.smokeplume_datamodule.SmokePlumeDataModule
+root_dir: ${paths.data_dir}
+equivariance_level: 0
+input_length: 1
+mid: 3
+output_length: 6
+task_list: [0, 1, 2, 3]
+batch_size: 8 # Needs to be divisible by the number of devices (e.g., if in a distributed setup)
+train_val_test_split: [30, 10, 10]
+num_workers: 0
+pin_memory: False
