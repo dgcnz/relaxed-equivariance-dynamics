@@ -5,10 +5,10 @@
 defaults:
   - _self_
   - data: wang2022/equivariance_test_better
-  - model: wang2022/rgroup
+  - model: wang2022/equivariance_test/rgroup
   - callbacks: [early_stopping_rmse, model_checkpoint]
   - logger: wandb # set logger here or use command line (e.g. `python train.py logger=tensorboard`)
-  - trainer: default
+  - trainer: equivariance_encouraged
   - paths: default
   - extras: default
   - hydra: default
@@ -26,6 +26,15 @@ defaults:
 
   # debugging config (enable through command line, e.g. `python train.py debug=default)
   - debug: null
+
+logger:
+  wandb:
+    tags: ${tags}
+    group: "alpha_experiment"
+    project: "wang2022"
+    entity: "uva-dl2"
+  aim:
+    experiment: "wang2022/alpha_experiment"
 
 # task name, determines output directory path
 task_name: "equivariance_encouraged"
