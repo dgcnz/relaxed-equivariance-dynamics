@@ -90,7 +90,7 @@ class Wang2022LightningModule(LightningModule):
         :param batch: A batch of data (a tuple) containing the input tensor of images and target labels.
         """
         xx, yy = batch
-        mse = torch.tensor(0.0)
+        mse = torch.tensor(0.0, device=self.device)
         for y in yy.transpose(0, 1):
             im = self.forward(xx)
             xx = torch.cat([xx[:, im.shape[1] :], im], 1)

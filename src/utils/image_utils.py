@@ -12,11 +12,13 @@ def rot_img(x: Tensor, theta: float) -> Tensor:
     :param theta: angle :returns rotated images
     """
     # Rotation Matrix (2 x 3)
-    rot_mat = FloatTensor(
+    rot_mat = torch.tensor(
         [
             [np.cos(theta), -np.sin(theta), 0],
             [np.sin(theta), np.cos(theta), 0],
-        ]
+        ], 
+        dtype=torch.float32,
+        device=x.device
     )
 
     # The affine transformation matrices should have the shape of N x 2 x 3
@@ -27,7 +29,7 @@ def rot_img(x: Tensor, theta: float) -> Tensor:
     # F.affine_grid assumes the origin is in the middle
     # and it rotates the positions of the coordinates
     # r(f(x)) = f(r^-1 x)
-    grid = F.affine_grid(rot_mat.to(x.device), x.size(), align_corners=False).float()
+    grid = F.affine_grid(rot_mat, x.size(), align_corners=False).float()
     x = F.grid_sample(x, grid)
     return x.float()
 
