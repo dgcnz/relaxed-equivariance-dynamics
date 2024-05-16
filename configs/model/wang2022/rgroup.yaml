@@ -1,5 +1,6 @@
 _target_: src.models.wang2022_module.Wang2022LightningModule
 
+# DO NOT CHANGE THIS FILE, OVERWRITE model.net IN THE EXPERIMENT
 optimizer:
   _target_: torch.optim.Adam
   _partial_: true
@@ -7,24 +8,23 @@ optimizer:
   weight_decay: 0.0004
   betas: [0.9, 0.999]
 
+# DO NOT CHANGE THIS FILE, OVERWRITE model.net IN THE EXPERIMENT
 scheduler:
   _target_: torch.optim.lr_scheduler.StepLR
   _partial_: true
   step_size: 1
   gamma: 0.9
 
+# DO NOT CHANGE THIS FILE, OVERWRITE model.net IN THE EXPERIMENT
 net:
   _target_: src.models.components.wang2022.rgroup.RuiCnRGCNN
   in_channels: 20
-  out_channels: 1
+  out_channels: 2
   hidden_dim: 32
-  kernel_size: 3 
+  kernel_size: 3 # default
   num_gconvs: 5
   num_filter_banks: 2
-  group_order: 4
+  group_order: 4 
+  alpha: 0
 
-#group order is 4 because c4
-#num_gconvs is num layers
-#num filter banks is either 3 according to the paper or 2 following the translation equivariant code
-# compile model for faster training with pytorch 2.0
 compile: false
