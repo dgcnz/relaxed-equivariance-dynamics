@@ -1,16 +1,11 @@
 # @package _global_
 
-# to execute this experiment run:
-# python train.py experiment=example
-
 defaults:
   - override /data: wang2022/equivariance_test
-  - override /model: wang2022/convnet
+  - override /model: wang2022/rsteer
   - override /callbacks: early_stopping_rmse
   - override /trainer: default
 
-# all parameters below will be merged with parameters from default configurations set above
-# this allows you to overwrite only specified parameters
 
 tags: ["wang2022", "equivariance_test"]
 
@@ -18,10 +13,9 @@ seed: 0
 
 model:
   net:
-    in_channels: 2
-    out_channels: 2
-    hidden_dim: 64
-
+    in_frames: 1
+    hidden_dim: 32 # 64 // 2
+    alpha: 0
   # default optimizer params
   # default scheduler params
 
