@@ -4,7 +4,7 @@ from wandb.apis.public import Run
 def get_all_checkpoints(run_id: str, project: str, entity: str) -> list[str]:
     """Get all checkpoints from a run.
 
-    :param run_id: The run id.
+    :param run_id: The run id (e.g. rgo48mzm). Not to be confused with the run name (e.g. crimson-valley-31).
     :param project: The project name.
     :param entity: The entity name.
     :return: A list of checkpoint names ["model-runid:v0", ...].
