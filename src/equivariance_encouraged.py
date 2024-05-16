@@ -7,6 +7,8 @@ import torch
 from lightning import Callback, LightningDataModule, LightningModule, Trainer
 from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
+import json
+import wandb
 
 rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 # ------------------------------------------------------------------------------------ #
@@ -38,9 +40,23 @@ from src.utils import (
 
 log = RankedLogger(__name__, rank_zero_only=True)
 
+def get_checkpoint_dict(path_dict):
+    
+    checkpoint_dict = {}
+    run = wandb.init()
+
+    for name in path_dict.keys():
+        current_checkpoint = run.use_artifact(path_dict[name], type="model")
+        current_dir = current_checkpoint.download()
+        checkpoint_dict[name] = torch.load(current_dir + "/model.ckpt")
+
+    run.finish()
+
+    return checkpoint_dict
+
 
 @task_wrapper
-def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Trains the model. Can additionally evaluate on a testset, using best weights obtained during
     training.
 
@@ -54,17 +70,21 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     if cfg.get("seed"):
         L.seed_everything(cfg.seed, workers=True)
 
+    #make config such that this is the equivariance test data with {30,10,10} split -> actually it doesnt matter cause we dont test 
     log.info(f"Instantiating datamodule <{cfg.data._target_}>")
     datamodule: LightningDataModule = hydra.utils.instantiate(cfg.data)
 
+    #instantiate the model, but change the value for alpha 
     log.info(f"Instantiating model <{cfg.model._target_}>")
-    model: LightningModule = hydra.utils.instantiate(cfg.model)
+    model: LightningModule = hydra.utils.instantiate(cfg.model, alpha=alpha)
 
+    #make config file such that the callbacks checkpoint every 10 epochs. Do mse early stopping callback.
     log.info("Instantiating callbacks...")
     callbacks: List[Callback] = instantiate_callbacks(cfg.get("callbacks"))
 
     log.info("Instantiating loggers...")
-    logger: List[Logger] = instantiate_loggers(cfg.get("logger"))
+    logger: List[Logger] = instantiate_loggers(cfg.get("logger"), config = {'alpha':alpha})
+
 
     log.info(f"Instantiating trainer <{cfg.trainer._target_}>")
     trainer: Trainer = hydra.utils.instantiate(cfg.trainer, callbacks=callbacks, logger=logger)
@@ -82,16 +102,11 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         log.info("Logging hyperparameters!")
         log_hyperparameters(object_dict)
 
-    if cfg.get("train"):
-        log.info("Starting training!")
-        trainer.fit(
-            model=model, datamodule=datamodule, ckpt_path=cfg.get("ckpt_path")
-        )  ##TODO adjust this to checkpoint more often...
-
-    train_metrics = trainer.callback_metrics
     
-
-    return metric_dict, object_dict
+    log.info("Starting training!")
+    trainer.fit(
+        model=model, datamodule=datamodule
+    )
 
 
 @hydra.main(version_base="1.3", config_path="../configs", config_name="train.yaml")
@@ -105,13 +120,11 @@ def main(cfg: DictConfig) -> Optional[float]:
     # (e.g. ask for tags if none are provided in cfg, print cfg tree, etc.)
     extras(cfg)
 
-    # train the model
-    metric_dict, _ = train(cfg)
-
-    
-
-    # return optimized metric
-    return metric_value
+    alpha_dict = {}
+    for alpha in cfg.alphas:
+        # train the model
+        train(cfg, alpha)
+        
 
 
 if __name__ == "__main__":
