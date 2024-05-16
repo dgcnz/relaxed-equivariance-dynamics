@@ -13,7 +13,14 @@ task_name: "eval"
 
 tags: ["dev"]
 
-storage_location: 'logs/hessian_values'
+storage_location: 'logs/measures'
+# which metrics do you want to compute 
+spectrum: True
+sharpeness: False
+lie_derivative: False
+equivariance_error: False
+
+# Hessian parameters
 batch_size: 16
 percentage_data: None
 weight_decay: None

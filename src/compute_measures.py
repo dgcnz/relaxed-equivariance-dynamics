@@ -7,6 +7,9 @@ import torch
 from lightning import Callback, LightningDataModule, LightningModule, Trainer
 from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
+from src.metrics.equivariance_error import get_equivariance_error
+from src.metrics.lie_derivative import get_lie_derivative
+from src.metrics.sharpness import get_sharpness
 
 from neuralyze import get_hessian_max_spectrum
 import wandb
@@ -85,7 +88,7 @@ def get_spectrum(cfg: DictConfig, datamodule, model) -> List:
     return spectrum
 
         
-@hydra.main(version_base="1.3", config_path="../configs", config_name="hessian_spectra.yaml")
+@hydra.main(version_base="1.3", config_path="../configs", config_name="compute_measures.yaml")
 def main(cfg: DictConfig) -> None:
     """Main entry point for training.
 
@@ -105,15 +108,23 @@ def main(cfg: DictConfig) -> None:
     ckpt_path_dict = json.loads(cfg.ckpt_path_dict)
 
     checkpoint_dict = get_checkpoint_dict(path = ckpt_path_dict)
-    spectrum_dict = {}
+
+    metric_dict = {}
 
     for name in checkpoint_dict.keys():
         print('obtaining spectrum for checkpoint', name)
         model.load_state_dict(checkpoint_dict[name]["state_dict"])
-        spectrum_dict[name] = get_spectrum(cfg, datamodule, model)
+        if cfg.get("equivariance_error"):
+            metric_dict[name]["equivariance_error"] = get_equivariance_error(model, datamodule, cfg.device)
+        if cfg.get("lie_derivative"):
+            metric_dict[name]["lie_derivative"] = get_lie_derivative(model, datamodule, cfg.device)
+        if cfg.get("sharpness"):
+            metric_dict[name]["sharpness"] = get_sharpness(model, datamodule, cfg.device)
+        if cfg.get("spectrum"):
+            metric_dict[name]["spectrum"] = get_spectrum(cfg, datamodule, model)
     
     with open(cfg.storage_location + "/spectra.json", "w") as outfile: 
-        json.dump(spectrum_dict, outfile)
+        json.dump(metric_dict, outfile)
 
 if __name__ == "__main__":
     main()
