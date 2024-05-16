@@ -3,8 +3,9 @@ import numpy as np
 from scr.utils import rot_field
 
 
-def get_equivariance_error(model, test_loader, device):
+def get_equivariance_error(model, datamodule, device):
     equiv_errors = []
+    test_loader = datamodule.test_dataloader()
     with torch.no_grad():
         for xx, yy in test_loader:
             xx = xx.to(device)
