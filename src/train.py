@@ -128,7 +128,7 @@ def main(cfg: DictConfig) -> Optional[float]:
 
     # train the model
     print('-----------------------------------------')
-    print(cfg.alphas, '-----------------------------')
+    print(type(cfg.alphas), '-----------------------------')
     if isinstance(cfg.alphas, list):
         print('------------------------Helllooooooo')
         for alpha in cfg.alphas:
