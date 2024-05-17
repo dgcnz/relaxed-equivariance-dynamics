@@ -80,6 +80,10 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         "trainer": trainer,
     }
 
+    print('-----------------')
+    print(alpha, 'alpha')
+    print('-----------------')
+
     if logger:
         log.info("Logging hyperparameters!")
         log_hyperparameters(object_dict)
