@@ -103,6 +103,7 @@ class Wang2022LightningModule(LightningModule):
         else:
             weight_constraint = None
             loss = mse
+
         return mse, weight_constraint, loss, yy
 
     def training_step(
@@ -127,6 +128,7 @@ class Wang2022LightningModule(LightningModule):
                 prog_bar=True,
             )
 
+        self.log('alpha', self.net.alpha)
         # update and log metrics
         self.train_loss(loss)
         self.train_rmse(mse.item() / targets.shape[1])
