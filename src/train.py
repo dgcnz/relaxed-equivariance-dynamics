@@ -9,6 +9,7 @@ from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
 from lightning.pytorch.callbacks import ModelCheckpoint
 from omegaconf import OmegaConf, ListConfig
+import wandb
 
 rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 # ------------------------------------------------------------------------------------ #
@@ -135,6 +136,7 @@ def main(cfg: DictConfig) -> Optional[float]:
     if isinstance(cfg.alphas, ListConfig):
         for alpha in cfg.alphas:
             metric_dict, _ = train(cfg,alpha)
+            wandb.finish()
     
     metric_dict, _ = train(cfg, alpha = None)
 
