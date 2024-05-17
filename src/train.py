@@ -130,6 +130,7 @@ def main(cfg: DictConfig) -> Optional[float]:
     print('-----------------------------------------')
     print(cfg.alphas, '-----------------------------')
     if isinstance(cfg.alphas, list):
+        print('------------------------Helllooooooo')
         for alpha in cfg.alphas:
             metric_dict, _ = train(cfg,alpha)
     
