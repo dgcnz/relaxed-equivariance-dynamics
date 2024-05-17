@@ -55,7 +55,6 @@ def get_checkpoint_dict(path_dict):
     return checkpoint_dict
 
 
-@task_wrapper
 def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Trains the model. Can additionally evaluate on a testset, using best weights obtained during
     training.
@@ -76,14 +75,15 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
     #instantiate the model, but change the value for alpha 
     log.info(f"Instantiating model <{cfg.model._target_}>")
-    model: LightningModule = hydra.utils.instantiate(cfg.model, alpha=alpha)
+    model: LightningModule = hydra.utils.instantiate(cfg.model)
+    model.net.alpha= alpha
 
     #make config file such that the callbacks checkpoint every 10 epochs. Do mse early stopping callback.
     log.info("Instantiating callbacks...")
     callbacks: List[Callback] = instantiate_callbacks(cfg.get("callbacks"))
 
     log.info("Instantiating loggers...")
-    logger: List[Logger] = instantiate_loggers(cfg.get("logger"), config = {'alpha':alpha})
+    logger: List[Logger] = instantiate_loggers(cfg.get("logger"))
 
 
     log.info(f"Instantiating trainer <{cfg.trainer._target_}>")
@@ -109,7 +109,7 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     )
 
 
-@hydra.main(version_base="1.3", config_path="../configs", config_name="train.yaml")
+@hydra.main(version_base="1.3", config_path="../configs", config_name="equivariance_encouraged.yaml")
 def main(cfg: DictConfig) -> Optional[float]:
     """Main entry point for training.
 
