@@ -59,7 +59,10 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     datamodule: LightningDataModule = hydra.utils.instantiate(cfg.data)
 
     log.info(f"Instantiating model <{cfg.model._target_}>")
-    model: LightningModule = hydra.utils.instantiate(cfg.model, alpha=alpha)
+    if alpha is not None:
+        model: LightningModule = hydra.utils.instantiate(cfg.model, alpha=alpha)
+    else: 
+        model: LightningModule = hydra.utils.instantiate(cfg.model)
 
     log.info("Instantiating callbacks...")
     callbacks: List[Callback] = instantiate_callbacks(cfg.get("callbacks"))
@@ -126,7 +129,7 @@ def main(cfg: DictConfig) -> Optional[float]:
         for alpha in cfg.alphas:
             metric_dict, _ = train(cfg,alpha)
     
-    metric_dict, _ = train(cfg)
+    metric_dict, _ = train(cfg, alpha = None)
 
     # safely retrieve metric value for hydra-based hyperparameter optimization
     metric_value = get_metric_value(
