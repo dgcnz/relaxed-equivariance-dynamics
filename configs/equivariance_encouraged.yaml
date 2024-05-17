@@ -27,15 +27,6 @@ defaults:
   # debugging config (enable through command line, e.g. `python train.py debug=default)
   - debug: null
 
-logger:
-  wandb:
-    tags: ${tags}
-    group: "alpha_experiment"
-    project: "wang2022"
-    entity: "uva-dl2"
-  aim:
-    experiment: "wang2022/alpha_experiment"
-
 # task name, determines output directory path
 task_name: "equivariance_encouraged"
 
