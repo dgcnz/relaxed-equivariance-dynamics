@@ -15,7 +15,7 @@ tags: ["dev"]
 
 storage_location: 'logs/measures'
 # which metrics do you want to compute 
-spectrum: True
+spectrum: False
 sharpeness: False
 lie_derivative: False
 equivariance_error: False
