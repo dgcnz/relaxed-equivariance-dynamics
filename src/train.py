@@ -71,6 +71,10 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     log.info(f"Instantiating trainer <{cfg.trainer._target_}>")
     trainer: Trainer = hydra.utils.instantiate(cfg.trainer, callbacks=callbacks, logger=logger)
 
+    print('------------------------------------------------------------------------')
+    print('running for alpha is', alpha)
+    print('------------------------------------------------------------------------')
+    
     object_dict = {
         "cfg": cfg,
         "datamodule": datamodule,
