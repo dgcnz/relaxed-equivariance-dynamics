@@ -61,6 +61,8 @@ class SmokePlumeDataModule(LightningDataModule):
             test_split = list(range(accnum[1], accnum[2]))
             test_split.pop(2)
             test_split.pop(8)
+            test_split.pop(9)
+            test_split.pop(10)
             if num[2] == 0:
                 test_split = val_times
                 self.logger.warn(
