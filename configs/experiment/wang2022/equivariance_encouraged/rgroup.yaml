@@ -1,7 +1,7 @@
 # @package _global_
 
 defaults:
-  - override /data: wang2022/equivariance_test_better
+  - override /data: wang2022/equivariance_test
   - override /model: wang2022/rgroup
   - override /callbacks: [early_stopping_rmse,model_checkpoint]
   - override /trainer: default
