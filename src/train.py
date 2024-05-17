@@ -8,6 +8,7 @@ from lightning import Callback, LightningDataModule, LightningModule, Trainer
 from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
 from pytorch_lightning.callbacks import ModelCheckpoint
+from omegaconf import OmegaConf, ListConfig
 
 rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 # ------------------------------------------------------------------------------------ #
@@ -129,7 +130,7 @@ def main(cfg: DictConfig) -> Optional[float]:
     # train the model
     print('-----------------------------------------')
     print(type(cfg.alphas), '-----------------------------')
-    if isinstance(cfg.alphas, list):
+    if isinstance(cfg.alphas, ListConfig):
         print('------------------------Helllooooooo')
         for alpha in cfg.alphas:
             metric_dict, _ = train(cfg,alpha)
