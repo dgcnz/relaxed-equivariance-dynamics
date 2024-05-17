@@ -39,8 +39,6 @@ from src.utils import (
 
 log = RankedLogger(__name__, rank_zero_only=True)
 
-
-@task_wrapper
 def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Trains the model. Can additionally evaluate on a testset, using best weights obtained during
     training.
