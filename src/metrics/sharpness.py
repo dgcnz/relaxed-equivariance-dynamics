@@ -1,2 +1,2 @@
-def get_sharpeness():
+def get_sharpness():
     pass

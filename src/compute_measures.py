@@ -10,7 +10,7 @@ from omegaconf import DictConfig
 from src.metrics.equivariance_error import get_equivariance_error
 from src.metrics.lie_derivative import get_lie_derivative
 from src.metrics.sharpness import get_sharpness
-from scr.metrics.hessian_spectrum import get_spectrum
+from src.metrics.hessian_spectrum import get_spectrum
 from src.utils.wandb import download_config_file, get_model_and_data_modules_from_config
 
 import wandb
@@ -90,7 +90,7 @@ def main(cfg: DictConfig) -> None:
     metric_dict = {}
 
     for name in checkpoint_dict.keys():
-        print('obtaining spectrum for checkpoint', name)
+        log.info('obtaining spectrum for checkpoint', name)
 
         #PARSE THE CKPT_PATH_DICT
         entity, project, run_id = parse_ckpt_path(ckpt_path_dict[name])

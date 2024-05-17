@@ -1,6 +1,6 @@
 import torch
 import numpy as np 
-from scr.utils import rot_field
+from src.utils.image_utils import rot_field
 
 
 def get_equivariance_error(model, datamodule, device):
