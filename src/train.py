@@ -108,7 +108,7 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         checkpoint_callback = next((cb for cb in callbacks if isinstance(cb, ModelCheckpoint)), None)
         best_checkpoint_path = checkpoint_callback.best_model_path
         trainer.test(model=model, datamodule=datamodule, ckpt_path=best_checkpoint_path)
-        log.info(f"Best ckpt path: {ckpt_path}")
+        log.info(f"Best ckpt path: {best_checkpoint_path}")
 
     test_metrics = trainer.callback_metrics
 
