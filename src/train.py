@@ -66,7 +66,7 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
     log.info("Instantiating callbacks...")
     callbacks: List[Callback] = instantiate_callbacks(cfg.get("callbacks"))
-
+    print(callbacks)
     log.info("Instantiating loggers...")
     logger: List[Logger] = instantiate_loggers(cfg.get("logger"))
 
@@ -104,6 +104,7 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
             log.warning("Best ckpt not found! Using best weights for testing...")
             ckpt_path = None
         #load the best model
+
         checkpoint_callback = next((cb for cb in callbacks if isinstance(cb, ModelCheckpoint)), None)
         best_checkpoint_path = checkpoint_callback.best_model_path
         trainer.test(model=model, datamodule=datamodule, ckpt_path=best_checkpoint_path)
