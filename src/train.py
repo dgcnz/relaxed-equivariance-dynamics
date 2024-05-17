@@ -7,7 +7,7 @@ import torch
 from lightning import Callback, LightningDataModule, LightningModule, Trainer
 from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
-from lightning.callbacks import ModelCheckpoint
+from lightning.pytorch.callbacks import ModelCheckpoint
 from omegaconf import OmegaConf, ListConfig
 
 rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
