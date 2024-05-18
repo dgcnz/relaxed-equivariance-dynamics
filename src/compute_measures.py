@@ -82,10 +82,7 @@ def main(cfg: DictConfig) -> None:
     if cfg.get("seed"):
         L.seed_everything(cfg.seed, workers=True)
 
-    #load the model 
-    ckpt_path_dict = json.loads(cfg.ckpt_path_dict)
-
-    checkpoint_dict = get_checkpoint_dict(path = ckpt_path_dict, run=run)
+    checkpoint_dict = get_checkpoint_dict(path_dict = cfg.ckpt_path_dict, run=run)
 
     metric_dict = {}
 
@@ -93,7 +90,7 @@ def main(cfg: DictConfig) -> None:
         log.info('obtaining spectrum for checkpoint', name)
 
         #PARSE THE CKPT_PATH_DICT
-        entity, project, run_id = parse_ckpt_path(ckpt_path_dict[name])
+        entity, project, run_id = parse_ckpt_path(cfg.ckpt_path_dict[name])
         
         #GET THE MODEL AND DATAMODULE
         config = download_config_file(entity, project, run_id)
