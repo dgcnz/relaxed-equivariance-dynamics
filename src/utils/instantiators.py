@@ -51,7 +51,7 @@ def instantiate_loggers(logger_cfg: DictConfig, run_name = None) -> List[Logger]
     for _, lg_conf in logger_cfg.items():
         if isinstance(lg_conf, DictConfig) and "_target_" in lg_conf:
             log.info(f"Instantiating logger <{lg_conf._target_}>")
-            if run_id is not None:
+            if run_name is not None:
                 logger.append(hydra.utils.instantiate(lg_conf, name= run_name))
             else:
                 logger.append(hydra.utils.instantiate(lg_conf))
