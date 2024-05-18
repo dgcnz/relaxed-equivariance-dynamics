@@ -31,3 +31,6 @@ logger:
     entity: "uva-dl2"
   aim:
     experiment: "wang2022/rotation"
+
+trainer:
+  max_epochs: 200
