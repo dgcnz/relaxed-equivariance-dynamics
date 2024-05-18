@@ -1,6 +1,5 @@
 from gconv.gnn import GSeparableConvSE3, GLiftingConvSE3
 from gconv.geometry.groups import so3
-import torch
 from torch import Tensor
 import torch.nn as nn
 
@@ -27,7 +26,6 @@ class GCNNOhT3(nn.Module):
                 in_channels=in_channels,
                 out_channels=hidden_dim,
                 kernel_size=kernel_size,
-                groups=1,  # TODO: how many groups should we use?
                 padding=kernel_size // 2,
                 grid_H=self.grid_Oh,
                 permute_output_grid=False,
@@ -38,7 +36,6 @@ class GCNNOhT3(nn.Module):
                     in_channels=hidden_dim,
                     out_channels=self.dims[i],
                     kernel_size=kernel_size,
-                    groups=1,  # TODO: how many groups should we use?
                     padding=kernel_size // 2,
                     permute_output_grid=False,
                     grid_H=self.grid_Oh,
