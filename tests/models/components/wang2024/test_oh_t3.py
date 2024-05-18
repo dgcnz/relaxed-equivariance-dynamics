@@ -2,6 +2,7 @@ from gconv.gnn import GSeparableConvSE3, GLiftingConvSE3, GConvSE3, RGLiftingCon
 from gconv.geometry.groups import so3
 from src.models.components.wang2024.oh_t3 import GCNNOhT3
 import torch
+import pytest
 
 
 def test_oh_separable_conv():
@@ -63,7 +64,8 @@ def test_oh_lifting_rconv():
     z, H1 = lift(x)
 
 
-def test_ohgcnn():
+@pytest.mark.parametrize("classifier", [False, True])
+def test_ohgcnn(classifier: bool):
     in_channels, out_channels, kernel_size, hidden_dim, num_gconvs = 3, 3, 3, 3, 3
     model = GCNNOhT3(
         in_channels=in_channels,
@@ -71,9 +73,12 @@ def test_ohgcnn():
         kernel_size=kernel_size,
         hidden_dim=hidden_dim,
         num_gconvs=num_gconvs,
-        classifier=True,
+        classifier=classifier,
         sigmoid=True,
     )
-    x = torch.randn(1, in_channels, 48, 48, 48)
+    x = torch.randn(1, in_channels, 64, 64, 64)
     y = model(x)
-    assert y.shape == (1, out_channels)
+    if classifier:
+        assert y.shape == (1, out_channels)
+    else:
+        assert y.shape == (1, out_channels, 24, 64, 64, 64)
