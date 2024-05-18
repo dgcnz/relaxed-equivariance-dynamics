@@ -101,13 +101,14 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
     if cfg.get("test"):
         log.info("Starting testing!")
-        if cfg.get("ckpt_path"):
+        if not cfg.get("ckpt_path"):
             log.warning("Best ckpt not found! Using best weights for testing...")
-            ckpt_path = None
+            checkpoint_callback = next((cb for cb in callbacks if isinstance(cb, ModelCheckpoint)), None)
+            best_checkpoint_path = checkpoint_callback.best_model_path
         #load the best model
+        else:
+            best_checkpoint_path = cfg.get("ckpt_path")
 
-        checkpoint_callback = next((cb for cb in callbacks if isinstance(cb, ModelCheckpoint)), None)
-        best_checkpoint_path = checkpoint_callback.best_model_path
         trainer.test(model=model, datamodule=datamodule, ckpt_path=best_checkpoint_path)
         log.info(f"Best ckpt path: {best_checkpoint_path}")
 
