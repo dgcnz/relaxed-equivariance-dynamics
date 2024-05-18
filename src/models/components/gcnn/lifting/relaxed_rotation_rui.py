@@ -109,11 +109,10 @@ class RuiRLiftingConvCn(torch.nn.Module):
         return x
 
     def get_weight_constraint(self):
-        with torch.no_grad():
-            #TODO vectorize this code 
-            total = 0
-            for i in range(self.num_filter_banks):
-                filter_bank_weights = self.relaxed_weights[:, i]
-                for weight1, weight2 in combinations(filter_bank_weights, 2):
-                    total = total + torch.abs(weight1 - weight2)
-            return total 
+        #TODO vectorize this code 
+        total = 0
+        for i in range(self.num_filter_banks):
+            filter_bank_weights = self.relaxed_weights[i, :]
+            for weight1, weight2 in combinations(filter_bank_weights, 2):
+                total = total + torch.abs(weight1 - weight2)
+        return total 
