@@ -1,0 +1,36 @@
+# @package _global_
+
+defaults:
+  - override /data: wang2022/equivariance_test
+  - override /model: wang2022/rgroup
+  - override /callbacks: [early_stopping_rmse,model_checkpoint]
+  - override /trainer: default
+
+
+tags: ["wang2022", "alpha_experiment"]
+
+seed: 0
+
+model:
+  net:
+    in_channels: 1
+    out_channels: 2
+    hidden_dim: 64
+    alpha: 0
+  # default optimizer params
+  # default scheduler params
+
+logger:
+  wandb:
+    tags: ${tags}
+    group: "alpha_experiment"
+    project: "wang2022"
+    entity: "uva-dl2"
+  aim:
+    experiment: "wang2022/alpha_experiment"
+
+alphas: 
+  - 0
+  - 1e-2  # 0.01
+  - 1e-4  # 0.0001
+  - 1e-6  # 0.000001
