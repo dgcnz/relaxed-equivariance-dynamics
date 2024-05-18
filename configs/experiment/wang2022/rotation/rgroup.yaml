@@ -26,6 +26,16 @@ model:
     num_filter_banks: 2 # we have no idea about this
     alpha: 0.00001
     # group_order: 4 # C4
+  
+  optimizer:
+    lr: 0.001
+  
+  scheduler:
+    gamma: 0.95
+
+trainer:
+  max_epochs: 200
+
 
 logger:
   wandb:
