@@ -32,3 +32,16 @@ def rot_img(x: Tensor, theta: float) -> Tensor:
     grid = F.affine_grid(rot_mat, x.size(), align_corners=False).float()
     x = F.grid_sample(x, grid)
     return x.float()
+
+
+def rot_field(x, theta):
+    x_rot = torch.cat([rot_img(rot_vector(x, theta)[:,:1],  theta),
+                       rot_img(rot_vector(x, theta)[:,-1:], theta)], dim = 1)
+    return x_rot
+
+def rot_vector(inp, theta):
+    #inp shape: c x 2 x 64 x 64
+    theta = torch.tensor(theta).float().to(inp.device)
+    rot_matrix = torch.tensor([[torch.cos(theta), -torch.sin(theta)], [torch.sin(theta), torch.cos(theta)]]).float().to(inp.device)
+    out = torch.einsum("ab, bc... -> ac...",(rot_matrix, inp.transpose(0,1))).transpose(0,1)
+    return out

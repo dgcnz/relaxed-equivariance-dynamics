@@ -33,7 +33,7 @@ def instantiate_callbacks(callbacks_cfg: DictConfig) -> List[Callback]:
     return callbacks
 
 
-def instantiate_loggers(logger_cfg: DictConfig) -> List[Logger]:
+def instantiate_loggers(logger_cfg: DictConfig, run_name = None) -> List[Logger]:
     """Instantiates loggers from config.
 
     :param logger_cfg: A DictConfig object containing logger configurations.
@@ -51,6 +51,9 @@ def instantiate_loggers(logger_cfg: DictConfig) -> List[Logger]:
     for _, lg_conf in logger_cfg.items():
         if isinstance(lg_conf, DictConfig) and "_target_" in lg_conf:
             log.info(f"Instantiating logger <{lg_conf._target_}>")
-            logger.append(hydra.utils.instantiate(lg_conf))
+            if run_id is not None:
+                logger.append(hydra.utils.instantiate(lg_conf, name= run_name))
+            else:
+                logger.append(hydra.utils.instantiate(lg_conf))
 
     return logger

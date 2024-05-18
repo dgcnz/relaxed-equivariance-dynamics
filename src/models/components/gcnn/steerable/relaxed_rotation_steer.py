@@ -77,7 +77,7 @@ class Relaxed_Rot_SteerConv(torch.nn.Module):
 
     def forward(self, x: Tensor) -> Tensor:
         conv_filters = torch.einsum(
-            "bpqk,obik->opiqk", self.basis_kernels, self.relaxed_weights
+            "bpqk,obik->opiqk", self.basis_kernels.to(x.device), self.relaxed_weights.to(x.device)
         )
         conv_filters = conv_filters.reshape(
             conv_filters.shape[0] * conv_filters.shape[1],
