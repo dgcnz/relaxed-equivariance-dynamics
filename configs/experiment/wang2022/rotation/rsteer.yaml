@@ -32,6 +32,9 @@ model:
   scheduler:
     gamma: 0.95
 
+trainer:
+  max_epochs: 200
+
 
 logger:
   wandb:
