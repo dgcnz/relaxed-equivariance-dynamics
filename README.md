@@ -1,5 +1,5 @@
 # DL2
-
+Our blogpost can be found in 'Effect of equivariance on training dynamics.md'
 
 ## Setup 
 
