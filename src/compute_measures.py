@@ -7,8 +7,12 @@ import torch
 from lightning import Callback, LightningDataModule, LightningModule, Trainer
 from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
+from src.metrics.equivariance_error import get_equivariance_error
+from src.metrics.lie_derivative import get_lie_derivative
+from src.metrics.sharpness import get_sharpness
+from src.metrics.hessian_spectrum import get_spectrum
+from src.utils.wandb import download_config_file, get_model_and_data_modules_from_config
 
-from neuralyze import get_hessian_max_spectrum
 import wandb
 import json
 # before running this script please log in to wandb, like wandb.login(key=userdata.get("wandb_key"))
@@ -43,77 +47,71 @@ from src.utils import (
 
 log = RankedLogger(__name__, rank_zero_only=True)
 
-def get_checkpoint_dict(path_dict):
+def get_checkpoint_dict(path_dict, run):
     
     checkpoint_dict = {}
-    run = wandb.init()
-
+    
     for name in path_dict.keys():
         current_checkpoint = run.use_artifact(path_dict[name], type="model")
         current_dir = current_checkpoint.download()
         checkpoint_dict[name] = torch.load(current_dir + "/model.ckpt")
 
-    run.finish()
-
     return checkpoint_dict
 
-@task_wrapper
-def get_spectrum(cfg: DictConfig, datamodule, model) -> List:
+
+def parse_ckpt_path(ckpt_path: str):
+
+    parts = ckpt_path.split('/')
+    entity = parts[0]  # The first part is the organization
+    project = parts[1]  # The second part is the project
+    run_id_parts = parts[2].split(':')  # Split the last part to separate model ID and version
+    run_id = run_id_parts[0].replace('model-', '')  # Remove 'model-' prefix and get the model ID
     
-    #get the dataset from the datamodule 
-    dataset = datamodule.data_train
-
-    # get criterion (might have to make this selectable in the future)
-    loss_fn = torch.nn.CrossEntropyLoss()
-
-    #weight_decay = 1e-5
-
-    spectrum = get_hessian_max_spectrum(
-        model=model,
-        criterion=loss_fn,
-        train_dataset= dataset,
-        batch_size = cfg.batch_size,
-        percentage_data = cfg.percentage_data,
-        weight_decay = cfg.weight_decay,
-        hessian_top_k= cfg.top_k,
-        hessian_tol = cfg.tol,
-        hessian_max_iter= cfg.max_iter,
-        cuda = cfg.cuda,
-        verbose = cfg.verbose,
-    )
-
-    return spectrum
+    return entity, project, run_id
 
         
-@hydra.main(version_base="1.3", config_path="../configs", config_name="hessian_spectra.yaml")
+@hydra.main(version_base="1.3", config_path="../configs", config_name="compute_measures.yaml")
 def main(cfg: DictConfig) -> None:
     """Main entry point for training.
 
     :param cfg: DictConfig configuration composed by Hydra.
     :return: Optional[float] with optimized metric value.
     """
+    run = wandb.init()
+
     if cfg.get("seed"):
         L.seed_everything(cfg.seed, workers=True)
 
-    log.info(f"Instantiating datamodule <{cfg.data._target_}>")
-    datamodule: LightningDataModule = hydra.utils.instantiate(cfg.data)
+    checkpoint_dict = get_checkpoint_dict(path_dict = cfg.ckpt_path_dict, run=run)
 
-    log.info(f"Instantiating model <{cfg.model._target_}>")
-    model: LightningModule = hydra.utils.instantiate(cfg.model)
-
-    #load the model 
-    ckpt_path_dict = json.loads(cfg.ckpt_path_dict)
-
-    checkpoint_dict = get_checkpoint_dict(path = ckpt_path_dict)
-    spectrum_dict = {}
+    metric_dict = {}
 
     for name in checkpoint_dict.keys():
-        print('obtaining spectrum for checkpoint', name)
+        log.info('obtaining spectrum for checkpoint', name)
+
+        #PARSE THE CKPT_PATH_DICT
+        entity, project, run_id = parse_ckpt_path(cfg.ckpt_path_dict[name])
+        
+        #GET THE MODEL AND DATAMODULE
+        config = download_config_file(entity, project, run_id)
+        model, datamodule = get_model_and_data_modules_from_config(config)
+
+        #COMPUTE THE WANTED METRICS
         model.load_state_dict(checkpoint_dict[name]["state_dict"])
-        spectrum_dict[name] = get_spectrum(cfg, datamodule, model)
+        if cfg.get("equivariance_error"):
+            metric_dict[name]["equivariance_error"] = get_equivariance_error(model, datamodule, cfg.device)
+        if cfg.get("lie_derivative"):
+            metric_dict[name]["lie_derivative"] = get_lie_derivative(model, datamodule, cfg.device)
+        if cfg.get("sharpness"):
+            metric_dict[name]["sharpness"] = get_sharpness(model, datamodule, cfg.device)
+        if cfg.get("spectrum"):
+            metric_dict[name]["spectrum"] = get_spectrum(cfg, datamodule, model)
     
     with open(cfg.storage_location + "/spectra.json", "w") as outfile: 
-        json.dump(spectrum_dict, outfile)
+        json.dump(metric_dict, outfile)
+        #also put the file on wandb
+
+    run.finish()
 
 if __name__ == "__main__":
     main()

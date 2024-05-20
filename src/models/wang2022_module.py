@@ -97,12 +97,13 @@ class Wang2022LightningModule(LightningModule):
             mse += self.criterion(im, y)
 
         if self.with_weight_constraint:
-            weight_constraint = self.net.get_weight_constraint()
+            weight_constraint = self.criterion(self.net.get_weight_constraint(), torch.tensor(0).float().cuda())
             
             loss = mse + weight_constraint
         else:
             weight_constraint = None
             loss = mse
+
         return mse, weight_constraint, loss, yy
 
     def training_step(
@@ -127,6 +128,7 @@ class Wang2022LightningModule(LightningModule):
                 prog_bar=True,
             )
 
+        self.log('alpha', self.net.alpha)
         # update and log metrics
         self.train_loss(loss)
         self.train_rmse(mse.item() / targets.shape[1])

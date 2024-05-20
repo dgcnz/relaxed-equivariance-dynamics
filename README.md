@@ -1,5 +1,5 @@
 # DL2
-
+Our blogpost can be found in 'Effect of equivariance on training dynamics.md'
 
 ## Setup 
 
@@ -27,7 +27,7 @@ source .venv/bin/activate
 Let's say you want to run the experiment at `configs/experiment/wang2022/equivariance_test/convnet.yaml`. You can make use of the shortcut `slurmtrain` as follows:
 
 ```sh
-make slurmtrain experiment=wang2022/equivariance_test/convnet
+make strain experiment=wang2022/equivariance_test/convnet
 ```
 
 If you need to modify anything, the script is at `scripts/slurm/train.sh`.
