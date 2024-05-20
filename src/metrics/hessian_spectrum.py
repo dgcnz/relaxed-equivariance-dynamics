@@ -3,7 +3,7 @@ import torch
 from omegaconf import DictConfig
 from typing import Any, Dict, List, Optional, Tuple
 
-def get_spectrum(cfg: DictConfig, datamodule, model) -> List:
+def get_spectrum(cfg: DictConfig, config, datamodule, model) -> List:
     
     #get the dataset from the datamodule 
     dataset = datamodule.data_train
@@ -17,9 +17,9 @@ def get_spectrum(cfg: DictConfig, datamodule, model) -> List:
         model=model,
         criterion=loss_fn,
         train_dataset= dataset,
-        batch_size = cfg.batch_size,
+        batch_size = config.data.batch_size,
         percentage_data = cfg.percentage_data,
-        weight_decay = cfg.weight_decay,
+        weight_decay = config.optimizer.weight_decay,
         hessian_top_k= cfg.top_k,
         hessian_tol = cfg.tol,
         hessian_max_iter= cfg.max_iter,
