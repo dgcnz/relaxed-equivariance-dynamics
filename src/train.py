@@ -7,6 +7,9 @@ import torch
 from lightning import Callback, LightningDataModule, LightningModule, Trainer
 from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
+from lightning.pytorch.callbacks import ModelCheckpoint
+from omegaconf import OmegaConf, ListConfig
+import wandb
 
 rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 # ------------------------------------------------------------------------------------ #
@@ -38,9 +41,7 @@ from src.utils import (
 
 log = RankedLogger(__name__, rank_zero_only=True)
 
-
-@task_wrapper
-def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Trains the model. Can additionally evaluate on a testset, using best weights obtained during
     training.
 
@@ -58,13 +59,17 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     datamodule: LightningDataModule = hydra.utils.instantiate(cfg.data)
 
     log.info(f"Instantiating model <{cfg.model._target_}>")
+    
     model: LightningModule = hydra.utils.instantiate(cfg.model)
+
+    if alpha is not None:
+        model.net.alpha = alpha
 
     log.info("Instantiating callbacks...")
     callbacks: List[Callback] = instantiate_callbacks(cfg.get("callbacks"))
-
+    print(callbacks)
     log.info("Instantiating loggers...")
-    logger: List[Logger] = instantiate_loggers(cfg.get("logger"))
+    logger: List[Logger] = instantiate_loggers(cfg.get("logger"), run_name=f'run_name{alpha}')
 
     log.info(f"Instantiating trainer <{cfg.trainer._target_}>")
     trainer: Trainer = hydra.utils.instantiate(cfg.trainer, callbacks=callbacks, logger=logger)
@@ -77,6 +82,10 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         "logger": logger,
         "trainer": trainer,
     }
+
+    print('-----------------')
+    print(alpha, 'alpha')
+    print('-----------------')
 
     if logger:
         log.info("Logging hyperparameters!")
@@ -92,12 +101,16 @@ def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
 
     if cfg.get("test"):
         log.info("Starting testing!")
-        ckpt_path = trainer.checkpoint_callback.best_model_path
-        if ckpt_path == "":
-            log.warning("Best ckpt not found! Using current weights for testing...")
-            ckpt_path = None
-        trainer.test(model=model, datamodule=datamodule, ckpt_path=ckpt_path)
-        log.info(f"Best ckpt path: {ckpt_path}")
+        if not cfg.get("ckpt_path"):
+            log.warning("Best ckpt not found! Using best weights for testing...")
+            checkpoint_callback = next((cb for cb in callbacks if isinstance(cb, ModelCheckpoint)), None)
+            best_checkpoint_path = checkpoint_callback.best_model_path
+        #load the best model
+        else:
+            best_checkpoint_path = cfg.get("ckpt_path")
+
+        trainer.test(model=model, datamodule=datamodule, ckpt_path=best_checkpoint_path)
+        log.info(f"Best ckpt path: {best_checkpoint_path}")
 
     test_metrics = trainer.callback_metrics
 
@@ -119,7 +132,14 @@ def main(cfg: DictConfig) -> Optional[float]:
     extras(cfg)
 
     # train the model
-    metric_dict, _ = train(cfg)
+    print('-----------------------------------------')
+    print(cfg.alphas, '-----------------------------')
+    if isinstance(cfg.alphas, ListConfig):
+        for alpha in cfg.alphas:
+            metric_dict, _ = train(cfg,alpha)
+            wandb.finish()
+    
+    metric_dict, _ = train(cfg, alpha = None)
 
     # safely retrieve metric value for hydra-based hyperparameter optimization
     metric_value = get_metric_value(

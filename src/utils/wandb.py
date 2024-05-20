@@ -38,10 +38,7 @@ def download_config_file(entity: str, project: str, run_id: str) -> DictConfig:
     """
     api = wandb.Api()
     run = api.run(f"{entity}/{project}/{run_id}")
-    file = run.file("config.yaml")
-    fp = file.download(replace=True)
-    conf = OmegaConf.load(fp)
-    return conf
+    return OmegaConf.create(run.config)
 
 
 def get_model_and_data_modules_from_config(
