@@ -19,7 +19,7 @@ def get_spectrum(cfg: DictConfig, config, datamodule, model) -> List:
         train_dataset= dataset,
         batch_size = config.data.batch_size,
         percentage_data = cfg.percentage_data,
-        weight_decay = config.optimizer.weight_decay,
+        weight_decay = config.model.optimizer.weight_decay,
         hessian_top_k= cfg.top_k,
         hessian_tol = cfg.tol,
         hessian_max_iter= cfg.max_iter,
