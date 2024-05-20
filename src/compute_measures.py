@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, DefaultDict, Dict, List, Optional, Tuple
 
 import hydra
 import lightning as L
@@ -12,6 +12,9 @@ from src.metrics.lie_derivative import get_lie_derivative
 from src.metrics.sharpness import get_sharpness
 from src.metrics.hessian_spectrum import get_spectrum
 from src.utils.wandb import download_config_file, get_model_and_data_modules_from_config
+from collections import defaultdict
+import os
+import numpy as np
 
 import wandb
 import json
@@ -69,6 +72,16 @@ def parse_ckpt_path(ckpt_path: str):
     
     return entity, project, run_id
 
+def convert_to_serializable(obj):
+    if isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()  # Convert numpy arrays to lists
+    elif isinstance(obj, dict):
+        # Recursively convert dictionary items
+        return {k: convert_to_serializable(v) for k, v in obj.items()}
+    return obj
+
         
 @hydra.main(version_base="1.3", config_path="../configs", config_name="compute_measures.yaml")
 def main(cfg: DictConfig) -> None:
@@ -84,7 +97,9 @@ def main(cfg: DictConfig) -> None:
 
     checkpoint_dict = get_checkpoint_dict(path_dict = cfg.ckpt_path_dict, run=run)
 
-    metric_dict = {}
+    metric_dict = defaultdict(dict)
+
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
     for name in checkpoint_dict.keys():
         log.info('obtaining spectrum for checkpoint', name)
@@ -96,19 +111,29 @@ def main(cfg: DictConfig) -> None:
         config = download_config_file(entity, project, run_id)
         model, datamodule = get_model_and_data_modules_from_config(config)
 
+        #Do what lightning would normally do
+        model.to(device)
+        datamodule.setup()
+        
+
         #COMPUTE THE WANTED METRICS
         model.load_state_dict(checkpoint_dict[name]["state_dict"])
         if cfg.get("equivariance_error"):
-            metric_dict[name]["equivariance_error"] = get_equivariance_error(model, datamodule, cfg.device)
+           metric_dict[name]["equivariance_error"] = convert_to_serializable(get_equivariance_error(model, datamodule, device))
         if cfg.get("lie_derivative"):
-            metric_dict[name]["lie_derivative"] = get_lie_derivative(model, datamodule, cfg.device)
+          metric_dict[name]["lie_derivative"] = convert_to_serializable(get_lie_derivative(model, datamodule, device))
         if cfg.get("sharpness"):
-            metric_dict[name]["sharpness"] = get_sharpness(model, datamodule, cfg.device)
+          metric_dict[name]["sharpness"] = convert_to_serializable(get_sharpness(model, datamodule, device))
         if cfg.get("spectrum"):
-            metric_dict[name]["spectrum"] = get_spectrum(cfg, datamodule, model)
+          metric_dict[name]["spectrum"] = convert_to_serializable(get_spectrum(cfg, datamodule, model))
     
-    with open(cfg.storage_location + "/spectra.json", "w") as outfile: 
-        json.dump(metric_dict, outfile)
+        storage_path = cfg.storage_location + "/metrics.json"
+        os.makedirs(os.path.dirname(storage_path), exist_ok=True)
+
+        # Write the metrics to a file
+        with open(storage_path, "w") as outfile: 
+            json.dump(metric_dict, outfile)
+
         #also put the file on wandb
 
     run.finish()
