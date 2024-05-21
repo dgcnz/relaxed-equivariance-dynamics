@@ -28,7 +28,7 @@ weight_decay: None
 top_k: 5
 tol: 1e-3
 max_iter: 1000
-cuda: False
+cuda: True
 verbose: True
 
 # passing checkpoint path dict is necessary for computation 
