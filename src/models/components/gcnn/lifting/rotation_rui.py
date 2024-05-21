@@ -20,7 +20,9 @@ class RuiLiftingConvCn(nn.Module):
         activation: whether to use relu.
     """
 
-    def __init__(self, in_channels, out_channels, kernel_size, group_order, activation=True):
+    def __init__(
+        self, in_channels, out_channels, kernel_size, group_order, activation=True
+    ):
         super().__init__()
 
         self.in_channels = in_channels
@@ -31,7 +33,12 @@ class RuiLiftingConvCn(nn.Module):
 
         # Initialize an unconstrained kernel.
         self.kernel = torch.nn.Parameter(
-            torch.zeros(self.out_channels, self.in_channels, self.kernel_size, self.kernel_size)
+            torch.zeros(
+                self.out_channels,
+                self.in_channels,
+                self.kernel_size,
+                self.kernel_size,
+            )
         )
 
         # Initialize weights
@@ -76,7 +83,9 @@ class RuiLiftingConvCn(nn.Module):
 
         # reshape output signal to shape [bz, #out, group order, h, w].
         # ==============================
-        x = x.view(x.shape[0], self.out_channels, self.group_order, x.shape[-1], x.shape[-2])
+        x = x.view(
+            x.shape[0], self.out_channels, self.group_order, x.shape[-1], x.shape[-2]
+        )
         # ==============================
         if self.activation:
             return F.leaky_relu(x)
