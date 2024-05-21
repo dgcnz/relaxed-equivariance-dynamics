@@ -5,11 +5,11 @@ from src.models.components.gcnn.gcnn import CnGCNN
 from src.models.components.gcnn.gcnn_rui import RuiCnGCNN
 
 
-@pytest.mark.skip
+# @pytest.mark.skip
 @pytest.mark.parametrize("group_order", [2, 4])
 def test_gcnn_even(group_order: int):
     in_channels, out_channels, kernel_size, hidden_dim, num_gconvs = 3, 5, 3, 10, 3
-    B, H, W = 2, 5, 5
+    B, H, W = 2, 6, 6
     x = torch.rand(B, in_channels, H, W)
     net1 = CnGCNN(
         in_channels, out_channels, kernel_size, hidden_dim, group_order, num_gconvs
