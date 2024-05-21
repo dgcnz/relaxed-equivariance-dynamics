@@ -1,5 +1,16 @@
 # DL2
-Our blogpost can be found in 'Effect of equivariance on training dynamics.md'
+Our blogpost can be found [here](blogpost.md).
+
+## Package contributions
+
+To maximize convenience, reproducibility and encourage usage of our modules (models, datasets, tools), we've package some of them separately.
+
+
+- [gconv: (Relaxed) Regular Group Convolutions package](https://github.com/dgcnz/gconv)
+- [neuralyze: Equivariance analysis package](https://github.com/dgcnz/neuralyze)
+- [JHTDB HuggingFace Dataset](https://huggingface.co/datasets/dl2-g32/jhtdb)
+
+
 
 ## Setup 
 
