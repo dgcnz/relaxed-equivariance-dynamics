@@ -15,6 +15,9 @@ tags: ["dev"]
 
 storage_location: 'logs/measures'
 
+#which type of loss function do you want
+wang2022_loss: True
+
 # which metrics do you want to compute 
 spectrum: False
 sharpeness: False
