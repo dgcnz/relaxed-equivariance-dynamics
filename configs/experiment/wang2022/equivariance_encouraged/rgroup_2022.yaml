@@ -36,9 +36,3 @@ logger:
     entity: "uva-dl2"
   aim:
     experiment: "wang2022/alpha_experiment"
-
-alphas: 
-  - 0
-  - 1e-2  # 0.01
-  - 1e-4  # 0.0001
-  - 1e-6  # 0.000001
