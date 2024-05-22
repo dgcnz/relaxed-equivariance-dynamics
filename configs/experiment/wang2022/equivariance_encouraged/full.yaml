@@ -1,13 +1,4 @@
 # @package _global_
-hydra:
-  mode: "MULTIRUN"
-  sweeper:
-    params:
-      data.equivariance_level: 0,5,9
-    wandb_sweep_config:
-      name: equivariance_encouraged_full
-      method: grid
-
 defaults:
   - override /hydra/sweeper: wandb
   - override /data: wang2022/equivariance_test
