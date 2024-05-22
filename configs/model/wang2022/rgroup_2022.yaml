@@ -1,3 +1,14 @@
+
+#        in_channels: int,
+#        out_channels: int,
+#        kernel_size: int,
+#        hidden_dim: int,
+#        group_order: int,
+#        num_gconvs: int,
+#        num_filter_banks: int,
+#        vel_inp: bool = True,
+
+
 _target_: src.models.wang2022_module.Wang2022LightningModule
 
 # DO NOT CHANGE THIS FILE, OVERWRITE model.net IN THE EXPERIMENT
@@ -17,12 +28,15 @@ scheduler:
 
 # DO NOT CHANGE THIS FILE, OVERWRITE model.net IN THE EXPERIMENT
 net:
-  _target_: src.models.components.wang2022.se_2.GCNNSE2
+  _target_: src.models.components.wang2022.rgroup_2022.RelaxedGroupEquivariantCNN
   in_channels: 20
   out_channels: 2
   hidden_dim: 32
   kernel_size: 3 # default
   num_gconvs: 5
+  num_filter_banks: 2
+  group_order: 4 
+  alpha: 0
+  vel_inp: True
 
-autoregressive_train: True
 compile: false
