@@ -63,6 +63,9 @@ scat: ## cat slurm log with param
 strain:
 	sbatch scripts/slurm/train.sh $(experiment)
 
+strain_multirun:
+	sbatch scripts/slurm/train_multirun.sh $(experiment)
+
 secho: # check that there is experiment
 	sbatch scripts/slurm/echo.sh $(experiment)
 
