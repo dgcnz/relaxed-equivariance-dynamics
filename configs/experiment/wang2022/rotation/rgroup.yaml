@@ -6,7 +6,7 @@
 defaults:
   - override /data: wang2022/rotation
   - override /model: wang2022/rgroup
-  - override /callbacks: early_stopping_rmse
+  - override /callbacks: [early_stopping_rmse, model_checkpoint]
   - override /trainer: default
 
 # all parameters below will be merged with parameters from default configurations set above
