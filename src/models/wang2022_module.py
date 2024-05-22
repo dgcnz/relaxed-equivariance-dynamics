@@ -95,11 +95,13 @@ class Wang2022LightningModule(LightningModule):
         mse = torch.tensor(0.0, device=self.device)
         for y in yy.transpose(0, 1):
             im = self.forward(xx)
-            # xx = torch.cat([xx[:, im.shape[1] :], im], 1)
             cur_mse = self.criterion(im, y)
             mse += cur_mse
-            # self.log(f"train/mse_{i}", cur_mse.item())
-            xx = im if autoregressive else y
+            # generalized sliding window, works for n input frames and m output frames
+            if autoregressive:
+                xx = torch.cat([xx[:, im.shape[1] :], im], 1)
+            else:
+                xx = torch.cat([xx[:, im.shape[1] :], y], 1)
 
         if self.with_weight_constraint:
             weight_constraint = self.criterion(
