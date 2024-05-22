@@ -2,7 +2,7 @@
 
 model_checkpoint:
   _target_: lightning.pytorch.callbacks.ModelCheckpoint
-  dirpath: '/dl2/checkpoints' # directory to save the model file
+  dirpath: 'checkpoints' # directory to save the model file
   filename: null # checkpoint filename
   monitor: "val/rmse" # name of the logged metric which determines when model is improving
   verbose: False # verbosity mode

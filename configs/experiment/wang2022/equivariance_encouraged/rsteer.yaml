@@ -1,4 +1,11 @@
 # @package _global_
+# hydra:
+#   mode: "MULTIRUN"
+#   sweeper:
+#     params:
+#       model.net.alpha: 0.1,0.01,0.0001,0.000001
+# Example of multirun config ^
+# TODO: replace manual alpha 
 
 defaults:
   - override /data: wang2022/equivariance_test
