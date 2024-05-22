@@ -1,0 +1,38 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /data: wang2022/equivariance_test
+  - override /model: wang2022/rgroup_2022
+  - override /callbacks: early_stopping_rmse
+  - override /trainer: default
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["wang2022", "equivariance_test"]
+
+seed: 0
+
+model:
+  net:
+    in_channels: 2
+    out_channels: 2
+    hidden_dim: 64
+    alpha: 0
+    vel_inp: True
+    # we don't have info on other parameters
+
+  # default optimizer params
+  # default scheduler params
+
+logger:
+  wandb:
+    tags: ${tags}
+    group: "equivariance_test"
+    project: "wang2022"
+    entity: "uva-dl2"
+  aim:
+    experiment: "wang2022/equivariance_test"

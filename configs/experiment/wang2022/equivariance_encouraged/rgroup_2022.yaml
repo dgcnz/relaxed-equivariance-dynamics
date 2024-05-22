@@ -1,6 +1,5 @@
 # @package _global_
-# To run this experiment, execute:
-# WANDB_START_METHOD=thread python src.train -m experiment=wang2022/equivariance_encouraged/full --multirun
+# WANDB_START_METHOD=thread python src.train -m experiment=wang2022/equivariance_encouraged/rgroup_2022 --multirun
 hydra:
   mode: "MULTIRUN"
   sweeper:
@@ -10,7 +9,7 @@ hydra:
 
 defaults:
   - override /data: wang2022/equivariance_test
-  - override /model: wang2022/full
+  - override /model: wang2022/rgroup_2022
   - override /callbacks: [early_stopping_rmse,model_checkpoint]
   - override /trainer: default
 
@@ -23,8 +22,11 @@ model:
   net:
     in_channels: 2
     out_channels: 2
-  autoregressive_train: False
-
+    hidden_dim: 64
+    alpha: 0
+    vel_inp: False
+  # default optimizer params
+  # default scheduler params
 
 logger:
   wandb:
@@ -34,3 +36,9 @@ logger:
     entity: "uva-dl2"
   aim:
     experiment: "wang2022/alpha_experiment"
+
+alphas: 
+  - 0
+  - 1e-2  # 0.01
+  - 1e-4  # 0.0001
+  - 1e-6  # 0.000001
