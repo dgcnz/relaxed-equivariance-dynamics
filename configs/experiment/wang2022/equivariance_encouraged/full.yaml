@@ -1,4 +1,9 @@
 # @package _global_
+hydra:
+  mode: "MULTIRUN"
+  sweeper:
+    params:
+      data.equivariance_level: 0,5,9
 
 defaults:
   - override /data: wang2022/equivariance_test
