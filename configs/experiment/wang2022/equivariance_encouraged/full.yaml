@@ -4,6 +4,8 @@ hydra:
   sweeper:
     params:
       data.equivariance_level: 0,5,9
+    wandb_sweep_config:
+      name: equivariance_encouraged_full
 
 defaults:
   - override /data: wang2022/equivariance_test
