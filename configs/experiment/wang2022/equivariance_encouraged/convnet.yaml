@@ -1,4 +1,12 @@
 # @package _global_
+# To run this experiment, execute:
+# WANDB_START_METHOD=thread python src.train -m experiment=wang2022/equivariance_encouraged/convnet --multirun
+hydra:
+  mode: "MULTIRUN"
+  sweeper:
+    params:
+      model.net.alpha: 0.1,0.01,0.0001,0.000001
+      data.equivariance_level: 0,5,9
 
 defaults:
   - override /data: wang2022/equivariance_test_better
@@ -27,9 +35,3 @@ logger:
     entity: "uva-dl2"
   aim:
     experiment: "wang2022/alpha_experiment"
-
-alphas: 
-  - 0
-  - 1e-2  # 0.01
-  - 1e-4  # 0.0001
-  - 1e-6  # 0.000001
