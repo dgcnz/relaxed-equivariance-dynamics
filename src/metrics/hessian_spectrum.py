@@ -80,7 +80,7 @@ def get_hessian_max_spectrum(
     max_eigens: list[float] = []
     for xs, ys in tqdm(train_dataloader, disable=not verbose):
         hessian_comp = hessian(
-            model, criterion, data=(xs, ys), weight_decay=weight_decay, cuda=cuda
+            model, criterion, data=(xs, ys), cuda=cuda
         )
         top_eigenvalues, _ = hessian_comp.eigenvalues(top_n=hessian_top_k, tol=hessian_tol, maxIter=hessian_max_iter)
         max_eigens.extend(top_eigenvalues)
