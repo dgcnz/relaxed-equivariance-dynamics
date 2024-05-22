@@ -33,4 +33,10 @@ logger:
     experiment: "wang2022/rotation"
 
 trainer:
-  max_epochs: 200
+  max_epochs: 150
+  accelerator: auto
+  devices: auto
+  min_epochs: 50
+
+data:
+  batch_size: 8
