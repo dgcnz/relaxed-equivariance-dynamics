@@ -15,6 +15,7 @@ model:
   net:
     in_channels: 2
     out_channels: 2
+  autoregressive_train: False
 
 
 logger:
