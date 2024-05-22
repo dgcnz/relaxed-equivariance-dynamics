@@ -18,6 +18,14 @@ defaults:
 tags: ["wang2022", "alpha_experiment"]
 
 seed: 0
+trainer:
+  max_epochs: 150
+  accelerator: auto
+  devices: auto
+  min_epochs: 50
+
+data:
+  batch_size: 8
 
 model:
   net:

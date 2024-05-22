@@ -27,6 +27,16 @@ model:
   # default optimizer params
   # default scheduler params
 
+
+trainer:
+  max_epochs: 150
+  accelerator: auto
+  devices: auto
+  min_epochs: 50
+
+data:
+  batch_size: 8
+
 logger:
   wandb:
     tags: ${tags}
