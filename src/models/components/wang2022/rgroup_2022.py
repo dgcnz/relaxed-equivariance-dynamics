@@ -99,6 +99,8 @@ class RelaxedGroupEquivariantCNN(torch.nn.Module):
             if self.vel_inp:
                 z = torch.einsum("bivhw, nv->binhw", x, self.lift_coefs)
                 # x: [8, 1, 4, 64, 64]
+            else:
+                z = x
             out = self.gconvs(z)
             if self.vel_inp:
                 # x: [8, 1, 4, 64, 64]
