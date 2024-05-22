@@ -1,6 +1,5 @@
 # @package _global_
 defaults:
-  - override /hydra/sweeper: wandb
   - override /data: wang2022/equivariance_test
   - override /model: wang2022/full
   - override /callbacks: [early_stopping_rmse,model_checkpoint]
