@@ -1,4 +1,6 @@
 # @package _global_
+# To run this experiment, execute:
+# WANDB_START_METHOD=thread python src.train -m experiment=wang2022/equivariance_encouraged/full
 defaults:
   - override /data: wang2022/equivariance_test
   - override /model: wang2022/full
