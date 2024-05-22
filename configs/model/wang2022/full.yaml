@@ -23,6 +23,6 @@ net:
   hidden_dim: 32
   kernel_size: 3 # default
   num_gconvs: 5
-  autoregressive_train: True
 
+autoregressive_train: True
 compile: false
