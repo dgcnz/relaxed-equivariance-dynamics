@@ -5,7 +5,6 @@ hydra:
   mode: "MULTIRUN"
   sweeper:
     params:
-      model.net.alpha: 0.1,0.01,0.0001,0.000001
       data.equivariance_level: 0,5,9
 
 defaults:
