@@ -18,6 +18,7 @@ class Wang2022LightningModule(LightningModule):
         optimizer: torch.optim.Optimizer,
         scheduler: torch.optim.lr_scheduler,
         compile: bool,
+        autoregressive_train: bool = True,
     ) -> None:
         """Initialize a `pl_classifier`.
 
@@ -65,6 +66,7 @@ class Wang2022LightningModule(LightningModule):
 
         # for tracking best so far validation accuracy
         self.val_rmse_best = MinMetric()
+        self.autoregressive_train = autoregressive_train
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Perform a forward pass through the model `self.net`.
@@ -83,7 +85,7 @@ class Wang2022LightningModule(LightningModule):
         self.val_rmse_best.reset()
 
     def model_step(
-        self, batch: Tuple[torch.Tensor, torch.Tensor]
+        self, batch: Tuple[torch.Tensor, torch.Tensor], autoregressive: bool = True
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """Perform a single model step on a batch of data.
 
@@ -93,12 +95,16 @@ class Wang2022LightningModule(LightningModule):
         mse = torch.tensor(0.0, device=self.device)
         for y in yy.transpose(0, 1):
             im = self.forward(xx)
-            xx = torch.cat([xx[:, im.shape[1] :], im], 1)
-            mse += self.criterion(im, y)
+            # xx = torch.cat([xx[:, im.shape[1] :], im], 1)
+            cur_mse = self.criterion(im, y)
+            mse += cur_mse
+            # self.log(f"train/mse_{i}", cur_mse.item())
+            xx = im if autoregressive else y
 
         if self.with_weight_constraint:
-            weight_constraint = self.criterion(self.net.get_weight_constraint(), torch.tensor(0).float().cuda())
-            
+            weight_constraint = self.criterion(
+                self.net.get_weight_constraint(), torch.tensor(0).float().to(self.device)
+            )
             loss = mse + weight_constraint
         else:
             weight_constraint = None
@@ -116,7 +122,9 @@ class Wang2022LightningModule(LightningModule):
         :param batch_idx: The index of the current batch.
         :return: A tensor of losses between model predictions and targets.
         """
-        mse, weight_constraint, loss, targets = self.model_step(batch)
+        mse, weight_constraint, loss, targets = self.model_step(
+            batch, autoregressive=self.autoregressive_train
+        )
 
         if weight_constraint is not None:
             self.train_weight_constraint(weight_constraint)
@@ -127,8 +135,8 @@ class Wang2022LightningModule(LightningModule):
                 on_epoch=True,
                 prog_bar=True,
             )
-
-        self.log('alpha', self.net.alpha)
+        if hasattr(self.net, "alpha"):
+            self.log("alpha", self.net.alpha)
         # update and log metrics
         self.train_loss(loss)
         self.train_rmse(mse.item() / targets.shape[1])

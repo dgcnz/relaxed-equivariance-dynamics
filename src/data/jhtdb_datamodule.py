@@ -122,30 +122,6 @@ class JHTDBDataModule(LightningDataModule):
             shuffle=False,
         )
 
-    def teardown(self, stage: Optional[str] = None) -> None:
-        """Lightning hook for cleaning up after `trainer.fit()`, `trainer.validate()`,
-        `trainer.test()`, and `trainer.predict()`.
-
-        :param stage: The stage being torn down. Either `"fit"`, `"validate"`, `"test"`, or `"predict"`.
-            Defaults to ``None``.
-        """
-        pass
-
-    def state_dict(self) -> Dict[Any, Any]:
-        """Called when saving a checkpoint. Implement to generate and save the datamodule state.
-
-        :return: A dictionary containing the datamodule state that you want to save.
-        """
-        return {}
-
-    def load_state_dict(self, state_dict: Dict[str, Any]) -> None:
-        """Called when loading a checkpoint. Implement to reload datamodule state given datamodule
-        `state_dict()`.
-
-        :param state_dict: The datamodule state returned by `self.state_dict()`.
-        """
-        pass
-
 
 if __name__ == "__main__":
     _ = JHTDBDataModule()

@@ -103,12 +103,12 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         log.info("Starting testing!")
         if not cfg.get("ckpt_path"):
             log.warning("Best ckpt not found! Using best weights for testing...")
-            checkpoint_callback = next((cb for cb in callbacks if isinstance(cb, ModelCheckpoint)), None)
-            best_checkpoint_path = checkpoint_callback.best_model_path
-        #load the best model
+            best_checkpoint_path = trainer.checkpoint_callback.best_model_path or None
         else:
-            best_checkpoint_path = cfg.get("ckpt_path")
-
+            best_checkpoint_path = cfg.get("ckpt_path", None)
+        if not best_checkpoint_path:
+            # Note that when best_checkpoint_path is None, the model is tested on current weights
+            log.warn("NO CHECKPOINT FOUND! Skipping testing... Running on current model.") 
         trainer.test(model=model, datamodule=datamodule, ckpt_path=best_checkpoint_path)
         log.info(f"Best ckpt path: {best_checkpoint_path}")
 
