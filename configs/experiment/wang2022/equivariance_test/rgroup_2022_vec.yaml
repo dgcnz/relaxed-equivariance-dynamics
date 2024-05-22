@@ -5,7 +5,7 @@
 
 defaults:
   - override /data: wang2022/equivariance_test
-  - override /model: wang2022/rgroup
+  - override /model: wang2022/rgroup_2022
   - override /callbacks: [early_stopping_rmse,model_checkpoint]
   - override /trainer: default
 
@@ -18,10 +18,11 @@ seed: 0
 
 model:
   net:
-    in_channels: 2
-    out_channels: 2
+    in_channels: 1
+    out_channels: 1
     hidden_dim: 64
     alpha: 0
+    vel_inp: True
     # we don't have info on other parameters
 
   # default optimizer params
