@@ -42,7 +42,7 @@ from src.utils import (
 log = RankedLogger(__name__, rank_zero_only=True)
 
 @task_wrapper
-def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+def train(cfg: DictConfig) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Trains the model. Can additionally evaluate on a testset, using best weights obtained during
     training.
 
@@ -63,9 +63,6 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     
     model: LightningModule = hydra.utils.instantiate(cfg.model)
 
-    if alpha is not None:
-        model.net.alpha = alpha
-
     log.info("Instantiating callbacks...")
     callbacks: List[Callback] = instantiate_callbacks(cfg.get("callbacks"))
     print(callbacks)
@@ -85,7 +82,8 @@ def train(cfg: DictConfig, alpha) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     }
 
     print('-----------------')
-    print(alpha, 'alpha')
+    if hasattr(model.net, 'alpha'):
+        print(model.net.alpha, 'alpha')
     print('-----------------')
 
     if logger:
@@ -137,10 +135,10 @@ def main(cfg: DictConfig) -> Optional[float]:
     print(cfg.alphas, '-----------------------------')
     if isinstance(cfg.alphas, ListConfig):
         for alpha in cfg.alphas:
-            metric_dict, _ = train(cfg,alpha)
-            wandb.finish()
+            cfg.model.net.alpha = alpha
+            metric_dict, _ = train(cfg)
     
-    metric_dict, _ = train(cfg, alpha = None)
+    metric_dict, _ = train(cfg)
 
     # safely retrieve metric value for hydra-based hyperparameter optimization
     metric_value = get_metric_value(
