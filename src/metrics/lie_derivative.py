@@ -1,7 +1,7 @@
 import torch
 from src.utils.lie_utils import *
     
-def get_lie_equiv_err(model, datamodule, type):
+def get_lie_equiv_err(model, datamodule, type='rotation'):
     equiv_err = 0
 
     if type == 'rotation':
