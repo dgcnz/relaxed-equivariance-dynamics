@@ -11,5 +11,5 @@
 cd $HOME/development/dl2
 source .venv/bin/activate
 # run script from above
-srun WANDB_START_METHOD=thread python -m src.train experiment=$1 --multirun
+srun python -m src.train experiment=$1 --multirun
 deactivate
