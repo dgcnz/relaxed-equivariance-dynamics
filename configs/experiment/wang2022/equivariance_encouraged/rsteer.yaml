@@ -32,7 +32,7 @@ data:
 model:
   net:
     in_frames: 1
-    hidden_dim: 32 # 64 // 2
+    hidden_dim: 32 # ~670k params
     alpha: 0
   autoregressive_train: False
   # default optimizer params
