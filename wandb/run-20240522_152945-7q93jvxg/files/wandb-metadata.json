@@ -1,0 +1,57 @@
+{
+    "os": "Windows-10-10.0.18363-SP0",
+    "python": "3.9.5",
+    "heartbeatAt": "2024-05-22T13:29:47.773038",
+    "startedAt": "2024-05-22T13:29:45.165100",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "++weight_decay=1e-5",
+        "percentage_data=20",
+        "ckpt_path_dict=uva-dl2/wang2022/model-hci643oq:v1",
+        "lie_derivative=True"
+    ],
+    "state": "running",
+    "program": "-m src.compute_measures",
+    "codePathLocal": null,
+    "git": {
+        "remote": "https://github.com/dgcnz/dl2.git",
+        "commit": "eefbed0b777776bc9396dc6912af2563c765d293"
+    },
+    "email": "64084916+JiapengFan@users.noreply.github.com",
+    "root": "C:/Users/20191937/Documents/GitHub/dl2",
+    "host": "20191937",
+    "username": "20191937",
+    "executable": "C:\\Users\\20191937\\.conda\\envs\\ml1labs\\python.exe",
+    "cpu_count": 6,
+    "cpu_count_logical": 12,
+    "cpu_freq": {
+        "current": 1405.0,
+        "min": 0.0,
+        "max": 2208.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1405.0,
+            "min": 0.0,
+            "max": 2208.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 235.47655868530273,
+            "used": 232.38581466674805
+        }
+    },
+    "gpu": "Quadro P1000",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "Quadro P1000",
+            "memory_total": 4294967296
+        }
+    ],
+    "memory": {
+        "total": 15.547504425048828
+    }
+}
