@@ -8,7 +8,7 @@ hydra:
       # data.equivariance_level: 0,5,9
       model.net.alpha: 0
       data.equivariance_level: 0,5,9
-      seed: 12,23
+      seed: 45,56,67,78
 
 defaults:
   - override /data: wang2022/equivariance_test
