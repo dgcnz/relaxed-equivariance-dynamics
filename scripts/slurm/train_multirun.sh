@@ -5,7 +5,7 @@
 #SBATCH --job-name=DL2
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --time=02:00:00
+#SBATCH --time=01:00:00
 #SBATCH --output=scripts/slurm_logs/slurm_output_%A.out
 
 cd $HOME/development/dl2

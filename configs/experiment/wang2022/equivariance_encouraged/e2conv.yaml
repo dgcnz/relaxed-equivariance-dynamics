@@ -1,6 +1,6 @@
 # @package _global_
 # To run this experiment, execute:
-# python src.train -m experiment=wang2022/equivariance_encouraged/rsteer --multirun
+# python src.train -m experiment=wang2022/equivariance_encouraged/e2conv --multirun
 hydra:
   mode: "MULTIRUN"
   sweeper:
