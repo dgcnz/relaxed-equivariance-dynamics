@@ -17,14 +17,13 @@ scheduler:
 
 # DO NOT CHANGE THIS FILE, OVERWRITE model.net IN THE EXPERIMENT
 net:
-  _target_: src.models.components.wang2022.rsteer.Relaxed_Rot_SteerConvNet
+  _target_: src.models.components.wang2022.e2conv.E2CNN
   in_frames: 1
   out_frames: 1
   hidden_dim: 32
   kernel_size: 3 
   num_layers: 5
   N: 4
-  alpha: 0
 
 # compile model for faster training with pytorch 2.0
 compile: false

@@ -1,6 +1,6 @@
 # @package _global_
 # To run this experiment, execute:
-# python src.train -m experiment=wang2022/equivariance_encouraged/convnet --multirun
+# python src.train -m experiment=wang2022/equivariance_encouraged/rsteer --multirun
 hydra:
   mode: "MULTIRUN"
   sweeper:
@@ -8,8 +8,8 @@ hydra:
       data.equivariance_level: 0,5,9
 
 defaults:
-  - override /data: wang2022/equivariance_test_better
-  - override /model: wang2022/convnet
+  - override /data: wang2022/equivariance_test
+  - override /model: wang2022/e2conv
   - override /callbacks: [early_stopping_rmse,model_checkpoint]
   - override /trainer: default
 
@@ -17,16 +17,6 @@ defaults:
 tags: ["wang2022", "alpha_experiment"]
 
 seed: 0
-
-model:
-  net:
-    in_channels: 2
-    out_channels: 2
-    hidden_dim: 64
-  # default optimizer params
-  # default scheduler params
-
-
 trainer:
   max_epochs: 150
   accelerator: auto
@@ -35,6 +25,14 @@ trainer:
 
 data:
   batch_size: 8
+
+model:
+  net:
+    in_frames: 1
+    out_frames: 1
+    hidden_dim: 96
+  # default optimizer params
+  # default scheduler params
 
 logger:
   wandb:

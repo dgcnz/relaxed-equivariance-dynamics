@@ -1,5 +1,5 @@
 # @package _global_
-# WANDB_START_METHOD=thread python src.train -m experiment=wang2022/equivariance_encouraged/rgroup_2022 --multirun
+# python src.train -m experiment=wang2022/equivariance_encouraged/rgroup_2022 --multirun
 hydra:
   mode: "MULTIRUN"
   sweeper:
