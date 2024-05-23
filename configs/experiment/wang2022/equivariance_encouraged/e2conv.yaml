@@ -6,7 +6,7 @@ hydra:
   sweeper:
     params:
       data.equivariance_level: 0,5,9
-      seed: 34,45
+      seed: 12,23,34,45
 
 defaults:
   - override /data: wang2022/equivariance_test
@@ -31,8 +31,8 @@ model:
   net:
     in_frames: 1
     out_frames: 1
-    # hidden_dim: 92 # ~600k params
-    hidden_dim: 64 # ~300k params
+    hidden_dim: 92 # ~600k params
+    # hidden_dim: 64 # ~300k params
   autoregressive_train: False
   # default optimizer params
   # default scheduler params
