@@ -20,7 +20,7 @@ wang2022_loss: True
 
 # which metrics do you want to compute 
 spectrum: False
-sharpeness: False
+sharpness: False
 lie_derivative: False
 equivariance_error: False
 
