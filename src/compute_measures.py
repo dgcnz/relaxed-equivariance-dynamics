@@ -20,7 +20,7 @@ import wandb
 import json
 # before running this script please log in to wandb, like wandb.login(key=userdata.get("wandb_key"))
 
-rootutils.setup_root(_file_, indicator=".project-root", pythonpath=True)
+rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 # ------------------------------------------------------------------------------------ #
 # the setup_root above is equivalent to:
 # - adding project root dir to PYTHONPATH
@@ -48,7 +48,7 @@ from src.utils import (
     task_wrapper,
 )
 
-log = RankedLogger(_name_, rank_zero_only=True)
+log = RankedLogger(__name__, rank_zero_only=True)
 
 def get_checkpoint_dict(path_dict, run):
     
@@ -138,5 +138,5 @@ def main(cfg: DictConfig) -> None:
 
     run.finish()
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     main()
