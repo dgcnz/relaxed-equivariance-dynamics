@@ -5,8 +5,10 @@ hydra:
   mode: "MULTIRUN"
   sweeper:
     params:
-      model.net.alpha: 0.1,0.01,0.0001,0.000001
+      # model.net.alpha: 0,0.01,0.000001
       data.equivariance_level: 0,5,9
+      model.net.alpha: 0 # new tests
+      seed: 12,23 # new tests
 
 defaults:
   - override /data: wang2022/equivariance_test

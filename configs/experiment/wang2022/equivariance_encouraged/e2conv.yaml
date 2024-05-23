@@ -30,7 +30,8 @@ model:
   net:
     in_frames: 1
     out_frames: 1
-    hidden_dim: 92 # ~600k params
+    # hidden_dim: 92 # ~600k params
+    hidden_dim: 64 # ~300k params
   autoregressive_train: False
   # default optimizer params
   # default scheduler params
