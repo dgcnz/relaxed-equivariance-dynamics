@@ -6,7 +6,7 @@ hydra:
   sweeper:
     params:
       data.equivariance_level: 0,5,9
-      seed: 12,23
+      seed: 34,45
 
 defaults:
   - override /data: wang2022/equivariance_test
