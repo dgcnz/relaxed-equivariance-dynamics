@@ -185,3 +185,15 @@ def saturate(img, t):
     img = img.clone()
     img *= 1 + t
     return img
+
+def jvp(f, x, u):
+    """Jacobian vector product Df(x)u vs typical autograd VJP vTDF(x).
+    Uses two backwards passes: computes (vTDF(x))u and then derivative wrt to v to get DF(x)u"""
+    with torch.enable_grad():
+        y = f(x)
+        v = torch.ones_like(
+            y, requires_grad=True
+        )  # Dummy variable (could take any value)
+        vJ = torch.autograd.grad(y, [x], [v], create_graph=True)
+        Ju = torch.autograd.grad(vJ, [v], [u], create_graph=True)
+        return Ju[0]
