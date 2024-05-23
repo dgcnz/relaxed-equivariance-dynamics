@@ -23,6 +23,7 @@ model:
     in_channels: 2
     out_channels: 2
     hidden_dim: 64
+  autoregressive_train: False
   # default optimizer params
   # default scheduler params
 

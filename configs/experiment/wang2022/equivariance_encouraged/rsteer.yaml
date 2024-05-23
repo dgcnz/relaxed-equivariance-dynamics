@@ -32,6 +32,7 @@ model:
     in_frames: 1
     hidden_dim: 32 # 64 // 2
     alpha: 0
+  autoregressive_train: False
   # default optimizer params
   # default scheduler params
 

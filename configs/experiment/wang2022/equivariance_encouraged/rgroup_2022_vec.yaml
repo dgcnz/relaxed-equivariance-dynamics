@@ -30,9 +30,10 @@ model:
   net:
     in_channels: 1
     out_channels: 1
-    hidden_dim: 64
+    hidden_dim: 64 # ~900k params
     alpha: 0
     vel_inp: True
+  autoregressive_train: False
   # default optimizer params
   # default scheduler params
 

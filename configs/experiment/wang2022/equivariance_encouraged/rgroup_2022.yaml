@@ -33,6 +33,7 @@ model:
     hidden_dim: 64
     alpha: 0
     vel_inp: False
+  autoregressive_train: False
   # default optimizer params
   # default scheduler params
 
