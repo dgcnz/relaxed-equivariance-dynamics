@@ -28,6 +28,8 @@ model:
     vel_inp: True
     # group_order: 4 # C4
   
+  autoregressive_train: true
+
   optimizer:
     lr: 0.001
   

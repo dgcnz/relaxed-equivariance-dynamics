@@ -23,6 +23,14 @@ model:
     hidden_dim: 138 # 540k
     num_layers: 5 # layers fixed accross models
 
+  autoregressive_train: True
+
+  optimizer:
+    lr: 0.001
+  
+  scheduler:
+    gamma: 0.95
+
 logger:
   wandb:
     tags: ${tags}
