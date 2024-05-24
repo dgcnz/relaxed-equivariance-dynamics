@@ -8,7 +8,7 @@ from lightning import Callback, LightningDataModule, LightningModule, Trainer
 from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
 from src.metrics.equivariance_error import get_equivariance_error
-from src.metrics.lie_derivative import get_lie_derivative
+from src.metrics.lie_derivative import get_lie_equiv_err
 from src.metrics.sharpness import get_sharpness
 from src.metrics.hessian_spectrum import get_spectrum
 from src.utils.wandb import download_config_file, get_model_and_data_modules_from_config
@@ -25,7 +25,7 @@ rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 # the setup_root above is equivalent to:
 # - adding project root dir to PYTHONPATH
 #       (so you don't need to force user to install project as a package)
-#       (necessary before importing any local modules e.g. `from src import utils`)
+#       (necessary before importing any local modules e.g. from src import utils)
 # - setting up PROJECT_ROOT environment variable
 #       (which is used as a base for paths in "configs/paths/default.yaml")
 #       (this way all filepaths are the same no matter where you run the code)
@@ -33,7 +33,7 @@ rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 #
 # you can remove it if you:
 # 1. either install project as a package or move entry files to project root dir
-# 2. set `root_dir` to "." in "configs/paths/default.yaml"
+# 2. set root_dir to "." in "configs/paths/default.yaml"
 #
 # more info: https://github.com/ashleve/rootutils
 # ------------------------------------------------------------------------------------ #
@@ -115,18 +115,17 @@ def main(cfg: DictConfig) -> None:
         model.to(device)
         datamodule.setup()
         
-
         #COMPUTE THE WANTED METRICS
         model.load_state_dict(checkpoint_dict[name]["state_dict"])
         if cfg.get("equivariance_error"):
            metric_dict[name]["equivariance_error"] = convert_to_serializable(get_equivariance_error(model, datamodule, device))
         if cfg.get("lie_derivative"):
-          metric_dict[name]["lie_derivative"] = convert_to_serializable(get_lie_derivative(model, datamodule, device))
+          metric_dict[name]["lie_derivative"] = convert_to_serializable(get_lie_equiv_err(model, datamodule, device))
         if cfg.get("sharpness"):
           metric_dict[name]["sharpness"] = convert_to_serializable(get_sharpness(model, datamodule, device))
         if cfg.get("spectrum"):
           metric_dict[name]["spectrum"] = convert_to_serializable(get_spectrum(cfg, config, datamodule, model))
-    
+
         storage_path = cfg.storage_location + "/metrics.json"
         os.makedirs(os.path.dirname(storage_path), exist_ok=True)
 

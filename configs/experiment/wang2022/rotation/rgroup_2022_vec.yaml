@@ -5,7 +5,7 @@
 
 defaults:
   - override /data: wang2022/rotation
-  - override /model: wang2022/convnet
+  - override /model: wang2022/rgroup_2022
   - override /callbacks: [early_stopping_rmse, model_checkpoint]
   - override /trainer: default
 
@@ -18,27 +18,23 @@ seed: 0
 
 model:
   net:
-    in_channels: 20
-    out_channels: 2
-    hidden_dim: 138 # 540k
-    num_layers: 5 # layers fixed accross models
-
-  autoregressive_train: True
+    in_channels: 10
+    out_channels: 1
+    # we don't have info on the following parameters but this is our best guess
+    hidden_dim: 48  # params 530k
+    num_gconvs: 5 # layers fixed accross models
+    num_filter_banks: 2 # we have no idea about this
+    alpha: 0.00001
+    vel_inp: True
+    # group_order: 4 # C4
+  
+  autoregressive_train: true
 
   optimizer:
     lr: 0.001
   
   scheduler:
     gamma: 0.95
-
-logger:
-  wandb:
-    tags: ${tags}
-    group: "rotation"
-    project: "wang2022"
-    entity: "uva-dl2"
-  aim:
-    experiment: "wang2022/rotation"
 
 trainer:
   max_epochs: 150
@@ -48,3 +44,13 @@ trainer:
 
 data:
   batch_size: 8
+
+
+logger:
+  wandb:
+    tags: ${tags}
+    group: "rotation"
+    project: "wang2022"
+    entity: "uva-dl2"
+  aim:
+    experiment: "wang2022/rotation"

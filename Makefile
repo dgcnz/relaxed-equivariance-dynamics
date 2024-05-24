@@ -63,15 +63,28 @@ scat: ## cat slurm log with param
 strain:
 	sbatch scripts/slurm/train.sh $(experiment)
 
+strain_multiseed:
+	for seed in $(seeds); do \
+		sbatch scripts/slurm/train.sh $(experiment) seed=$$seed; \
+	done
+
+strain_multirun:
+	sbatch scripts/slurm/train_multirun.sh $(experiment)
+
 secho: # check that there is experiment
 	sbatch scripts/slurm/echo.sh $(experiment)
 
 test_wang2022_table_1:
-	python -m src.train experiment=wang2022/rotation/rgroup +trainer.fast_dev_run=True data.batch_size=8
-	python -m src.train experiment=wang2022/rotation/rsteer +trainer.fast_dev_run=True data.batch_size=8
-	python -m src.train experiment=wang2022/rotation/convnet +trainer.fast_dev_run=True data.batch_size=8
+	python -m src.train experiment=wang2022/rotation/rgroup_2022_vec +trainer.fast_dev_run=True data.batch_size=8 trainer.accelerator=cpu
+	python -m src.train experiment=wang2022/rotation/rsteer +trainer.fast_dev_run=True data.batch_size=8 trainer.accelerator=cpu
+	python -m src.train experiment=wang2022/rotation/convnet +trainer.fast_dev_run=True data.batch_size=8 trainer.accelerator=cpu
+	python -m src.train experiment=wang2022/rotation/e2conv +trainer.fast_dev_run=True data.batch_size=8 trainer.accelerator=cpu
 
 test_wang2022_figure_4:
 	python -m src.train experiment=wang2022/equivariance_test/rgroup +trainer.fast_dev_run=True data.batch_size=8
 	python -m src.train experiment=wang2022/equivariance_test/rsteer +trainer.fast_dev_run=True data.batch_size=8
 	python -m src.train experiment=wang2022/equivariance_test/convnet +trainer.fast_dev_run=True data.batch_size=8
+
+
+printid:
+	cat scripts/slurm_logs/slurm_output_$(id).out | grep "View run * at"

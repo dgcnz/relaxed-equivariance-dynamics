@@ -3,7 +3,7 @@
 defaults:
   - override /data: wang2022/equivariance_test
   - override /model: wang2022/rsteer
-  - override /callbacks: early_stopping_rmse
+  - override /callbacks: [early_stopping_rmse,model_checkpoint]
   - override /trainer: default
 
 

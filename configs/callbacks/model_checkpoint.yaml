@@ -2,7 +2,7 @@
 
 model_checkpoint:
   _target_: lightning.pytorch.callbacks.ModelCheckpoint
-  dirpath: '/dl2/checkpoints' # directory to save the model file
+  dirpath: null # directory to save the model file
   filename: null # checkpoint filename
   monitor: "val/rmse" # name of the logged metric which determines when model is improving
   verbose: False # verbosity mode
@@ -13,5 +13,5 @@ model_checkpoint:
   save_weights_only: False # if True, then only the model’s weights will be saved
   every_n_train_steps: null # number of training steps between checkpoints
   train_time_interval: null # checkpoints are monitored at the specified time interval
-  every_n_epochs: 1 # number of epochs between checkpoints
+  every_n_epochs: 10 # number of epochs between checkpoints
   save_on_train_epoch_end: null # whether to run checkpointing at the end of the training epoch or the end of validation

@@ -1,7 +1,11 @@
 # @package _global_
-
-# to execute this experiment run:
-# python train.py experiment=example
+# python src.train -m experiment=wang2022/equivariance_encouraged/rgroup_2022 --multirun
+hydra:
+  mode: "MULTIRUN"
+  sweeper:
+    params:
+      model.net.alpha: 0.1,0.01,0.0001,0.000001
+      data.equivariance_level: 0,5,9
 
 defaults:
   - override /data: wang2022/equivariance_test
@@ -9,12 +13,18 @@ defaults:
   - override /callbacks: [early_stopping_rmse,model_checkpoint]
   - override /trainer: default
 
-# all parameters below will be merged with parameters from default configurations set above
-# this allows you to overwrite only specified parameters
 
-tags: ["wang2022", "equivariance_test"]
+tags: ["wang2022", "alpha_experiment"]
 
 seed: 0
+trainer:
+  max_epochs: 150
+  accelerator: auto
+  devices: auto
+  min_epochs: 50
+
+data:
+  batch_size: 8
 
 model:
   net:
@@ -23,16 +33,15 @@ model:
     hidden_dim: 64
     alpha: 0
     vel_inp: False
-    # we don't have info on other parameters
-
+  autoregressive_train: False
   # default optimizer params
   # default scheduler params
 
 logger:
   wandb:
     tags: ${tags}
-    group: "equivariance_test"
+    group: "alpha_experiment"
     project: "wang2022"
     entity: "uva-dl2"
   aim:
-    experiment: "wang2022/equivariance_test"
+    experiment: "wang2022/alpha_experiment"

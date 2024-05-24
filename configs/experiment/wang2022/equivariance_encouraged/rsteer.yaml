@@ -1,4 +1,14 @@
 # @package _global_
+# To run this experiment, execute:
+# python src.train -m experiment=wang2022/equivariance_encouraged/rsteer --multirun
+hydra:
+  mode: "MULTIRUN"
+  sweeper:
+    params:
+      # model.net.alpha: 0,0.01,0.000001
+      data.equivariance_level: 0,5,9
+      model.net.alpha: 0 # new tests
+      seed: 34,45,56,67 # new tests
 
 defaults:
   - override /data: wang2022/equivariance_test
@@ -10,12 +20,21 @@ defaults:
 tags: ["wang2022", "alpha_experiment"]
 
 seed: 0
+trainer:
+  max_epochs: 150
+  accelerator: auto
+  devices: auto
+  min_epochs: 50
+
+data:
+  batch_size: 8
 
 model:
   net:
     in_frames: 1
-    hidden_dim: 32 # 64 // 2
+    hidden_dim: 32 # ~670k params
     alpha: 0
+  autoregressive_train: False
   # default optimizer params
   # default scheduler params
 
@@ -27,9 +46,3 @@ logger:
     entity: "uva-dl2"
   aim:
     experiment: "wang2022/alpha_experiment"
-
-alphas: 
-  - 0
-  - 1e-2  # 0.01
-  - 1e-4  # 0.0001
-  - 1e-6  # 0.000001
