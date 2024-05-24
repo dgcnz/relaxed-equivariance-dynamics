@@ -115,7 +115,6 @@ def main(cfg: DictConfig) -> None:
         model.to(device)
         datamodule.setup()
         
-
         #COMPUTE THE WANTED METRICS
         model.load_state_dict(checkpoint_dict[name]["state_dict"])
         if cfg.get("equivariance_error"):
@@ -126,7 +125,7 @@ def main(cfg: DictConfig) -> None:
           metric_dict[name]["sharpness"] = convert_to_serializable(get_sharpness(model, datamodule, device))
         if cfg.get("spectrum"):
           metric_dict[name]["spectrum"] = convert_to_serializable(get_spectrum(cfg, config, datamodule, model))
-    
+
         storage_path = cfg.storage_location + "/metrics.json"
         os.makedirs(os.path.dirname(storage_path), exist_ok=True)
 
