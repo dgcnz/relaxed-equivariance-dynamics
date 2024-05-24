@@ -1,57 +1,57 @@
 import torch
 import numpy as np
 
-def get_sharpness(nn_model, w, x, y):
+def get_sharpness(nn_model, datamodule, device):
     '''
     Calculates the sharpness of the loss landscape.
-    
-    Args:
-    nn_model (torch.nn.Module): The neural network model.
-    w (torch.Tensor): The weights of the model.
-    x (torch.Tensor): The input data.
-    y (torch.Tensor): The target data.
     
     Returns:
     float: The sharpness of the loss landscape as defined in the blog post.
     '''
+
     # List of magnitudes 
-    T = np.arange(0.1, 1.01, 0.3) 
+    T = torch.tensor(np.arange(0.1, 1.01, 0.3)).to(device)
 
-    w = torch.tensor(w, requires_grad=False).to(x.device)
-    
-    # Generate random unit vectors of the same shape as w
-    D = torch.randn(5, *w.shape).to(w.device)        
-    D = D / D.norm(dim=list(range(1, len(D.shape))), keepdim=True) 
-
+    nn_model.eval()
     # Save the original state of the model
     original_state_dict = nn_model.state_dict()
-
-    # Update the model's parameters with w
-    nn_model.load_state_dict({'weight': w})
-            
-    # Calculate loss at w
-    nn_model.eval()
-    with torch.no_grad():
-        predictions = nn_model(x)
-        loss_w = torch.sqrt(torch.mean((predictions - y) ** 2))
     
     sharpness = 0
-    for t in T:
-        for d in D:
-            w_plus_dt = w + t * d
-            # Update the model's parameters with w_plus_dt
-            nn_model.load_state_dict({'weight': w_plus_dt})     
-            
-            # Calculate loss at w + dt
-            with torch.no_grad():
-                predictions_plus_dt = nn_model(x)
-                loss_plus_dt = torch.sqrt(torch.mean((predictions_plus_dt - y) ** 2))
-            
-            sharpness += abs(loss_plus_dt - loss_w)
+    num_samples = 0
+
+    for (x, y) in datamodule.train_dataloader:
+        sharpness_batch = 0
+        num_samples += x.shape[0]
+
+        x, y = x.to(device), y.to(device)
+
+        # Calculate loss at w
+        with torch.no_grad():
+            predictions = nn_model(x)
+            loss_w = torch.sqrt(torch.mean((predictions - y) ** 2))
+
+            for param in nn_model.parameters():
+                if param.requires_grad:
+                    # Generate random unit vectors of the same shape as param
+                    D = torch.randn(5, *param.shape).to(param.device)
+                    # Unsqueeze norm multiple times so that division is done per entry for the first dim of D.
+                    D = D / torch.norm(D.view(D.size(0), -1), dim=(1))[(..., ) + (None, ) * (len(D.size())-1)]
+                    
+                    for t in T:
+                        for d in range(D.shape[0]):
+                            # Apply the perturbation
+                            param.add_(t*D[d])
+
+                            predictions_perturbed = nn_model(x)
+                            loss_perturbed = torch.sqrt(torch.mean((predictions_perturbed - y) ** 2))
+                            sharpness_batch += abs(loss_perturbed - loss_w)
+                            
+                            nn_model.load_state_dict(original_state_dict)
+                    
+                    sharpness_batch /= D.shape[0] * len(T)
+
+        sharpness += sharpness_batch
+
+    sharpness /= num_samples
     
-    sharpness /= len(D) * len(T)
-    
-    # Restore the original model parameters
-    nn_model.load_state_dict(original_state_dict)
-    
-    return sharpness.item()
+    return sharpness
