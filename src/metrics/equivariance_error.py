@@ -11,7 +11,7 @@ def get_equivariance_error(model, datamodule, device):
     with torch.no_grad():
         for xx, yy in test_loader:
             xx = xx.to(device)
-            print(xx.shape)
+            #print(xx.shape)
             orig_pred = model(xx).reshape(-1, 2, xx.shape[-2], xx.shape[-1])
 
             for angle in [np.pi/2, np.pi, np.pi/2*3]:

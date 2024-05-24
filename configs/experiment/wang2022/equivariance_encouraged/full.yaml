@@ -1,6 +1,6 @@
 # @package _global_
 # To run this experiment, execute:
-# WANDB_START_METHOD=thread python src.train -m experiment=wang2022/equivariance_encouraged/full --multirun
+# python src.train -m experiment=wang2022/equivariance_encouraged/full --multirun
 hydra:
   mode: "MULTIRUN"
   sweeper:

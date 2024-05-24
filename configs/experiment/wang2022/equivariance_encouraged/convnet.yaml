@@ -1,6 +1,6 @@
 # @package _global_
 # To run this experiment, execute:
-# WANDB_START_METHOD=thread python src.train -m experiment=wang2022/equivariance_encouraged/convnet --multirun
+# python src.train -m experiment=wang2022/equivariance_encouraged/convnet --multirun
 hydra:
   mode: "MULTIRUN"
   sweeper:
@@ -23,6 +23,7 @@ model:
     in_channels: 2
     out_channels: 2
     hidden_dim: 64
+  autoregressive_train: False
   # default optimizer params
   # default scheduler params
 

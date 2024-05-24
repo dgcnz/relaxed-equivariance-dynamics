@@ -20,8 +20,16 @@ model:
   net:
     in_channels: 20
     out_channels: 2
-    hidden_dim: 92 # fixing hidden dim across models
+    hidden_dim: 138 # 540k
     num_layers: 5 # layers fixed accross models
+
+  autoregressive_train: True
+
+  optimizer:
+    lr: 0.001
+  
+  scheduler:
+    gamma: 0.95
 
 logger:
   wandb:

@@ -21,13 +21,15 @@ model:
     in_channels: 10
     out_channels: 1
     # we don't have info on the following parameters but this is our best guess
-    hidden_dim: 92  # fixing hidden dim across models
+    hidden_dim: 48  # params 530k
     num_gconvs: 5 # layers fixed accross models
     num_filter_banks: 2 # we have no idea about this
     alpha: 0.00001
     vel_inp: True
     # group_order: 4 # C4
   
+  autoregressive_train: true
+
   optimizer:
     lr: 0.001
   
