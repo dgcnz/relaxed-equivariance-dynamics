@@ -84,3 +84,7 @@ test_wang2022_figure_4:
 	python -m src.train experiment=wang2022/equivariance_test/rgroup +trainer.fast_dev_run=True data.batch_size=8
 	python -m src.train experiment=wang2022/equivariance_test/rsteer +trainer.fast_dev_run=True data.batch_size=8
 	python -m src.train experiment=wang2022/equivariance_test/convnet +trainer.fast_dev_run=True data.batch_size=8
+
+
+printid:
+	cat scripts/slurm_logs/slurm_output_$(id).out | grep "View run * at"
