@@ -19,7 +19,7 @@ def get_sharpness(nn_model, datamodule, device):
     sharpness = 0
     num_samples = 0
 
-    for (x, y) in datamodule.train_dataloader:
+    for (x, y) in datamodule.train_dataloader():
         sharpness_batch = 0
         num_samples += x.shape[0]
 
