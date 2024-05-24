@@ -16,41 +16,38 @@ def get_sharpness(model, datamodule, device):
 
     
     # Save the original state of the mode
-    
     sharpness = 0
     num_samples = 0
 
-    for (x ,y) in datamodule.train_dataloader():
-        nn_model = copy.deepcopy(model)
-        nn_model.eval()
+    with torch.no_grad():
+        for t in T:
+            for i in range(5):  #5 is the amount of directions we perturb in 
+                nn_model = perturb_model(model, t)
+                
+                sharpness_model = 0
+                num_batches=0
+                for (x ,y) in datamodule.train_dataloader():
 
-        sharpness_batch = 0
-        num_samples += x.shape[0]
+                    num_batches += 1
 
-        batch = (x.to(device), y.to(device))
+                    batch = (x.to(device), y.to(device))
 
-        ### CODE IS WRONG BECAUSE WE SHOULD FIRST DO A FULL MODEL PERTUBATION, AND ONLY THEN DO THE BATCH SHARPENESS
+                    # Calculate loss at w
+                    _, _, loss_w, _ = model.model_step(batch) #always the og model
+                    
+                    _,_, loss_perturbed, _ = nn_model.model_step(batch)
 
-        # Calculate loss at w
-        with torch.no_grad():
-            _, _, loss_w, _ = model.model_step(batch) #always the og model
-            
-            for t in T:
-                for i in range(5):  #5 is the amount of directions we perturb in 
-                    nn_model = perturb_model(model, t)
-            
-            _,_,loss_perturbed,_ = nn_model.model_step(batch)
-            
-            print('w', loss_w)
-            print('perturbed', loss_perturbed)
+                    #print('w', loss_w)
+                    #print('perturbed', loss_perturbed)
+                    sharpness_model += abs(loss_perturbed - loss_w) 
+                    #print(sharpness_batch)
 
-        sharpness_batch += abs(loss_perturbed - loss_w)            
-        sharpness_batch /= 5 * len(T)
-        #print(sharpness_batch)
-        sharpness += sharpness_batch
+                sharpness_model /= num_batches
+                sharpness += sharpness_model
+      
+    sharpness /= len(T)*5
 
-    sharpness /= num_samples
-    
+                
     return sharpness.cpu().detach().numpy()
 
 def perturb_model(model, t):
