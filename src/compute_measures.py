@@ -10,7 +10,7 @@ from omegaconf import DictConfig
 from src.metrics.equivariance_error import get_equivariance_error
 from src.metrics.lie_derivative import get_lie_equiv_err
 from src.metrics.sharpness import get_sharpness
-# from src.metrics.hessian_spectrum import get_spectrum
+from src.metrics.hessian_spectrum import get_spectrum
 from src.utils.wandb import download_config_file, get_model_and_data_modules_from_config
 from collections import defaultdict
 import os
