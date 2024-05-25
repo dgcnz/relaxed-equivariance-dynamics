@@ -17,7 +17,7 @@ class SuperResolutionLightningModule(LightningModule):
         if lossfunc == None:
             self.lossfunc = nn.L1Loss()
         
-    def process_batch(batch):
+    def process_batch(self,batch):
         # Processes a batch into x and y
         # That look like (Batch,Channel,X,Y,Z)
         # x has shape (Batch,Timestep/Channel,Timestep/Channel), X,Y,Z)
