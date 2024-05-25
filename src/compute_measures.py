@@ -123,8 +123,8 @@ def main(cfg: DictConfig) -> None:
           metric_dict[name]["lie_derivative"] = convert_to_serializable(get_lie_equiv_err(model, datamodule, device))
         if cfg.get("sharpness"):
           metric_dict[name]["sharpness"] = convert_to_serializable(get_sharpness(model, datamodule, device))
-        # if cfg.get("spectrum"):
-        #   metric_dict[name]["spectrum"] = convert_to_serializable(get_spectrum(cfg, config, datamodule, model))
+        if cfg.get("spectrum"):
+           metric_dict[name]["spectrum"] = convert_to_serializable(get_spectrum(cfg, config, datamodule, model))
 
         storage_path = cfg.storage_location + "/metrics.json"
         os.makedirs(os.path.dirname(storage_path), exist_ok=True)
