@@ -23,8 +23,8 @@ class SuperResolutionLightningModule(LightningModule):
         # x has shape (Batch,Timestep/Channel,Timestep/Channel), X,Y,Z)
         # (unknown which is timestep and which is channel, but it shouldn't matter)
         x = batch['lrs'] 
-        batch,timestep,channel,x_dim, y_dim, z_dim = x.shape
-        x = x.reshape(batch,timestep*channel,x_dim,y_dim,z_dim)
+        batch_size,timestep,channel,x_dim, y_dim, z_dim = x.shape
+        x = x.reshape(batch_size,timestep*channel,x_dim,y_dim,z_dim)
         y = batch['hr']
 
         return x,y
