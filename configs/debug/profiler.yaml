@@ -7,6 +7,11 @@ defaults:
 
 trainer:
   max_epochs: 1
-  profiler: "simple"
+  limit_train_batches: 2
+  limit_val_batches: 2
+  limit_test_batches: 2
+  fast_dev_run: true
+  # profiler: "simple"
   # profiler: "advanced"
-  # profiler: "pytorch"
+  profiler: "pytorch"
+

@@ -24,3 +24,5 @@ pytest          # tests
 # sh            # for running bash commands in some tests (linux/macos only)
 git+https://github.com/dgcnz/gconv.git
 git+https://github.com/QUVA-Lab/e2cnn
+torch-tb-profiler
+datasets

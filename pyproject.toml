@@ -57,6 +57,7 @@ h5py = "^3.11.0"
 datasets = "^2.19.1"
 e2cnn = {git = "https://github.com/QUVA-Lab/e2cnn"}
 gconv-tpk = {git = "https://github.com/dgcnz/gconv.git", develop = true}
+torch-tb-profiler = "^0.4.3"
 
 
 [tool.poetry.group.dev.dependencies]
