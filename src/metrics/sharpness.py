@@ -54,12 +54,14 @@ def perturb_model(model, t):
     nn_model = copy.deepcopy(model)
     nn_model.eval()
 
+    num_param = sum(p.numel() for p in model.parameters() if p.requires_grad)
+
     for param in nn_model.parameters():
         if param.requires_grad:
             # Generate random unit vectors of the same shape as param
             d = torch.randn(1, *param.shape).to(param.device) 
             # Unsqueeze norm multiple times so that division is done per entry for the first dim of D.
-            d = d / torch.norm(d)
+            d = d / num_param
             d = d.squeeze(0)
             # Apply the perturbation
             param.add_(t*d)
