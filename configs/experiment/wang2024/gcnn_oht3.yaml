@@ -23,7 +23,7 @@ model:
   net:
     in_channels: 9
     out_channels: 3
-    hidden_dim: 8
+    hidden_dim: 46
     maxpool: True
   # default optimizer params
   # default scheduler params
