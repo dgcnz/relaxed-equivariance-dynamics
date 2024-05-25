@@ -1270,7 +1270,7 @@ tqdm = "^4.66.4"
 type = "git"
 url = "https://github.com/dgcnz/gconv.git"
 reference = "HEAD"
-resolved_reference = "1162c9fd6db297070ad4da35b6b985be24d78972"
+resolved_reference = "a3fe094056d104cde976e974ed08984013371fe6"
 
 [[package]]
 name = "gitdb"
