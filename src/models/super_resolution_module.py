@@ -32,7 +32,7 @@ class SuperResolutionLightningModule(LightningModule):
         # training_step defines the train loop.
         # it is independent of forward
         
-        x,y = self.process_batch(x,y)
+        x,y = self.process_batch(batch)
         pred = self.net(x)        
         loss = self.lossfunc(pred, y)
         self.train_mae(pred,y)        
@@ -42,7 +42,7 @@ class SuperResolutionLightningModule(LightningModule):
         self.log("train_loss", loss)
         return loss
     def validation_step(self, batch, batch_idx):
-        x,y = self.process_batch(x,y)
+        x,y = self.process_batch(batch)
         pred = self.net(x)        
         loss = self.lossfunc(pred, y)
         self.val_mae(pred,y)        
@@ -54,7 +54,7 @@ class SuperResolutionLightningModule(LightningModule):
     def test_step(self, batch, batch_idx):
         
         
-        x,y = self.process_batch(x,y)
+        x,y = self.process_batch(batch)
         pred = self.net(x)        
         loss = self.lossfunc(pred, y)
         self.test_mae(pred,y)        
