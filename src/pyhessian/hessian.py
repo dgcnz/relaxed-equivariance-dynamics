@@ -22,6 +22,7 @@ import torch
 import math
 from torch.autograd import Variable
 import numpy as np
+from typing import Optional
 
 from src.pyhessian.utils import group_product, group_add, normalization, get_params_grad, hessian_vector_product, orthnormal
 
@@ -34,7 +35,7 @@ class hessian():
         iii) the estimated eigenvalue density
     """
 
-    def __init__(self, model, criterion, data=None, dataloader=None, cuda=True):
+    def __init__(self, model, criterion, data=None, dataloader=None, cuda=True, weight_decay: Optional[float] = None):
         """
         model: the model that needs Hessain information
         criterion: the loss function
@@ -77,7 +78,8 @@ class hessian():
             loss.backward(create_graph=True)
 
         # this step is used to extract the parameters from the model
-        params, gradsH = get_params_grad(self.model)
+        self.weight_decay = weight_decay    
+        params, gradsH = get_params_grad(self.model, weight_decay=self.weight_decay)
         self.params = params
         self.gradsH = gradsH  # gradient used for Hessian computation
 
