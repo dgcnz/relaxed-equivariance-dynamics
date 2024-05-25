@@ -17,7 +17,7 @@ trainer:
   min_epochs: 20
 
 data:
-  batch_size: 8
+  batch_size: 4
 
 model:
   net:
