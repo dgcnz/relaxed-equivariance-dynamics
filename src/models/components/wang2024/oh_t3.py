@@ -58,7 +58,7 @@ class GCNNOhT3(nn.Module):
         if maxpool:
             self.pool = GMaxGroupPool()
 
-        self.grid_Oh = so3.quat_to_matrix(so3.octahedral())
+        self.register_buffer("grid_Oh", so3.quat_to_matrix(so3.octahedral()))
         # self.dims = [in_channels] + [hidden_dim] * (num_gconvs - 2) + [out_channels]
         self.upsampler = GroupUpsampler3D(nn.Upsample(scale_factor=2, mode="trilinear"))
 
