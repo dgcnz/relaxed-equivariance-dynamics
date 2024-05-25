@@ -3,7 +3,7 @@
 defaults:
   - override /data: wang2024/jhtdb
   - override /model: wang2024/rgcnn_oht3
-  - override /callbacks: [early_stopping_mae,model_checkpoint]
+  - override /callbacks: [early_stopping_mae,model_checkpoint_2024]
   - override /trainer: default
 
 
@@ -11,10 +11,10 @@ tags: ["wang2024", "superresolution", "large_50"]
 
 seed: 0
 trainer:
-  max_epochs: 50
+  max_epochs: 80
   accelerator: auto
   devices: auto
-  min_epochs: 20
+  min_epochs: 40
 
 data:
   batch_size: 4
