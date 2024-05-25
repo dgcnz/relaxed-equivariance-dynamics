@@ -3,7 +3,7 @@
 defaults:
   - override /data: wang2024/jhtdb
   - override /model: wang2024/gcnn_oht3
-  - override /callbacks: [early_stopping_rmse,model_checkpoint]
+  - override /callbacks: [early_stopping_mae,model_checkpoint]
   - override /trainer: default
 
 
