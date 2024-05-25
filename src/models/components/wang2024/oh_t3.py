@@ -47,6 +47,7 @@ class GCNNOhT3(nn.Module):
         super().__init__()
 
         self.pool = None
+        self.maxpool = maxpool
         if avgpool:
             self.pool = GAvgGroupPool()
         if maxpool: 
@@ -219,6 +220,8 @@ class GCNNOhT3(nn.Module):
         
         if self.pool == None:
             return(z6)
+        if self.maxpool:
+            return self.pool(z6).values
         return self.pool(z6)
        
         
@@ -239,6 +242,7 @@ class RGCNNOhT3(nn.Module):
         super().__init__()
 
         self.pool = None
+        self.maxpool = maxpool
         if avgpool:
             self.pool = GAvgGroupPool()
         if maxpool: 
@@ -419,4 +423,6 @@ class RGCNNOhT3(nn.Module):
         
         if self.pool == None:
             return(z6)
+        if self.maxpool:
+            return self.pool(z6).values
         return self.pool(z6)
