@@ -66,6 +66,11 @@ strain:
 strain_10:
 	sbatch scripts/slurm/train_10.sh $(experiment)
 
+strain_10_multiseed: # make strain_10_multiseed experiment=exp seeds="10 20"
+	for seed in $(seeds); do \
+		sbatch scripts/slurm/train_10_seed.sh $(experiment) $$seed; \
+	done
+
 strain_multirun:
 	sbatch scripts/slurm/train_multirun.sh $(experiment)
 
