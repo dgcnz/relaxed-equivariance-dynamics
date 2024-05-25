@@ -6,11 +6,6 @@ from torchmetrics import MinMetric, MeanMetric
 import logging
 
 
-class RootMeanMetric(MeanMetric):
-    def compute(self):
-        return super().compute().sqrt()
-
-
 class Wang2024LightningModule(LightningModule):
     def __init__(
         self,
@@ -36,12 +31,12 @@ class Wang2024LightningModule(LightningModule):
         self.net = net
 
         # loss function
-        self.criterion = torch.nn.MSELoss()
+        self.criterion = torch.nn.L1Loss()
 
         # metric objects for calculating and averaging accuracy across batches
-        self.train_rmse = RootMeanMetric()
-        self.val_rmse = RootMeanMetric()
-        self.test_rmse = RootMeanMetric()
+        self.train_mae = MeanMetric()
+        self.val_mae = MeanMetric()
+        self.test_mae = MeanMetric()
 
         # for averaging loss across batches
         self.train_loss = MeanMetric()
@@ -64,11 +59,11 @@ class Wang2024LightningModule(LightningModule):
             )
 
         # for tracking best so far validation accuracy
-        self.val_rmse_best = MinMetric()
+        self.val_mae_best = MinMetric()
 
     def forward(self, lrs: torch.Tensor) -> torch.Tensor:
         """Perform a forward pass through the model `self.net`."""
-        lrs = lrs.flatten(1, 2) # flatten the time and channel dimensions
+        lrs = lrs.flatten(1, 2)  # flatten the time and channel dimensions
         return self.net(lrs)
 
     def on_train_start(self) -> None:
@@ -76,29 +71,30 @@ class Wang2024LightningModule(LightningModule):
         # by default lightning executes validation step sanity checks before training starts,
         # so it's worth to make sure validation metrics don't store results from these checks
         self.val_loss.reset()
-        self.val_rmse.reset()
-        self.val_rmse_best.reset()
+        self.val_mae.reset()
+        self.val_mae_best.reset()
 
     def model_step(
         self, batch: dict[str, torch.Tensor]
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Perform a single model step on a batch of data.
-        """
+        """Perform a single model step on a batch of data."""
         lrs, hr = batch["lrs"], batch["hr"]
         out = self.forward(lrs)
-        mse = self.criterion(out, hr)
+        mae = self.criterion(out, hr)
 
         if self.with_weight_constraint:
-            weight_constraint = self.criterion(self.net.get_weight_constraint(), torch.tensor(0).float().cuda())
-            loss = mse + weight_constraint
+            weight_constraint = self.criterion(
+                self.net.get_weight_constraint(), torch.tensor(0).float().cuda()
+            )
+            loss = mae + weight_constraint
         else:
             weight_constraint = None
-            loss = mse
+            loss = mae
 
-        return mse, weight_constraint, loss
+        return mae, weight_constraint, loss
 
     def training_step(
-        self, batch: Tuple[torch.Tensor, torch.Tensor], batch_idx: int
+        self, batch: dict[str, torch.Tensor], batch_idx: int
     ) -> torch.Tensor:
         """Perform a single training step on a batch of data from the training set.
 
@@ -107,7 +103,7 @@ class Wang2024LightningModule(LightningModule):
         :param batch_idx: The index of the current batch.
         :return: A tensor of losses between model predictions and targets.
         """
-        mse, weight_constraint, loss = self.model_step(batch)
+        mae, weight_constraint, loss = self.model_step(batch)
 
         if weight_constraint is not None:
             self.train_weight_constraint(weight_constraint)
@@ -121,28 +117,25 @@ class Wang2024LightningModule(LightningModule):
 
         # update and log metrics
         self.train_loss(loss)
-        self.train_rmse(mse.item())
+        self.train_mae(mae.item())
         self.log(
             "train/loss", self.train_loss, on_step=False, on_epoch=True, prog_bar=True
         )
         self.log(
-            "train/rmse", self.train_rmse, on_step=False, on_epoch=True, prog_bar=True
+            "train/mae", self.train_mae, on_step=False, on_epoch=True, prog_bar=True
         )
 
         # return loss or backpropagation will fail
         return loss
 
-
-    def validation_step(
-        self, batch: Tuple[torch.Tensor, torch.Tensor], batch_idx: int
-    ) -> None:
+    def validation_step(self, batch: dict[str, torch.Tensor], batch_idx: int) -> None:
         """Perform a single validation step on a batch of data from the validation set.
 
         :param batch: A batch of data (a tuple) containing the input tensor of images and target
             labels.
         :param batch_idx: The index of the current batch.
         """
-        mse, weight_constraint, loss = self.model_step(batch)
+        mae, weight_constraint, loss = self.model_step(batch)
         if weight_constraint is not None:
             self.val_weight_constraint(weight_constraint)
             self.log(
@@ -155,30 +148,28 @@ class Wang2024LightningModule(LightningModule):
 
         # update and log metrics
         self.val_loss(loss)
-        self.val_rmse(mse.item())
+        self.val_mae(mae.item())
         self.log("val/loss", self.val_loss, on_step=False, on_epoch=True, prog_bar=True)
-        self.log("val/rmse", self.val_rmse, on_step=False, on_epoch=True, prog_bar=True)
+        self.log("val/mae", self.val_mae, on_step=False, on_epoch=True, prog_bar=True)
 
     def on_validation_epoch_end(self) -> None:
         "Lightning hook that is called when a validation epoch ends."
-        acc = self.val_rmse.compute()  # get current val acc
-        self.val_rmse_best(acc)  # update best so far val acc
+        acc = self.val_mae.compute()  # get current val acc
+        self.val_mae_best(acc)  # update best so far val acc
         # log `val_acc_best` as a value through `.compute()` method, instead of as a metric object
         # otherwise metric would be reset by lightning after each epoch
         self.log(
-            "val/rmse_best", self.val_rmse_best.compute(), sync_dist=True, prog_bar=True
+            "val/mae_best", self.val_mae_best.compute(), sync_dist=True, prog_bar=True
         )
 
-    def test_step(
-        self, batch: Tuple[torch.Tensor, torch.Tensor], batch_idx: int
-    ) -> None:
+    def test_step(self, batch: dict[str, torch.Tensor], batch_idx: int) -> None:
         """Perform a single test step on a batch of data from the test set.
 
         :param batch: A batch of data (a tuple) containing the input tensor of images and target
             labels.
         :param batch_idx: The index of the current batch.
         """
-        mse, weight_constraint, loss = self.model_step(batch)
+        mae, weight_constraint, loss = self.model_step(batch)
         if weight_constraint is not None:
             self.test_weight_constraint(weight_constraint)
             self.log(
@@ -191,13 +182,11 @@ class Wang2024LightningModule(LightningModule):
 
         # update and log metrics
         self.test_loss(loss)
-        self.test_rmse(mse.item())
+        self.test_mae(mae.item())
         self.log(
             "test/loss", self.test_loss, on_step=False, on_epoch=True, prog_bar=True
         )
-        self.log(
-            "test/rmse", self.test_rmse, on_step=False, on_epoch=True, prog_bar=True
-        )
+        self.log("test/mae", self.test_mae, on_step=False, on_epoch=True, prog_bar=True)
 
     def on_test_epoch_end(self) -> None:
         """Lightning hook that is called when a test epoch ends."""

@@ -2,7 +2,7 @@
 
 defaults:
   - override /data: wang2024/jhtdb
-  - override /model: wang2024/rgcnn_oht3
+  - override /model: wang2024/gcnn_oht3
   - override /callbacks: [early_stopping_rmse,model_checkpoint]
   - override /trainer: default
 
@@ -23,8 +23,7 @@ model:
   net:
     in_channels: 9
     out_channels: 3
-    num_filter_banks: 2
-    hidden_dim: 32
+    hidden_dim: 8
     maxpool: True
   # default optimizer params
   # default scheduler params
