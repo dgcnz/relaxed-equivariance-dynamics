@@ -63,10 +63,8 @@ scat: ## cat slurm log with param
 strain:
 	sbatch scripts/slurm/train.sh $(experiment)
 
-strain_multiseed:
-	for seed in $(seeds); do \
-		sbatch scripts/slurm/train.sh $(experiment) seed=$$seed; \
-	done
+strain_10:
+	sbatch scripts/slurm/train_10.sh $(experiment)
 
 strain_multirun:
 	sbatch scripts/slurm/train_multirun.sh $(experiment)
