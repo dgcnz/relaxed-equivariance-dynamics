@@ -17,13 +17,22 @@ class SuperResolutionLightningModule(LightningModule):
         if lossfunc == None:
             self.lossfunc = nn.L1Loss()
         
+    def process_batch(batch):
+        # Processes a batch into x and y
+        # That look like (Batch,Channel,X,Y,Z)
+        # x has shape (Batch,Timestep/Channel,Timestep/Channel), X,Y,Z)
+        # (unknown which is timestep and which is channel, but it shouldn't matter)
+        x = batch['lrs'] 
+        batch,timestep,channel,x_dim, y_dim, z_dim = x.shape
+        x = x.reshape(batch,timestep*channel,x_dim,y_dim,z_dim)
+        y = batch['hr']
 
+        return x,y
     def training_step(self, batch, batch_idx):
         # training_step defines the train loop.
         # it is independent of forward
         
-        x = batch['lrs'] #Three timesteps of 16^3, each on a different channel
-        y = batch['hr']  #One timestep of 64^3, just one channel
+        x,y = self.process_batch(x,y)
         pred = self.net(x)        
         loss = self.lossfunc(pred, y)
         self.train_mae(pred,y)        
@@ -33,8 +42,7 @@ class SuperResolutionLightningModule(LightningModule):
         self.log("train_loss", loss)
         return loss
     def validation_step(self, batch, batch_idx):
-        x = batch['lrs'] #Three timesteps of 16^3, each on a different channel
-        y = batch['hr']  #One timestep of 64^3, just one channel
+        x,y = self.process_batch(x,y)
         pred = self.net(x)        
         loss = self.lossfunc(pred, y)
         self.val_mae(pred,y)        
@@ -46,8 +54,7 @@ class SuperResolutionLightningModule(LightningModule):
     def test_step(self, batch, batch_idx):
         
         
-        x = batch['lrs'] #Three timesteps of 16^3, each on a different channel
-        y = batch['hr']  #One timestep of 64^3, just one channel
+        x,y = self.process_batch(x,y)
         pred = self.net(x)        
         loss = self.lossfunc(pred, y)
         self.test_mae(pred,y)        
