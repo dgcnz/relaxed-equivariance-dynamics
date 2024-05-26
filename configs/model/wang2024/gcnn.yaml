@@ -1,0 +1,27 @@
+_target_: src.models.wang2024_module.Wang2024LightningModule
+
+# DO NOT CHANGE THIS FILE, OVERWRITE model.net IN THE EXPERIMENT
+optimizer:
+  _target_: torch.optim.Adam
+  _partial_: true
+  lr: 0.001
+  weight_decay: 0.0004
+  betas: [0.9, 0.999]
+
+# DO NOT CHANGE THIS FILE, OVERWRITE model.net IN THE EXPERIMENT
+scheduler:
+  _target_: torch.optim.lr_scheduler.StepLR
+  _partial_: true
+  step_size: 1
+  gamma: 0.9
+
+
+# DO NOT CHANGE THIS FILE, OVERWRITE model.net IN THE EXPERIMENT
+net:
+  _target_: src.models.components.wang2024.gcnn_oh_t3.GCNNOhT3
+  in_channels: -1
+  out_channels: -1
+  kernel_size: 3
+  hidden_dim: -1
+
+compile: False

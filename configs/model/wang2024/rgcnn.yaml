@@ -18,12 +18,11 @@ scheduler:
 
 # DO NOT CHANGE THIS FILE, OVERWRITE model.net IN THE EXPERIMENT
 net:
-  _target_: src.models.components.wang2024.oh_t3.GCNNOhT3
+  _target_: src.models.components.wang2024.rgcnn_oh_t3.RGCNNOhT3
   in_channels: -1
   out_channels: -1
+  num_filter_banks: -1
   kernel_size: 3
   hidden_dim: -1
-  avgpool: False
-  maxpool: False
 
 compile: False
