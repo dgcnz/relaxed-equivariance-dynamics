@@ -11,3 +11,4 @@ model_checkpoint:
   mode: "min" # "max" means higher metric value is better, can be also "min"
   auto_insert_metric_name: True # when True, the checkpoints filenames will contain the metric name
   save_weights_only: False # if True, then only the model’s weights will be saved
+  every_n_epochs: 1 # number of epochs between checkpoints
