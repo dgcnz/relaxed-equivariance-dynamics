@@ -101,3 +101,10 @@ test_wang2024:
 
 printid:
 	cat scripts/slurm_logs/slurm_output_$(id).out | grep "View run * at"
+
+get_local_checkpoints:
+	@echo "Finding checkpoints for wandb run id: $(id)"
+	@RUNPATH=$$(find logs/train/runs -type d -name ${id}); \
+    echo "Found run path: $$RUNPATH"; \
+	echo "Checkpoints:"; \
+	ls $$RUNPATH/checkpoints
