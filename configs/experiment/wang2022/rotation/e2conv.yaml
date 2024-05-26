@@ -3,8 +3,8 @@
 defaults:
   - override /data: wang2022/rotation
   - override /model: wang2022/e2conv
-  - override /callbacks: [early_stopping_rmse, model_checkpoint]
-  - override /trainer: default
+  - override /callbacks: [early_stopping_rmse, default_model_checkpoint]
+  - override /trainer: rotation
 
 
 tags: ["wang2022", "rotation", "table1"]
@@ -15,7 +15,7 @@ model:
   net:
     in_frames: 10
     out_frames: 1
-    hidden_dim: 86 # 544k params
+    hidden_dim: 278 # 5'604'480 params
     num_layers: 5 # layers fixed accross models
   
   autoregressive_train: True
@@ -26,14 +26,6 @@ model:
   scheduler:
     gamma: 0.95
 
-trainer:
-  max_epochs: 150
-  accelerator: auto
-  devices: auto
-  min_epochs: 50
-
-data:
-  batch_size: 8
 
 logger:
   wandb:

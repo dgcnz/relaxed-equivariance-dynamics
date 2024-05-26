@@ -6,8 +6,8 @@
 defaults:
   - override /data: wang2022/rotation
   - override /model: wang2022/convnet
-  - override /callbacks: [early_stopping_rmse, model_checkpoint]
-  - override /trainer: default
+  - override /callbacks: [early_stopping_rmse, default_model_checkpoint]
+  - override /trainer: rotation
 
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
@@ -20,7 +20,7 @@ model:
   net:
     in_channels: 20
     out_channels: 2
-    hidden_dim: 138 # 540k
+    hidden_dim: 454 # 5'660'474
     num_layers: 5 # layers fixed accross models
 
   autoregressive_train: True
@@ -39,12 +39,3 @@ logger:
     entity: "uva-dl2"
   aim:
     experiment: "wang2022/rotation"
-
-trainer:
-  max_epochs: 150
-  accelerator: auto
-  devices: auto
-  min_epochs: 50
-
-data:
-  batch_size: 8
