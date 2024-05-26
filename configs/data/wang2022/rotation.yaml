@@ -7,4 +7,4 @@ output_length: 6
 batch_size: 32 # Needs to be divisible by the number of devices (e.g., if in a distributed setup)
 num_workers: 4
 pin_memory: False
-future: False
+future: True
