@@ -1,0 +1,39 @@
+# @package _global_
+
+defaults:
+  - override /data: wang2024/jhtdb
+  - override /model: wang2024/rgcnn
+  - override /callbacks: [early_stopping_mae,model_checkpoint_2024]
+  - override /trainer: default
+
+
+tags: ["wang2024", "superresolution", "large_50"]
+
+seed: 0
+trainer:
+  max_epochs: 80
+  accelerator: auto
+  devices: auto
+  min_epochs: 40
+
+data:
+  batch_size: 4
+
+model:
+  net:
+    in_channels: 9
+    out_channels: 3
+    num_filter_banks: 3
+    # hidden_dim: 24 # ~242k params
+    hidden_dim: 14 # ~130k params
+  # default optimizer params
+  # default scheduler params
+
+logger:
+  wandb:
+    tags: ${tags}
+    group: "superresolution"
+    project: "wang2024"
+    entity: "uva-dl2"
+  aim:
+    experiment: "wang2024/superresolution"
