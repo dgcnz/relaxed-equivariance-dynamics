@@ -23,7 +23,8 @@ model:
   net:
     in_channels: 9
     out_channels: 3
-    hidden_dim: 32 # ~214k params
+    # hidden_dim: 32 # ~214k params
+    hidden_dim: 24 # ~123k params
   # default optimizer params
   # default scheduler params
 

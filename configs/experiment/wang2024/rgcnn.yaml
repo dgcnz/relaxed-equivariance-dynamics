@@ -24,7 +24,8 @@ model:
     in_channels: 9
     out_channels: 3
     num_filter_banks: 2
-    hidden_dim: 24 # ~242k params
+    # hidden_dim: 24 # ~242k params
+    hidden_dim: 17 # ~126k params
   # default optimizer params
   # default scheduler params
 
