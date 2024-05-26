@@ -11,5 +11,5 @@
 cd $HOME/development/dl2
 source .venv/bin/activate
 # run script from above
-srun python -m src.train experiment=$1 +logger.wandb.resume=must logger.wandb.id=$2 ckpt_path=$3
+srun python -m src.train experiment=$1 +logger.wandb.resume=must logger.wandb.id=$2 ckpt_path=$3 seed=$4
 deactivate
