@@ -26,11 +26,9 @@ def get_sharpness(model, datamodule, device):
                 
                 sharpness_model = 0
                 num_batches=0
-                for (x ,y) in datamodule.train_dataloader():
-
+                for batch in datamodule.train_dataloader():
                     num_batches += 1
-
-                    batch = (x.to(device), y.to(device))
+                    batch = model.transfer_batch_to_device(batch, device, 0)
 
                     # Calculate loss at w
                     _, _, loss_w, *_ = model.model_step(batch) #always the og model
