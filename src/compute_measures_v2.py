@@ -58,7 +58,8 @@ def main(cfg: DictConfig) -> None:
         L.seed_everything(cfg.seed, workers=True)
     # !python -m src.compute_measures ++weight_decay=1e-5 percentage_data=20 'ckpt_path_dict={path_dict_best}' spectrum=True sharpness=True
     entity, project, artifact_name = cfg.ckpt_path.split("/")
-    run_id = artifact_name.split(":")[0].split("-")[1]
+    run_id, artifact_version = artifact_name.split(":")
+    run_id = run_id.split("-")[1]
     with wandb.init(entity=entity, project=project) as run:
         artifact_dir = download_artifact(run, artifact_name, project, entity)
         config = download_config_file(entity, project, run_id)
@@ -75,6 +76,8 @@ def main(cfg: DictConfig) -> None:
             "datamodule_name": config.data._target_,
             "num_filter_banks": config.model.net.get("num_filter_banks", None),
             "source_run_id": run_id,
+            "ckpt_path": cfg.ckpt_path,
+            "artifact_version": artifact_version
         })
         log.info("obtaining spectrum for checkpoint", cfg.ckpt_path)
         device = "cuda" if torch.cuda.is_available() else "cpu"
