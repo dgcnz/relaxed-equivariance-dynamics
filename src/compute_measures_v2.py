@@ -74,7 +74,7 @@ def main(cfg: DictConfig) -> None:
             "model_name": config.model.net._target_,
             "datamodule_name": config.data._target_,
             "num_filter_banks": config.model.net.get("num_filter_banks", None),
-            "test/mae": run.summary["test/mae"],
+            "source_run_id": run_id,
         })
         log.info("obtaining spectrum for checkpoint", cfg.ckpt_path)
         device = "cuda" if torch.cuda.is_available() else "cpu"
