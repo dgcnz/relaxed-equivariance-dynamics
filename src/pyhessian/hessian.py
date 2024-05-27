@@ -73,7 +73,7 @@ class hessian():
             ####
             # THIS IS THE PART I MODIFIED!!!!!!!!
             ####
-            _, _, loss, _ = self.model.model_step((self.inputs, self.targets))
+            _, _, loss, *_ = self.model.model_step((self.inputs, self.targets))
 
             loss.backward(create_graph=True)
 

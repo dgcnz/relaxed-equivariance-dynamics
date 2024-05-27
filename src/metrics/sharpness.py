@@ -33,9 +33,9 @@ def get_sharpness(model, datamodule, device):
                     batch = (x.to(device), y.to(device))
 
                     # Calculate loss at w
-                    _, _, loss_w, _ = model.model_step(batch) #always the og model
+                    _, _, loss_w, *_ = model.model_step(batch) #always the og model
                     
-                    _,_, loss_perturbed, _ = nn_model.model_step(batch)
+                    _,_, loss_perturbed, *_ = nn_model.model_step(batch)
 
                     #print('w', loss_w)
                     #print('perturbed', loss_perturbed)
