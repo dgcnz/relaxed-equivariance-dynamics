@@ -46,8 +46,6 @@ def get_sharpness(model, datamodule, device):
                 sharpness += sharpness_model
       
     sharpness /= len(T)*5
-
-                
     return sharpness.cpu().detach().numpy()
 
 def perturb_model(model, t):

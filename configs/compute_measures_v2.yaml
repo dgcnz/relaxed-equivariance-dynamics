@@ -1,0 +1,37 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - data: mnist # choose datamodule with `test_dataloader()` for evaluation
+  - model: mnist
+  - logger: null
+  - paths: default
+  - extras: default
+  - hydra: default
+
+task_name: "eval"
+
+tags: ["dev"]
+
+storage_location: 'logs/measures'
+
+# which metrics do you want to compute 
+spectrum: False
+sharpness: False
+lie_derivative: False
+equivariance_error: False
+
+# Hessian parameters
+percentage_data: 20
+top_k: 5
+tol: 1e-3
+max_iter: 1000
+cuda: True
+verbose: True
+
+# passing checkpoint path dict is necessary for computation 
+ckpt_path: null # entity/project/model-runid:v0
+
+
+
+

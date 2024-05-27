@@ -14,6 +14,8 @@ def get_spectrum(cfg: DictConfig, config, datamodule, model) -> List:
     # get criterion (might have to make this selectable in the future)
     loss_fn = torch.nn.CrossEntropyLoss()
 
+    assert 0.0 <= cfg.percentage_data <= 1.0, "Percentage data must be between 0 and 1"
+    assert config.model.optimizer.weight_decay is not None, "Weight decay must be specified"
     spectrum = get_hessian_max_spectrum(
         model=model,
         criterion=loss_fn,
