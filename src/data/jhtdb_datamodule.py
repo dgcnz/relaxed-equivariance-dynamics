@@ -13,6 +13,7 @@ class JHTDBDataModule(LightningDataModule):
         pin_memory: bool = False,
         dataset_name: str = "dl2-g32/jhtdb",
         dataset_config_name: str = "large_50",
+        root_dir: str = "data/",
     ) -> None:
         """Initialize a `MNISTDataModule`.
 
