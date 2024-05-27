@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import copy
+from tqdm import tqdm
 
 def get_sharpness(model, datamodule, device):
     '''
@@ -26,7 +27,7 @@ def get_sharpness(model, datamodule, device):
                 
                 sharpness_model = 0
                 num_batches=0
-                for batch in datamodule.train_dataloader():
+                for batch in tqdm(datamodule.train_dataloader()):
                     num_batches += 1
                     batch = model.transfer_batch_to_device(batch, device, 0)
 
