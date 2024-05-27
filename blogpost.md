@@ -79,7 +79,8 @@ The reason that with this construction, equivariance w.r.t. a infinite group is 
 
 The desirability of equivariance in a network depends on the amount of equivariance possessed by the data of interest. To this end, relaxed equivariant networks are built on top of G-CNNs using a modified (relaxed) kernel consisting of a linear combination of standard G-CNN kernels.
 
-$$ (\psi \hat{*}_{G} f)(g) = \sum_{h \in G}\psi(g,h)f(h) = \sum_{h \in G}\sum_{l=1}^L w_l(h) \psi_l(g^{-1}h)f(h) $$
+<!-- $$ (\psi \hat{*}_{G} f)(g) = \sum_{h \in G}\psi(g,h)f(h) = \sum_{h \in G}\sum_{l=1}^L w_l(h) \psi_l(g^{-1}h)f(h) $$ -->
+$$ (\psi *_{G} f)(g) = \sum_{h \in G}\psi(g,h)f(h) = \sum_{h \in G}\sum_{l=1}^L w_l(h) \psi_l(g^{-1}h)f(h) $$
 
 $G$-equivariance of the group convolution arises from kernel $\psi$'s dependence on the composite variable $g^{-1}h$, rather than on both variables $g$ and $h$ separately. This property is broken in relaxed kernels, which leads to a loss of equivariance.
 
@@ -376,11 +377,11 @@ Using these models means we have two ways of imposing equivariance. Strongly, by
 
 ### Training Dynamics
 #### Smoke Plume with full Equivariance
-For this experiment we use the [Smoke Plume dataset](#Smoke-Plume-with-Varying-Equivariance) introduced in the section above using its fully equivariant setting. We analyze the model checkpoints corresponding to the third and best epochs during training. Where best means highest validation RMSE. As we will see, the regularization using alpha has minimal impact. Thererfore, we use the Rsteer model with $\alpha$=0 and the E2CNN model introduced above. Both models are trained using Adam with weigth decay 0.0004 and learning rate 0.001.
+For this experiment we use the [Smoke Plume dataset](#Smoke-Plume-with-Varying-Equivariance) introduced in the section above using its fully equivariant setting. We analyze the model checkpoints corresponding to the third and best epochs during training. Where best means highest validation RMSE. As we will see, the regularization using alpha has minimal impact. Therefore, we use the Rsteer model with $\alpha$=0 and the E2CNN model introduced above. Both models are trained using Adam with weight decay 0.0004 and learning rate 0.001.
 
 
 #### Super Resolution
-We need to descibe which epochs were analysed etc #TODO
+We the third epoch using sharpness
 
 
 
@@ -403,7 +404,7 @@ We need to descibe which epochs were analysed etc #TODO
   </tr>
 </table>
 
-Figure 1 shows the Equivariance Error of different model specifications. The Equivariant Net is the E2CNN model, it is posititioned to the right of the x-axis because we can think of a fully equivariant net as a relaxed equivariant net where alpha is set to infinity. Note that this is purely conceptual, setting alpha to a very high value would not have this effect in practice. 
+Figure 1 shows the Equivariance Error of different model specifications. The Equivariant Net is the E2CNN model, it is positioned  to the right of the x-axis because we can think of a fully equivariant net as a relaxed equivariant net where alpha is set to infinity. Note that this is purely conceptual, setting alpha to a very high value would not have this effect in practice. 
 
 For Rsteer we observe that the Data Equivariance has a large effect on how equivariant the model learns to be. This shows the relaxed architecture can adapt well to the equivariance of the data, which matches the findings in [[5]](#References). However we see that the hyperparameter $\alpha$ has barely any effect on the Equivariance Error of the model, as alpha is increased the amount of Equivariance Error should decrease but it does not. We thus find that regularization is not very effective for imposing equivariance on a network. For E2CNN, the Equivariant Net, we see that the Equivariance Error is near zero for all levels of data equivariance. This is expected because the equivariance to C-4 rotation is build into the model, thus the Equivariance Error can only come from artifacts created when rotating the input or the output feature maps. 
 
@@ -437,7 +438,7 @@ First we examine the training, validation and test RMSE for the E2CNN and Rsteer
 </div>
 
 
-Figure 3 and 4 show the train and validation RMSE curves respectively. We see that on the training data Rsteer and E2CNN perform similarly, however on the validation set the curve for Rsteer lies below the the one for E2CNN. Therefore, the relaxed model Rsteer generalizes better to the validation set. Figure 5 shows the test set RMSE for the two models averaged over five seeds. 
+Figure 3 and 4 show the train and validation RMSE curves respectively. We see that on the training data Rsteer and E2CNN perform similarly, however on the validation set the curve for Rsteer lies below the one for E2CNN. Therefore, the relaxed model Rsteer generalizes better to the validation set. Figure 5 shows the test set RMSE for the two models averaged over five seeds. 
 
 We find that the relaxed equivariant model performs better, even though the data is fully C-4-equivariant, reaffirming the results obtained on the Isotropic Flow dataset.
 
@@ -458,7 +459,7 @@ To obtain insight into why the relaxed equivariant models outperform the fully e
 
 Figures 5 and 6 show hessian spectra for the same early and best checkpoints of E2CNN and Rsteer as used for the previous analysis. With regards to flatness of the loss landscape these plots allow us to make a similar conclusion. We see that for both checkpoints E2CNN has much larger eigenvalues than rsteer, this can lead to training instability, sharp minima and consequently poor generalization for E2CNN.
 
-To evaluate the convexity of the loss landscape we need to look at the negative eigenvalues in the Hessian Spectra. We see that for both models, neither spectra shows any negative eigenvalues. This suggests that both the fully equivariant E2CNN and the relaxed Rsteer models exibit "mostly convex" loss landscapes. Thus convexity of the loss landscapes does not seem to play a large role in the performance  
+To evaluate the convexity of the loss landscape we need to look at the negative eigenvalues in the Hessian Spectra. We see that for both models, neither spectra shows any negative eigenvalues. This suggests that both the fully equivariant E2CNN and the relaxed Rsteer models exhibit "mostly convex" loss landscapes. Thus convexity of the loss landscapes does not seem to play a large role in the performance  
 
 
 <div style="text-align: center;">
@@ -470,7 +471,7 @@ Next we examine checkpoints for the two models trained on the Smoke Plume Datase
 
 ### Super Resolution
 
-Similarly to the previous subsection, we'll analyze the training dynamics of the superresolution models on the isotropic JHTDB dataset as a potential explanation for the superiority of the relaxed equivariant model ofer the fully equivariant one.
+Similarly to the previous subsection, we'll analyze the training dynamics of the superresolution models on the isotropic JHTDB dataset as a potential explanation for the superiority of the relaxed equivariant model over the fully equivariant one.
 
 
 First we examine the training and validation Mean Average Error (MAE) curves for the Relaxed Equivariant (RGCNN), Fully Equivariant (GCNN) and non-equivariant (CNN) models (run on 6 different seeds).
@@ -514,7 +515,7 @@ Additionally, we demonstrated that the amount of equivariance in the data predom
 - Nesta: Reproduction of [[5]](#References), including porting models to lighting and creating configuration. Creating experimentation scrip using Wandb API. Implementing Equivariance Error and parts of Hessian Spectra and Sharpness metric. Writing the analysis in the results section for the experiments using the Smoke Plume Dataset.
 - Sebastian: Researching Lie derivatives, Researching Hessians, Researching Sharpness
 - Jiapeng: Researching and implementing Lie derivatives, Researching Hessians, Researching Sharpness
-- Thijs: Adapting code from gconv, Researching the octahedral group, Implementing Super-Resolution models, Implementing of 3D group upsampling, Reproducing code from [[5]](#References), Researching and implementing upconv for seperable group convolutions.
+- Thijs: Adapting code from gconv, Researching the octahedral group, Implementing Super-Resolution models, Implementing of 3D group upsampling, Reproducing code from [[5]](#References), Researching and implementing upconv for separable group convolutions.
 - Diego: Integration with Hydra, Integration with W&B, Adapting and researching the gconv library, Implementation of Hessian Spectra, Reproduction code for [[5]](#References), Processing and implementation of the JHTDB dataset, Implementation of octahedral (relaxed) separable/lifting/regular group convolutions, SLURM setup.
 
 ## References
