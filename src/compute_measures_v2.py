@@ -63,7 +63,9 @@ def main(cfg: DictConfig) -> None:
         artifact_dir = download_artifact(run, artifact_name, project, entity)
         config = download_config_file(entity, project, run_id)
         if cfg.batch_size:
-            print(f"Overriding batch size {config.data.batch_size} with {cfg.batch_size}")
+            print(
+                f"Overriding batch size {config.data.batch_size} with {cfg.batch_size}"
+            )
             config.data.batch_size = cfg.batch_size
         model, datamodule = get_model_and_data_modules_from_config(config)
         model = model.__class__.load_from_checkpoint(Path(artifact_dir) / "model.ckpt")
@@ -84,7 +86,7 @@ def main(cfg: DictConfig) -> None:
         if cfg.get("sharpness"):
             metric_dict["sharpness"] = convert_to_serializable(
                 get_sharpness(model, datamodule, device)
-            ).item()
+            )
             run.summary["sharpness"] = metric_dict["sharpness"]
         if cfg.get("spectrum"):
             metric_dict["spectrum"] = convert_to_serializable(
