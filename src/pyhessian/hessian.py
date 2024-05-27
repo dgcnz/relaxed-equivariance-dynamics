@@ -68,6 +68,7 @@ class hessian():
             ####
             # THIS IS THE PART I MODIFIED!!!!!!!!
             ####
+            data = self.model.transfer_batch_to_device(data, self.device, 0)
             _, _, loss, *_ = self.model.model_step(data)
 
             loss.backward(create_graph=True)
