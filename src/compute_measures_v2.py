@@ -69,6 +69,7 @@ def main(cfg: DictConfig) -> None:
             config.data.batch_size = cfg.batch_size
         model, datamodule = get_model_and_data_modules_from_config(config)
         model = model.__class__.load_from_checkpoint(Path(artifact_dir) / "model.ckpt")
+        wandb.config.update({"source_config": config})
         log.info("obtaining spectrum for checkpoint", cfg.ckpt_path)
         device = "cuda" if torch.cuda.is_available() else "cpu"
         model.to(device)
