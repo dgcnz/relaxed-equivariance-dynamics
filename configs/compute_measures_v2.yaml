@@ -28,6 +28,7 @@ tol: 1e-3
 max_iter: 1000
 cuda: True
 verbose: True
+batch_size: null
 
 # passing checkpoint path dict is necessary for computation 
 ckpt_path: null # entity/project/model-runid:v0
