@@ -70,6 +70,12 @@ def main(cfg: DictConfig) -> None:
         model, datamodule = get_model_and_data_modules_from_config(config)
         model = model.__class__.load_from_checkpoint(Path(artifact_dir) / "model.ckpt")
         wandb.config.update({"source_config": config})
+        wandb.config.update({
+            "model_name": config.model.net._target_,
+            "datamodule_name": config.data._target_,
+            "num_filter_banks": config.model.net.get("num_filter_banks", None),
+            "test/mae": run.summary["test/mae"],
+        })
         log.info("obtaining spectrum for checkpoint", cfg.ckpt_path)
         device = "cuda" if torch.cuda.is_available() else "cpu"
         model.to(device)
