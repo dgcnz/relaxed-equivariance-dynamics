@@ -64,16 +64,11 @@ class hessian():
 
         # pre-processing for single batch case to simplify the computation.
         if not self.full_dataset:
-            self.inputs, self.targets = self.data
-            if self.device == 'cuda':
-                self.inputs, self.targets = self.inputs.cuda(
-                ), self.targets.cuda()
-
             # if we only compute the Hessian information for a single batch data, we can re-use the gradients.
             ####
             # THIS IS THE PART I MODIFIED!!!!!!!!
             ####
-            _, _, loss, *_ = self.model.model_step((self.inputs, self.targets))
+            _, _, loss, *_ = self.model.model_step(data)
 
             loss.backward(create_graph=True)
 
