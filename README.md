@@ -1,17 +1,6 @@
 # DL2
 Our blogpost can be found [here](blogpost.md).
 
-## Package contributions
-
-To maximize convenience, reproducibility and encourage usage of our modules (models, datasets, tools), we've package some of them separately.
-
-
-- [gconv: (Relaxed) Regular Group Convolutions package](https://github.com/dgcnz/gconv)
-- [neuralyze: Equivariance analysis package](https://github.com/dgcnz/neuralyze)
-- [JHTDB HuggingFace Dataset](https://huggingface.co/datasets/dl2-g32/jhtdb)
-
-
-
 ## Setup 
 
 Make virtual environment and install dependencies:
@@ -22,6 +11,14 @@ make setup_env
 Source your virtual environment:
 ```sh
 source .venv/bin/activate
+```
+
+## Local Usage
+
+Reproduce the training results from a given experiment:
+
+```sh
+python -m src.train experiment=wang2024/rgcnn_triple
 ```
 
 ## SLURM Usage
@@ -50,3 +47,12 @@ make slurmcat id=6246500
 ```
 
 The logs are stored at `scripts/slurm_logs/slurm_output_{id}.out`.
+
+## Package contributions
+
+To maximize convenience, reproducibility and encourage usage of our modules (models, datasets, tools), we've package some of them separately.
+
+
+- [gconv: (Relaxed) Regular Group Convolutions package](https://github.com/dgcnz/gconv)
+- [neuralyze: Equivariance analysis package](https://github.com/dgcnz/neuralyze)
+- [JHTDB HuggingFace Dataset](https://huggingface.co/datasets/dl2-g32/jhtdb)
