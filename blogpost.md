@@ -54,7 +54,7 @@ To build such a network, it is sufficient that each of its layers is equivariant
 Consider any 2D image as an input signal $f^0: \mathbb{R}^2 \rightarrow \mathbb{R}^c$, where $c$ is the number of channels. When passing it through a G-CNN, from the outset, it undergoes the lifting convolution with kernel $k : \mathbb{R}^2 \rightarrow \mathbb{R}^{n \times c}$ on $x \in \mathbb{R}^2$ and $g \in G$:
 
 $$
-(k *_{lifting} f^0)(x,g) = \int_{y \in \mathbb{R}^2}k(g^{-1}(y-x))f^0(y)
+(k *_\text{lifting} f^0)(x,g) = \int_{y \in \mathbb{R}^2}k(g^{-1}(y-x))f^0(y)
 $$
 
 Suppose $f^1: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^n$ is the output signal thereof, which is fed to the next layer.
@@ -64,7 +64,7 @@ Suppose $f^1: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^n$ is the output sign
 Now, $f^1$ undergoes $G$-equivariant convolution with a kernel $\psi: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^{m \times n}$ on $x \in \mathbb{R}^2$ and $g \in G$:
 
 $$
-    (\psi *_{G} f^1)(x, g) = \int_{h \in G}\int_{y \in \mathbb{R}^2}\psi(g^{-1}(y-x), g^{-1}h)f^1(y, h)
+(\psi *_{G} f^1)(x, g) = \int_{h \in G}\int_{y \in \mathbb{R}^2}\psi(g^{-1}(y-x), g^{-1}h)f^1(y, h)
 $$
 
 This gives the output signal $f^2: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^m$. This way of convolving is repeated for all subsequent layers until the final aggregation layer, e.g. linear layer, if there is one.
