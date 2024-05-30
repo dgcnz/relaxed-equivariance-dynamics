@@ -59,9 +59,11 @@ $$
 Suppose $f^1: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^n$ is the output signal thereof, which is fed to the next layer.
 #### $G$-equivariant convolution
 Now, $f^1$ undergoes $G$-equivariant convolution with a kernel $\psi: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^{m \times n}$ on $x \in \mathbb{R}^2$ and $g \in G$:
+
 $$
 (\psi *_{G} f^1)(x, g) = \int_{h \in G}\int_{x \in \mathbb{R}^2}\psi(g^{-1}(x-x), g^{-1}h)f^1(x, h)
 $$
+
 This gives the output signal $f^2: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^m$. This way of convolving is repeated for all subsequent layers until the final aggregation layer, e.g. linear layer, if there is one.
 <!--
 LIFTING CONVOLUTION
