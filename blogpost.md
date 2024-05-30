@@ -53,9 +53,7 @@ To build such a network, it is sufficient that each of its layers is equivariant
 
 Consider any 2D image as an input signal $f^0: \mathbb{R}^2 \rightarrow \mathbb{R}^c$, where $c$ is the number of channels. When passing it through a G-CNN, from the outset, it undergoes the lifting convolution with kernel $k : \mathbb{R}^2 \rightarrow \mathbb{R}^{n \times c}$ on $x \in \mathbb{R}^2$ and $g \in G$:
 
-$$
-    (k *_{lifting} f^0)(x,g) = \int_{y \in \mathbb{R}^2}k(g^{-1}(y-x))f^0(y)
-$$
+$$(k *_{lifting} f^0)(x,g) = \int_{y \in \mathbb{R}^2}k(g^{-1}(y-x))f^0(y)$$
 
 Suppose $f^1: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^n$ is the output signal thereof, which is fed to the next layer.
 
@@ -124,7 +122,7 @@ $$
 
 $G$-equivariance of the group convolution arises from kernel $\psi$'s dependence on the composite variable $g^{-1}h$, rather than on both variables $g$ and $h$ separately. This property is broken in relaxed kernels, leading to a loss of equivariance.
 
-The equivariance error increases with the number of kernels $L$ and the variability of $w_l(h)$ over $h \in G$, allowing us to control the amount of equivariance imposed on the model by adding the term: 
+The equivariance error increases with the number of kernels $L$ and the variability of $w_l(h)$ over $h \in G$, allowing us to control the amount of equivariance imposed on the model by adding the term:
 
 $$ 
 \alpha \sum_{l=1}^L\sum_{g,h \in G}|w_l(g)-w_l(h)|
