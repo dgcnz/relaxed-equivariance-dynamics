@@ -116,12 +116,12 @@ This implies that convolution of a function $f$ with a rotated steerable kernel 
 The desirability of equivariance in a network depends on the amount of equivariance possessed by the data of interest. To this end, relaxed equivariant networks are built on top of G-CNNs using a modified (relaxed) kernel consisting of a linear combination of standard G-CNN kernels.
 
 $$
-(\psi \hat{*}_{G} f)(g) = \sum_{h \in G}\psi(g,h)f(h) = \sum_{h \in G}\sum_{l=1}^L w_l(h) \psi_l(g^{-1}h)f(h) 
+(\psi \tilde{*}_{G} f)(g) = \sum_{h \in G}\psi(g,h)f(h) = \sum_{h \in G}\sum_{l=1}^L w_l(h) \psi_l(g^{-1}h)f(h) 
 $$
 
 $G$-equivariance of the group convolution arises from kernel $\psi$'s dependence on the composite variable $g^{-1}h$, rather than on both variables $g$ and $h$ separately. This property is broken in relaxed kernels, leading to a loss of equivariance.
 
-The equivariance error increases with the number of kernels $L$ and the variability of $w_l(h)$ over $h \in G$, allowing us to control the amount of equivariance imposed on the model by adding the term: 
+The equivariance error increases with the number of kernels $L$ and the variability of $w_l(h)$ over $h \in G$, allowing us to control the amount of equivariance imposed on the model by adding the term:
 
 $$ \alpha \sum_{l=1}^L\sum_{g,h \in G}|w_l(g)-w_l(h)|
 $$
@@ -132,7 +132,7 @@ Therefore, using relaxed group convolutions allows the network to relax strict s
 
 Relaxed steerable G-CNNs are defined using a similar idea, again we let the weights depend on the variable of integration:
 $$
-(\psi \hat{*}_{\mathbb{Z}^2} f) (x) = \sum_{y \in \mathbb{Z}^2} \sum_{l=1}^L (w_l(y) \odot \psi_l(y))f(x+y)
+(\psi \tilde{*}_{\mathbb{Z}^2} f) (x) = \sum_{y \in \mathbb{Z}^2} \sum_{l=1}^L (w_l(y) \odot \psi_l(y))f(x+y)
 $$
 which leads to a loss of equivariance. Not unlike the previous case, the closer the weights are to constant functions the more equivariant the model is, and thus we can impose equivariance by adding the following term to the loss function:
 
