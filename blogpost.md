@@ -135,9 +135,11 @@ to the loss function. A higher value of the hyperparameter $\alpha$ enforces a h
 Therefore, using relaxed group convolutions allows the network to relax strict symmetry constraints, offering greater flexibility at the cost of reduced equivariance.
 
 Relaxed steerable G-CNNs are defined using a similar idea, again we let the weights depend on the variable of integration:
+
 $$
 (\psi *^R_{\mathbb{Z}^2} f) (x) = \sum_{y \in \mathbb{Z}^2} \sum_{l=1}^L (w_l(y) ⊙ \psi_l(y))f(x+y)
 $$
+
 which leads to a loss of equivariance. Not unlike the previous case, the closer the weights are to constant functions the more equivariant the model is, and thus we can impose equivariance by adding the following term to the loss function:
 
 $$
