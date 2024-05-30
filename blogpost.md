@@ -53,9 +53,7 @@ To build such a network, it is sufficient that each of its layers is equivariant
 
 Consider any 2D image as an input signal $f^0: \mathbb{R}^2 \rightarrow \mathbb{R}^c$, where $c$ is the number of channels. When passing it through a G-CNN, from the outset, it undergoes the lifting convolution with kernel $k : \mathbb{R}^2 \rightarrow \mathbb{R}^{n \times c}$ on $x \in \mathbb{R}^2$ and $g \in G$:
 
-$$
-(k *_\text{lifting} f^0)(x,g) = \int_{y \in \mathbb{R}^2}k(g^{-1}(y-x))f^0(y)
-$$
+$$(k*\_{lifting} f^0)(x,g) = \int_{y \in \mathbb{R}^2}k(g^{-1}(y-x))f^0(y)$$
 
 Suppose $f^1: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^n$ is the output signal thereof, which is fed to the next layer.
 
@@ -63,10 +61,9 @@ Suppose $f^1: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^n$ is the output sign
 
 Now, $f^1$ undergoes $G$-equivariant convolution with a kernel $\psi: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^{m \times n}$ on $x \in \mathbb{R}^2$ and $g \in G$:
 
-$$
-(\psi *_{G} f^1)(x, g) = \int_{h \in G}\int_{y \in \mathbb{R}^2}\psi(g^{-1}(y-x), g^{-1}h)f^1(y, h)
-$$
+$$(\psi *\_{G} f^1)(x, g) = \int_{h \in G}\int_{y \in \mathbb{R}^2}\psi(g^{-1}(y-x), g^{-1}h)f^1(y, h)$$
 
+For [Relaxed Equivariant Networks](#Relaxed-Equivariant-Networks), we define $H := \mathbb{R}^2 \rtimes G$, which means $$(\psi *\_{G} f^1)(h') := (\psi *\_{G} f^1)(x, g)$$ for $h' = (x, g) \in H$.
 This gives the output signal $f^2: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^m$. This way of convolving is repeated for all subsequent layers until the final aggregation layer, e.g. linear layer, if there is one.
 
 Note that for the group convolution to be practically feasible, $G$ has to be **finite** and relatively small in size (roughly up to a hundred elements) and $\mathbb{R}^2$ becomes $\mathbb{Z}^2$.
@@ -86,7 +83,7 @@ To secure kernel $\psi$ has the mentioned property, we precompute a set of non-l
 Therefore, the convolution is of the form:
 
 $$
-(\psi*_{\mathbb{Z}^2}f) (x) = \sum_{y \in \mathbb{Z}^2} \sum_{l=1}^L (w_l ⊙ \psi_l(y))f(x+y)
+(\psi*\_{\mathbb{Z}^2}f) (x) = \sum_{y \in \mathbb{Z}^2} \sum_{l=1}^L (w_l ⊙ \psi_l(y))f(x+y)
 $$
 
 Whenever both $\rho_{in}$ and $\rho_{out}$ can be decomposed into smaller building blocks called **irreducible representations**, equivariance w.r.t. infinite group $G$ is achieved (see Appendix A.1 of [[15]](#References)).
@@ -116,7 +113,7 @@ This implies that convolution of a function $f$ with a rotated steerable kernel 
 
 ### Relaxed Equivariant Networks
 
-The desirability of equivariance in a network depends on the amount of equivariance possessed by the data of interest. To this end, relaxed equivariant networks are built on top of G-CNNs using a modified (relaxed) kernel consisting of a linear combination of standard G-CNN kernels.
+The desirability of equivariance in a network depends on the amount of equivariance possessed by the data of interest. To this end, relaxed equivariant networks are built on top of G-CNNs using a modified (relaxed) kernel consisting of a linear combination of standard G-CNN kernels. Define $H := \mathbb{R}^2 \rtimes G$, then, for relaxed G-equivariant group convolution is defined for $g \in H$ as:
 
 $$
 (\psi *^R_{G} f)(g) = \sum_{h \in G}\psi(g,h)f(h) = \sum_{h \in G}\sum_{l=1}^L w_l(h) \psi_l(g^{-1}h)f(h)
@@ -136,9 +133,7 @@ Therefore, using relaxed group convolutions allows the network to relax strict s
 
 Relaxed steerable G-CNNs are defined using a similar idea, again we let the weights depend on the variable of integration:
 
-$$
-(\psi *^R_{\mathbb{Z}^2} f) (x) = \sum_{y \in \mathbb{Z}^2} \sum_{l=1}^L (w_l(y) ⊙ \psi_l(y))f(x+y)
-$$
+$$(\psi *\_{\mathbb{Z}^2}^R f) (x) = \sum_{y \in \mathbb{Z}^2} \sum_{l=1}^L (w_l(y) ⊙ \psi_l(y))f(x+y)$$
 
 which leads to a loss of equivariance. Not unlike the previous case, the closer the weights are to constant functions the more equivariant the model is, and thus we can impose equivariance by adding the following term to the loss function:
 
@@ -146,7 +141,7 @@ $$
 \alpha(\|\frac{\partial w(m,n)}{\partial m}\|+ \|\frac{\partial w(m,n)}{\partial n}\|)
 $$
 
-Here the partial derivatives are discrete and just represent the difference of neighbouring weight values over spacial locations
+Here the partial derivatives are discrete and just represent the difference of neighbouring weight values over spacial locations.
 
 <!--Naturally, we would expect approximately equivariant networks to achieve better results than fully equivariant models on datasets which are themselves not perfectly equivariant.
 [1] supports this intuition showing that an AENN yielded better results than a fully equivariant model on super-resolution tasks for partially-equivariant channel flow data.
