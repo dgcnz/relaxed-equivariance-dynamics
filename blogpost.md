@@ -113,7 +113,7 @@ This implies that convolution of a function $f$ with a rotated steerable kernel 
 
 ### Relaxed Equivariant Networks
 
-The desirability of equivariance in a network depends on the amount of equivariance possessed by the data of interest. To this end, relaxed equivariant networks are built on top of G-CNNs using a modified (relaxed) kernel consisting of a linear combination of standard G-CNN kernels. Define $H := \mathbb{R}^2 \rtimes G$, then, for relaxed G-equivariant group convolution is defined for $g \in H$ as:
+The desirability of equivariance in a network depends on the amount of equivariance possessed by the data of interest. To this end, relaxed equivariant networks are built on top of G-CNNs using a modified (relaxed) kernel consisting of a linear combination of standard G-CNN kernels. Define $H := \mathbb{R}^2 \rtimes G$, then, relaxed G-equivariant group convolution on $g \in H$ is defined as:
 
 $$
 (\psi *^R_{G} f)(g) = \sum_{h \in G}\psi(g,h)f(h) = \sum_{h \in G}\sum_{l=1}^L w_l(h) \psi_l(g^{-1}h)f(h)
