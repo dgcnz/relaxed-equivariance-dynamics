@@ -53,7 +53,9 @@ To build such a network, it is sufficient that each of its layers is equivariant
 
 Consider any 2D image as an input signal $f^0: \mathbb{R}^2 \rightarrow \mathbb{R}^c$, where $c$ is the number of channels. When passing it through a G-CNN, from the outset, it undergoes the lifting convolution with kernel $k : \mathbb{R}^2 \rightarrow \mathbb{R}^{n \times c}$ on $x \in \mathbb{R}^2$ and $g \in G$:
 
-$$(k *_{lifting} f^0)(x,g) = \int_{y \in \mathbb{R}^2}k(g^{-1}(y-x))f^0(y)$$
+$$
+(k *_{lifting} f^0)(x,g) = \int_{y \in \mathbb{R}^2}k(g^{-1}(y-x))f^0(y)
+$$
 
 Suppose $f^1: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^n$ is the output signal thereof, which is fed to the next layer.
 
@@ -67,7 +69,7 @@ $$
 
 This gives the output signal $f^2: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^m$. This way of convolving is repeated for all subsequent layers until the final aggregation layer, e.g. linear layer, if there is one.
 
-Note that for the group convolution to be practically feasible, $G$ has to be **finite** and relatively small in size (roughly up to a hundred elements) and $\mathbb{R}^2$ becomes $ \mathbb{Z}^2$.
+Note that for the group convolution to be practically feasible, $G$ has to be **finite** and relatively small in size (roughly up to a hundred elements) and $\mathbb{R}^2$ becomes $\mathbb{Z}^2$.
 However, if one is interested in equivariance w.r.t. an infinite group, e.g. all 2D rotations, the best they can do is to pick $G$ as a finite subset of those rotations. In this case, it is also unclear to what extent such a  network is **truly** rotationally equivariant.
 
 ### Steerable G-CNN
