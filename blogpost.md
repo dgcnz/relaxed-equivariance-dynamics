@@ -365,7 +365,7 @@ In this section, we introduce the necessary definitions of measuring quantities 
 ##### Equivariance Error
 It is natural to measure the amount of equivariance a network $f$ has as the expected difference between the output of the transformed data and the transformed output of the original data.
 
-$$\mathbb{E}_{x \sim D}\left[\frac{1}{|G|}\sum_{g \in G}\|f(gx)-gf(x)\|\right]$$
+$$\mathbb{E}\_{x \sim D}\left[\frac{1}{|G|}\sum_{g \in G}\|f(gx)-gf(x)\|\right]$$
 
 We can estimate this expectation by computing the average for a series of batches from our test set. However, this approach has downsides, which we can tackle using the Lie derivative. 
 
