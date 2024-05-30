@@ -3,7 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 api = wandb.Api()
-runs = api.runs(f"uva-dl2/wang2024", filters={"$and": [{"tags": "wang2024"}, {"tags": "sharpness"}]})
+runs = api.runs(
+    f"uva-dl2/wang2024", filters={"$and": [{"tags": "wang2024"}, {"tags": "sharpness"}]}
+)
 
 run_data = [
     {
