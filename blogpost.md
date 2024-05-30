@@ -50,31 +50,31 @@ for all images $x \in \mathbb{R}^2$ and rotations $g \in G$.
 To build such a network, it is sufficient that each of its layers is equivariant in the same sense. Recall that a CNN achieves equivariance to translations by sharing weights in kernels that are translated across the input in each of its convolution layers. A G-CNN extends this concept of weight sharing to achieve equivariance w.r.t an arbitrary (finite) group $G$. 
 
 #### Lifting convolution
+
 Consider any 2D image as an input signal $f^0: \mathbb{R}^2 \rightarrow \mathbb{R}^c$, where $c$ is the number of channels. When passing it through a G-CNN, from the outset, it undergoes the lifting convolution with kernel $k : \mathbb{R}^2 \rightarrow \mathbb{R}^{n \times c}$ on $x \in \mathbb{R}^2$ and $g \in G$:
 $$
-    (k *_{lifting} f^0)(x,g) = \int_{\tilde{x} \in \mathbb{R}^2}k(g^{-1}(\tilde{x}-x))f^0(\tilde{x})
+    (k *_{lifting} f^0)(x,g) = \int_{y \in \mathbb{R}^2}k(g^{-1}(y-x))f^0(y)
 $$
 Suppose $f^1: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^n$ is the output signal thereof, which is fed to the next layer.
+
 #### $G$-equivariant convolution
+
 Now, $f^1$ undergoes $G$-equivariant convolution with a kernel $\psi: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^{m \times n}$ on $x \in \mathbb{R}^2$ and $g \in G$:
 $$
-    (\psi *_{G} f^1)(x, g) = \int_{h \in G}\int_{\tilde{x} \in \mathbb{R}^2}\psi(g^{-1}(x&#x0303-x), g^{-1}h)f^1(\tilde{x}, h)
+    (\psi *_{G} f^1)(x, g) = \int_{h \in G}\int_{y \in \mathbb{R}^2}\psi(g^{-1}(y-x), g^{-1}h)f^1(y, h)
 $$
 This gives the output signal $f^2: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^m$. This way of convolving is repeated for all subsequent layers until the final aggregation layer, e.g. linear layer, if there is one.
-<!--
-LIFTING CONVOLUTION
-The function $f$ represents a hidden layer of the G-CNN, and it's important to notice that its domain is the group $G$. The first layer of the neural network is usually an image, i.e. a function defined on $\mathbb{R}^2$...
--->
 
-Note that for the group convolution to be practically feasible, $G$ has to be **finite** and relatively small in size (roughly up to a hundred elements). 
+Note that for the group convolution to be practically feasible, $G$ has to be **finite** and relatively small in size (roughly up to a hundred elements) and $\mathbb{R}^2$ becomes $ \mathbb{Z}^2$.
 However, if one is interested in equivariance w.r.t. an infinite group, e.g. all 2D rotations, the best they can do is to pick $G$ as a finite subset of those rotations. In this case, it is also unclear to what extent such a  network is **truly** rotationally equivariant.
 
 ### Steerable G-CNN
+
 First, consider the representation of rotations $\rho_{in}: G \rightarrow \mathbb{R}^{out \times in}$ parameterized by the infinite group $G$, and analogously $\rho_{out}$.
 To address the aforementioned equivariance problem w.r.t. the group of 2D rotations, $G$-steerable convolution modifies $G$-equivariant convolution with the following three changes:
-- The input signal becomes $f: \mathbb{R}^2 \rightarrow \mathbb{R}^{in}$. 
-- The kernel $\psi: \mathbb{R}^2 \rightarrow \mathbb{R}^{out \times in}$ used must satisfy the following constraint for all $g \in G$: $$\psi(gx) = \rho_{out}(g) \psi(x) \rho_{in}(g^{-1})$$
 
+- The input signal becomes $f: \mathbb{R}^2 \rightarrow \mathbb{R}^{in}$.
+- The kernel $\psi: \mathbb{R}^2 \rightarrow \mathbb{R}^{out \times in}$ used must satisfy the following constraint for all $g \in G$: $$\psi(gx) = \rho_{out}(g) \psi(x) \rho_{in}(g^{-1})$$
 - Standard convolution only over $\mathbb{R}^2$ and not $G$ is performed.
 
 To secure kernel $\psi$ has the mentioned property, we precompute a set of non-learnable basis kernels $(\psi_l)_{l=1}^L$ which do have it, and define all other kernels as weighted combinations of the basis kernels, using learnable weights with the same shape as the kernels.
@@ -82,7 +82,7 @@ To secure kernel $\psi$ has the mentioned property, we precompute a set of non-l
 Therefore, the convolution is of the form:
 
 $$
-(\psi*_{\mathbb{Z}^2}f) (x) = \sum_{y \in \mathbb{Z}^2} \sum_{l=1}^L (w_l \odot \psi_l(y))f(x+y)
+(\psi*_{\mathbb{Z}^2}f) (x) = \sum_{y \in \mathbb{Z}^2} \sum_{l=1}^L (w_l ⊙ \psi_l(y))f(x+y)
 $$
 
 Whenever both $\rho_{in}$ and $\rho_{out}$ can be decomposed into smaller building blocks called **irreducible representations**, equivariance w.r.t. infinite group $G$ is achieved (see Appendix A.1 of [[15]](#References)).
@@ -110,13 +110,12 @@ This implies that convolution of a function $f$ with a rotated steerable kernel 
 
 <!-- The reason that with this construction, equivariance w.r.t. a infinite group is achievable, is because those irreducible representations form a basis for some of the functions defined over $G$. Therefore, picking the weights appropriately facilitates the desired equivariance when the basis of irreducible representations is finite.  -->
 
-
 ### Relaxed Equivariant Networks
 
 The desirability of equivariance in a network depends on the amount of equivariance possessed by the data of interest. To this end, relaxed equivariant networks are built on top of G-CNNs using a modified (relaxed) kernel consisting of a linear combination of standard G-CNN kernels.
 
 $$
-(\psi \tilde{*}_{G} f)(g) = \sum_{h \in G}\psi(g,h)f(h) = \sum_{h \in G}\sum_{l=1}^L w_l(h) \psi_l(g^{-1}h)f(h) 
+(\psi *^R_{G} f)(g) = \sum_{h \in G}\psi(g,h)f(h) = \sum_{h \in G}\sum_{l=1}^L w_l(h) \psi_l(g^{-1}h)f(h)
 $$
 
 $G$-equivariance of the group convolution arises from kernel $\psi$'s dependence on the composite variable $g^{-1}h$, rather than on both variables $g$ and $h$ separately. This property is broken in relaxed kernels, leading to a loss of equivariance.
@@ -132,7 +131,7 @@ Therefore, using relaxed group convolutions allows the network to relax strict s
 
 Relaxed steerable G-CNNs are defined using a similar idea, again we let the weights depend on the variable of integration:
 $$
-(\psi \tilde{*}_{\mathbb{Z}^2} f) (x) = \sum_{y \in \mathbb{Z}^2} \sum_{l=1}^L (w_l(y) \odot \psi_l(y))f(x+y)
+(\psi *^R_{\mathbb{Z}^2} f) (x) = \sum_{y \in \mathbb{Z}^2} \sum_{l=1}^L (w_l(y) ⊙ \psi_l(y))f(x+y)
 $$
 which leads to a loss of equivariance. Not unlike the previous case, the closer the weights are to constant functions the more equivariant the model is, and thus we can impose equivariance by adding the following term to the loss function:
 
@@ -147,11 +146,12 @@ Here the partial derivatives are discrete, and just represent the difference of 
 Interestingly, the AENN prevailed even in the fully-equivariant isotropic flow dataset, which could potentially be explained by AENN weights enhancing optimization.-->
 
 ## Reproduction Methodology
+
 We perform two reproduction studies in this blogpost.
 
 Our first objective is to reproduce the experiment demonstrating that a relaxed equivariant model can outperform a fully equivariant model on fully equivariant data. Specifically, we reproduce the Super-resolution of 3D Turbulence experiment (Experiment 5.5) in the paper "Discovering Symmetry Breaking in Physical Systems with Relaxed Group Convolution" [[1]](#References). This reproduction provides ground for expecting model possessing less inductive bias than needed for a task to outperform model with the right amount of inductive bias.
 
-In this study, the authors of [[1]](#References) focus on understanding the asymmetries in physics data using relaxed equivariant neural networks. They employ various relaxed group convolution architectures to identify symmetry-breaking factors in different physical systems. 
+In this study, the authors of [[1]](#References) focus on understanding the asymmetries in physics data using relaxed equivariant neural networks. They employ various relaxed group convolution architectures to identify symmetry-breaking factors in different physical systems.
 
 <!-- This reproduction allows us to investigate the effects of approximate equivariance on the training dynamics in our extensions. We will do so by looking at the differences between a non-equivariant model, an approximate equivariant one and a fully equivariant one. -->
 <!-- to ensure relaxed group convolutions to perform well as shown in Wang 2024 [[1]](#References), -->
@@ -170,14 +170,11 @@ The data consists of liquid flowing in 3D space and is produced by a high resolu
 
 For the experiment, a subset of 50 timesteps are taken, each downsampled from $1024^3$ to $64^3$ and processed into a task suitable for learning. The model is given an input of 3 consecutive timesteps, which are all downsampled again to $16^3$, and is tasked to predict and to upsample to the subsequent timestep, which is still of size $64^3$. Furthermore, we have published our data processing scripts and production-ready dataloader on HuggingFace [[9]](#References).
 
-The architecture of the models is entirely taken over from [[1]](#References), with the following additions that are not specified in the paper. The first layer of the relaxed and the regular GCNNs are lifting layers. To preserve spatial size, in every non-Upconv convolution, $1$ is used as the stride, padding and dilation, to preserve spatial size. On the other hand, to double the spatial dimension in the Upconv layers, $2$ is used as the stride, and $1$ as the padding, dilation and output padding. For all layers, separable group convolutions are used. For the Upconv layers this meant that upsampling was only done on the spatial elements, while for a non-Upconv convolution, this was done on the group elements instead. Additionally, batch norm and ReLu where used after every convolution. Finally, for training the Adam optimizer was used with a learning rate of $0.01$. 
-
-
+The architecture of the models is entirely taken over from [[1]](#References), with the following additions that are not specified in the paper. The first layer of the relaxed and the regular GCNNs are lifting layers. To preserve spatial size, in every non-Upconv convolution, $1$ is used as the stride, padding and dilation, to preserve spatial size. On the other hand, to double the spatial dimension in the Upconv layers, $2$ is used as the stride, and $1$ as the padding, dilation and output padding. For all layers, separable group convolutions are used. For the Upconv layers this meant that upsampling was only done on the spatial elements, while for a non-Upconv convolution, this was done on the group elements instead. Additionally, batch norm and ReLu where used after every convolution. Finally, for training the Adam optimizer was used with a learning rate of $0.01$.
 
 #### Expectation Based on Equivariance
 
-
-- For isotropic turbulence, networks with full equivariance should either outperform or be on par with those with relaxed equivariance, as the data fully adheres to isotropic symmetry. However, as shown in [[1]](#References), the opposite happens. 
+- For isotropic turbulence, networks with full equivariance should either outperform or be on par with those with relaxed equivariance, as the data fully adheres to isotropic symmetry. However, as shown in [[1]](#References), the opposite happens.
 <!--
 #### Results and Observations
 
@@ -185,21 +182,27 @@ Their results indicate that incorporating both equivariance and relaxed equivari
 
 This unexpected outcome may be attributed to the enhanced optimization process facilitated by the relaxed weights, and serves as the main motivating factor for our extension.
  -->
- 
+
 ### Smoke Plume
+
 For this experiment in [[5]](#References), a specialized 2D smoke simulation was generated using Phiflow ([[6]](#References)). In these simulations, smoke flows into the scene from a position towards the direction of the buoyant force. For instance, in everyday life, the buoyant force opposes gravity and thus smoke floats upwards. Additionally, every inflow position has a slightly different buoyant force, varying in either strength or angle of dispersion. Furthermore, for a given inflow position, the simulation is ran multiple times. Each time, its buoyant force is modified by a scalar factor to increase the difference between the buoyant forces. In total, this results in $4$ different inflow positions, each of which is simulated $10$ times for $311$ timesteps.
 
 With this dataset, we are able to control the amount of equivariance it possesses. On a small scale, smoke will flow the same way regardless of rotation as it is mostly influenced by the smoke particles around it. However, on a larger scale the influence of the specific angle of the buoyant force on movement is larger. This due to the fact that some directions will have stronger buoyant forces than others. Of note is that since all the tested models are equivariant with respect to translation as they are based on CNN's. Meaning that the exact location of the inflow position is not generally important.  
 
-Using this dataset, the task is to predict the upcoming frames based on the previous ones. Evaluation on this task is done on the following settings: 
+Using this dataset, the task is to predict the upcoming frames based on the previous ones. Evaluation on this task is done on the following settings:
+
 - Domain: the model is tested on inflow locations it was not trained on.
 - Future: the model is tested on timesteps that are further in the simulation than what it was trained on.
+
 #### Expectations Based on Equivariance
+
 - Since, the dataset is partially equivariant to rotation, the partial equivariant model is expected to perform the best.
+
 ## Reproduction Results
 <!--We aim to reproduce the experiment of [1] using a 64x64 synthetic smoke dataset which has rotational symmetries. Specifically the data contains 40 simulations varied by inflow positions and buoyant forces, which exhibit perfect C4 rotational symmetry. However, buoyancy factors change with inflow locations, disrupting this symmetry.-->
 Both of our reproduction studies **corroborate** the conclusion drawn from the results in the original papers.
-### Super Resolution 
+
+### Super Resolution
 
 We compare our results with those of [[1]](#References) for the CNN (SuperResCNN), regular group equivariant network (GCNNOhT3), and relaxed regular group equivariant network (RGCNNOhT3). The reconstruction mean absolute error (MAE) is presented in the table below.
 
