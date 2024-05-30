@@ -51,9 +51,11 @@ To build such a network, it is sufficient that each of its layers is equivariant
 
 #### Lifting convolution
 Consider any 2D image as an input signal $f^0: \mathbb{R}^2 \rightarrow \mathbb{R}^c$, where $c$ is the number of channels. When passing it through a G-CNN, from the outset, it undergoes the lifting convolution with kernel $k : \mathbb{R}^2 \rightarrow \mathbb{R}^{n \times c}$ on $x \in \mathbb{R}^2$ and $g \in G$:
+
 $$
 (k f^0)(x,g) = 
 $$
+
 Suppose $f^1: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^n$ is the output signal thereof, which is fed to the next layer.
 #### $G$-equivariant convolution
 Now, $f^1$ undergoes $G$-equivariant convolution with a kernel $\psi: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^{m \times n}$ on $x \in \mathbb{R}^2$ and $g \in G$:
