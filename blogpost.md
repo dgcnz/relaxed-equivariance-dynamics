@@ -51,15 +51,19 @@ To build such a network, it is sufficient that each of its layers is equivariant
 
 #### Lifting convolution
 Consider any 2D image as an input signal $f^0: \mathbb{R}^2 \rightarrow \mathbb{R}^c$, where $c$ is the number of channels. When passing it through a G-CNN, from the outset, it undergoes the lifting convolution with kernel $k : \mathbb{R}^2 \rightarrow \mathbb{R}^{n \times c}$ on $x \in \mathbb{R}^2$ and $g \in G$:
+
 $$
     (k *_{lifting} f^0)(x,g) = \int_{\tilde{x} \in \mathbb{R}^2}k(g^{-1}(\tilde{x}-x))f^0(\tilde{x})
 $$
+
 Suppose $f^1: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^n$ is the output signal thereof, which is fed to the next layer.
 #### $G$-equivariant convolution
 Now, $f^1$ undergoes $G$-equivariant convolution with a kernel $\psi: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^{m \times n}$ on $x \in \mathbb{R}^2$ and $g \in G$:
+
 $$
     (\psi *_{G} f^1)(x, g) = \int_{h \in G}\int_{\tilde{x} \in \mathbb{R}^2}\psi(g^{-1}(\tilde{x}-x), g^{-1}h)f^1(\tilde{x}, h)
 $$
+
 This gives the output signal $f^2: \mathbb{R}^2 \times G \rightarrow \mathbb{R}^m$. This way of convolving is repeated for all subsequent layers until the final aggregation layer, e.g. linear layer, if there is one.
 <!--
 LIFTING CONVOLUTION
@@ -123,7 +127,8 @@ $G$-equivariance of the group convolution arises from kernel $\psi$'s dependence
 
 The equivariance error increases with the number of kernels $L$ and the variability of $w_l(h)$ over $h \in G$, allowing us to control the amount of equivariance imposed on the model by adding the term: 
 
-$$ \alpha \sum_{l=1}^L\sum_{g,h \in G}|w_l(g)-w_l(h)|
+$$ 
+\alpha \sum_{l=1}^L\sum_{g,h \in G}|w_l(g)-w_l(h)|
 $$
 
 to the loss function. A higher value of the hyperparameter $\alpha$ enforces a higher degree of equivariance, by forcing the weights to be nearly constant functions.
