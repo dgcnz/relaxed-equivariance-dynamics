@@ -149,11 +149,11 @@ Interestingly, the AENN prevailed even in the fully-equivariant isotropic flow d
 
 ## Reproduction Methodology
 
-We perform two reproduction studies in this blogpost.
+We perform two reproduction studies in this blog post.
 
 Our first objective is to reproduce the experiment demonstrating that a relaxed equivariant model can outperform a fully equivariant model on fully equivariant data. Specifically, we reproduce the Super-resolution of 3D Turbulence experiment (Experiment 5.5) in the paper "Discovering Symmetry Breaking in Physical Systems with Relaxed Group Convolution" [(Wang et al., 2023)](#References). This reproduction provides grounds for expecting a relaxed equivariant model to outperform a model that is properly equivariant to the symmetries of the data.
 
-In this study, the authors of [[1]](#References) focus on understanding the asymmetries in physics data using relaxed equivariant neural networks. They employ various relaxed group convolution architectures to identify symmetry-breaking factors in different physical systems.
+<!-- In this study, the authors focus on understanding the asymmetries in physics data using relaxed equivariant neural networks. They employ various relaxed group convolution architectures to identify symmetry-breaking factors in different physical systems.  -->
 
 <!-- This reproduction allows us to investigate the effects of approximate equivariance on the training dynamics in our extensions. We will do so by looking at the differences between a non-equivariant model, an approximate equivariant one and a fully equivariant one. -->
 <!-- to ensure relaxed group convolutions to perform well as shown in Wang 2024 [[1]](#References), -->
@@ -170,13 +170,25 @@ In Experiment 5.5 of [Wang et al. (2023)](#References), the authors evaluate the
 
 The data consists of liquid flowing in 3D space and is produced by a high-resolution state-of-the-art simulation hosted by the John Hopkins University [(Li et al., 2008)](#References). Importantly, this dataset is forced to be isotropic, i.e. fully equivariant to rotations, by design. 
 
-For the experiment, a subset of 50 timesteps are taken, each downsampled from $1024^3$ to $64^3$ and processed into a task suitable for learning. The model is given an input of 3 consecutive timesteps, which are all downsampled again to $16^3$, and is tasked to predict and to upsample to the subsequent timestep, which is still of size $64^3$. Furthermore, we have published our data processing scripts and production-ready dataloader on HuggingFace [[9]](#References).
+For the experiment, a subset of 50 timesteps are taken, each downsampled from $1024^3$ to $64^3$ and processed into a task suitable for learning. The model is given an input of 3 consecutive timesteps, $t, t+1, t+2$ (which are first downsampled to $16^3$), and is tasked to upsample timestep $t+1$ to $64^3$.
 
-The architecture of the models is entirely taken over from [[1]](#References), with the following additions that are not specified in the paper. The first layer of the relaxed and the regular GCNNs are lifting layers. To preserve spatial size, in every non-Upconv convolution, $1$ is used as the stride, padding and dilation, to preserve spatial size. On the other hand, to double the spatial dimension in the Upconv layers, $2$ is used as the stride, and $1$ as the padding, dilation and output padding. For all layers, separable group convolutions are used. For the Upconv layers this meant that upsampling was only done on the spatial elements, while for a non-Upconv convolution, this was done on the group elements instead. Additionally, batch norm and ReLu where used after every convolution. Finally, for training the Adam optimizer was used with a learning rate of $0.01$.
+The architecture of the models can be visualized on 
+
+
+
+1 and is mostly described in [Wang et al. (2023)](#References), with the following additions that are not specified in the paper: The first layer of the relaxed and the regular GCNNs are lifting layers. To preserve spatial size, in every non-Upconv convolution, $1$ is used as the stride, padding, and dilation, to preserve spatial size. On the other hand, to double the spatial dimension in the Upconv layers, $2$ is used as the stride, and $1$ as the padding, dilation, and output padding. For all layers, separable group convolutions are used. For the Upconv layers this meant that upsampling was only done on the spatial elements, while for a non-Upconv convolution, this was done on the group elements instead. Additionally, batch norm and ReLu were used after every convolution. All the specific hyperparameters are available on the appropriate [model defaults](https://github.com/dgcnz/dl2/tree/main/configs/model/wang2024) and  [experiment overrides](https://github.com/dgcnz/dl2/tree/main/configs/experiment/wang2024).
+
+
+<div style="text-align: center;">
+  <img src="https://hackmd.io/_uploads/r1WCqrL4A.png" alt="Figure 1" style="max-width: 100%;">
+  <p>Figure 1: Super Resolution architecture.</p>
+</div>
+
 
 #### Expectation Based on Equivariance
 
-- For isotropic turbulence, networks with full equivariance should either outperform or be on par with those with relaxed equivariance, as the data fully adheres to isotropic symmetry. However, as shown in [[1]](#References), the opposite happens.
+
+- For isotropic turbulence, networks with full equivariance should either outperform or be on par with those with relaxed equivariance, as the data fully adheres to isotropic symmetry. However, as shown in [Wang et al. (2023)](#References), the opposite happens. 
 <!--
 #### Results and Observations
 
@@ -184,30 +196,30 @@ Their results indicate that incorporating both equivariance and relaxed equivari
 
 This unexpected outcome may be attributed to the enhanced optimization process facilitated by the relaxed weights, and serves as the main motivating factor for our extension.
  -->
-
+ 
 ### Smoke Plume
+For this experiment in [Wang et al. (2022)](#References), a specialized 2D smoke simulation was generated using PhiFlow [(Holl et al., 2020)](#References). In these simulations, smoke flows into the scene from a position toward the direction of the buoyant force (see Figure 2). For instance, in everyday life, the buoyant force opposes gravity and thus smoke floats upwards. Additionally, every inflow position has a slightly different buoyant force, varying in either strength or angle of dispersion. Furthermore, for a given inflow position, the simulation is ran multiple times. Each time, its buoyant force is modified by a scalar factor to increase the difference between the buoyant forces. In total, this results in $4$ different inflow positions, each of which is simulated $10$ times for $311$ timesteps.
 
-For this experiment in [[5]](#References), a specialized 2D smoke simulation was generated using Phiflow ([[6]](#References)). In these simulations, smoke flows into the scene from a position towards the direction of the buoyant force. For instance, in everyday life, the buoyant force opposes gravity and thus smoke floats upwards. Additionally, every inflow position has a slightly different buoyant force, varying in either strength or angle of dispersion. Furthermore, for a given inflow position, the simulation is ran multiple times. Each time, its buoyant force is modified by a scalar factor to increase the difference between the buoyant forces. In total, this results in $4$ different inflow positions, each of which is simulated $10$ times for $311$ timesteps.
+With this dataset, we are able to control the amount of equivariance it possesses. On a small scale, smoke will flow the same way regardless of rotation as it is mostly influenced by the smoke particles around it. However, on a larger scale, the influence of the specific angle of the buoyant force on movement is larger. This is due to the fact that some directions will have stronger buoyant forces than others. Of note is that since all the tested models are equivariant with respect to translation as they are based on CNNs. Meaning that the exact location of the inflow position is not generally important.  
+
 
 <div style="text-align: center;">
   <img src="https://hackmd.io/_uploads/S1RILeLE0.png" alt="Figure 2" style="max-width: 100%;">
   <p>Figure 2: Example of a Smoke Plume sequence.</p>
 </div>
 
-Using this dataset, the task is to predict the upcoming frames based on the previous ones. Evaluation on this task is done on the following settings:
-
+Using this dataset, the task is to predict the upcoming frames based on the previous ones. Evaluation on this task is done on the following settings: 
 - Domain: the model is tested on inflow locations it was not trained on.
 - Future: the model is tested on timesteps that are further in the simulation than what it was trained on.
 
+For this experiment, two different model architectures are used. For the relaxed steerable model (rsteer) we use the hyperparameters provided in the repository of [Wang et al. 2022](#References). This means we use $92$ as the hidden dimension, $5$ layers and $\alpha=0.00001$. For the relaxed G-CNN (rgroup) we use a hidden dimension of 48 with again $5$ layers and $\alpha=0.00001$. Both models are equivariant to the C-4 group and have around $500$ thousand parameters. All the specific configurations are available on the appropriate [model defaults](https://github.com/dgcnz/dl2/tree/main/configs/model/wang2022) and [experiment overrides](https://github.com/dgcnz/dl2/tree/main/configs/experiment/wang2022/equivariance_encouraged).
+
 #### Expectations Based on Equivariance
-
-- Since, the dataset is partially equivariant to rotation, the partial equivariant model is expected to perform the best.
-
+- Since the dataset is partially equivariant to rotation, the partial equivariant model is expected to perform the best.
 ## Reproduction Results
 <!--We aim to reproduce the experiment of [1] using a 64x64 synthetic smoke dataset which has rotational symmetries. Specifically the data contains 40 simulations varied by inflow positions and buoyant forces, which exhibit perfect C4 rotational symmetry. However, buoyancy factors change with inflow locations, disrupting this symmetry.-->
 Both of our reproduction studies **corroborate** the conclusion drawn from the results in the original papers.
-
-### Super Resolution
+### Super Resolution 
 
 We compare our results with those of [Wang et al. (2023)](#References) for the CNN (SuperResCNN), regular group equivariant network (GCNNOhT3), and relaxed regular group equivariant network (RGCNNOhT3). The reconstruction mean absolute error (MAE) is presented in the table below.
 
