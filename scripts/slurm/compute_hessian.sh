@@ -11,5 +11,7 @@
 cd $HOME/development/dl2
 source .venv/bin/activate
 # run script from above
-srun HYDRA_FULL_ERROR=1 python -m src.compute_measures_v2 spectrum=True ckpt_path=$1
+# HYDRA_FULL_ERROR=1 
+export HYDRA_FULL_ERROR=1
+srun python -m src.compute_measures_v2 spectrum=True ckpt_path=$1
 deactivate
