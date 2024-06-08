@@ -22,7 +22,7 @@ model:
   net:
     in_channels: 2
     out_channels: 2
-    hidden_dim: 64
+    hidden_dim: 158 # ~664k params
   autoregressive_train: False
   # default optimizer params
   # default scheduler params
