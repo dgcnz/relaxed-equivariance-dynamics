@@ -3,6 +3,10 @@
 import torch
 import numpy as np
 import torch.nn.functional as F
+import copy
+import os
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 class RelaxedGroupEquivariantCNN(torch.nn.Module):
@@ -53,6 +57,7 @@ class RelaxedGroupEquivariantCNN(torch.nn.Module):
                     group_order=group_order,
                     num_filter_banks=num_filter_banks,
                     activation=True,
+                    save_image=True
                 )
             ]
 
@@ -233,6 +238,7 @@ class Relaxed_LiftingConvolution(torch.nn.Module):
         group_order,
         num_filter_banks,
         activation=True,
+        save_image = True
     ):
         super(Relaxed_LiftingConvolution, self).__init__()
 
@@ -242,6 +248,8 @@ class Relaxed_LiftingConvolution(torch.nn.Module):
         self.kernel_size = kernel_size
         self.group_order = group_order
         self.activation = activation
+        self.save_image = save_image
+        self.batch_number = 0
 
         self.combination_weights = torch.nn.Parameter(
             torch.ones(num_filter_banks, group_order).float() / num_filter_banks
@@ -295,6 +303,8 @@ class Relaxed_LiftingConvolution(torch.nn.Module):
         # output shape: [bz, #out, group order, h, w]
 
         # generate filter bank given input group order
+        self.batch_number += 1
+        x_in = copy.deepcopy(x)
         filter_bank = self.generate_filter_bank()
 
         # for each rotation, we have a linear combination of multiple filters with different coefficients.
@@ -323,9 +333,43 @@ class Relaxed_LiftingConvolution(torch.nn.Module):
         )
         # ==============================
 
+        if self.save_image:
+            self.save_channel_magnitude_image(x_in, output_dir=os.path.join('images', 'input'))
+            self.save_channel_magnitude_image(x, output_dir=os.path.join('images', 'output'))
+
+
         if self.activation:
             return F.relu(x)
         return x
+    
+    def save_channel_magnitude_image(self, tensor, output_dir='images'):
+        """
+        Calculate the magnitude of the output channel vectors and save the resulting image.
+
+        Parameters:
+        tensor (numpy.ndarray): Input tensor of shape [bz, #out, group order, h, w]
+        output_dir (str): Directory to save the resulting image
+        """
+        # Ensure the output directory exists
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Select the first batch dimension
+        for order in range(tensor.shape[2]):
+            order_tensor = tensor[:, :, order, :, :]
+            tensor_first_batch = order_tensor[0]  # Shape: [#out, group order, h, w]
+
+            # Compute the magnitude of the vectors across the output channels
+            magnitude = np.linalg.norm(tensor_first_batch, axis=0)
+
+            # Normalize the magnitude to the range [0, 255]
+            magnitude_min = np.min(magnitude)
+            magnitude_max = np.max(magnitude)
+            magnitude_normalized = 255 * (magnitude - magnitude_min) / (magnitude_max - magnitude_min)
+            magnitude_normalized = magnitude_normalized.astype(np.uint8)
+
+            # Save the resulting image
+            output_path = os.path.join(output_dir, f'magnitude_image{order}-{self.batch_number}.png')
+            plt.imsave(output_path, magnitude_normalized, cmap='gray')
 
 
 def get_weight_constraint(w: torch.Tensor):
@@ -357,3 +401,4 @@ def rot_img(x, theta):
     grid = F.affine_grid(rot_mat, x.size(), align_corners=False).float().to(x.device)
     x = F.grid_sample(x, grid)
     return x
+

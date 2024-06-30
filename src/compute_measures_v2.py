@@ -120,6 +120,10 @@ def main(cfg: DictConfig) -> None:
             except:
                 print("Failed to log spectrum")
                 pass
+        if cfg.get("explainability"):
+            trainer = L.Trainer()
+            trainer.test(model, datamodule=datamodule)
+
 
             # log all eigenvalues
 
