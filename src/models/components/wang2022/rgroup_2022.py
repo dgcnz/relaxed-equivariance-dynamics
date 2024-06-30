@@ -252,6 +252,7 @@ class Relaxed_GroupConv(torch.nn.Module):
         output_dir (str): Directory to save the resulting image
         """
         # Ensure the output directory exists
+        output_dir = os.path.join(output_dir, f'batch_{self.batch_number}')
         os.makedirs(output_dir, exist_ok=True)
         #print('saved some images')
 
@@ -272,7 +273,7 @@ class Relaxed_GroupConv(torch.nn.Module):
             magnitude_normalized = magnitude_normalized.astype(np.uint8)
 
             # Save the resulting image
-            output_path = os.path.join(output_dir, str(order), f'magnitude_image{self.batch_number}.png')
+            output_path = os.path.join(output_dir, f'magnitude_image{order}.png')
             plt.imsave(output_path, magnitude_normalized, cmap='Reds')
 
 
