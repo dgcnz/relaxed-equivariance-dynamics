@@ -260,6 +260,8 @@ class Relaxed_GroupConv(torch.nn.Module):
             order_tensor = tensor[:, :, order, :, :]
             tensor_first_batch = order_tensor[0]  # Shape: [#out, group order, h, w]
 
+            tensor_first_batch = tensor_first_batch.detach().cpu().numpy()
+
             # Compute the magnitude of the vectors across the output channels
             magnitude = np.linalg.norm(tensor_first_batch, axis=0)
 
