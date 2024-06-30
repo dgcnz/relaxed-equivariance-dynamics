@@ -37,6 +37,8 @@ class RelaxedGroupEquivariantCNN(torch.nn.Module):
             ).float(),
         )
 
+        print(f"vel_inp: {vel_inp}")
+
         if vel_inp:
             self.gconvs = [
                 Relaxed_GroupConv(
