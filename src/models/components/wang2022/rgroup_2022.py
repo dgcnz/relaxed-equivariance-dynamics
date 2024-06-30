@@ -217,6 +217,8 @@ class Relaxed_GroupConv(torch.nn.Module):
             "na, aon... -> on...", self.combination_weights, filter_bank
         )
 
+        shape = x.shape
+
         x = torch.nn.functional.conv2d(
             input=x.reshape(
                 x.shape[0], x.shape[1] * x.shape[2], x.shape[3], x.shape[4]
@@ -242,7 +244,7 @@ class Relaxed_GroupConv(torch.nn.Module):
                 relaxed_conv_weights = torch.ones_like(relaxed_conv_weights)
                 x_no_relax = torch.nn.functional.conv2d(
                     input=x.reshape(
-                        x.shape[0], x.shape[1] * x.shape[2], x.shape[3], x.shape[4]
+                        shape[0], shape[1] * shape[2], shape[3], shape[4]
                     ),
                     weight=relaxed_conv_weights.reshape(
                         self.out_channels * self.group_order,
@@ -257,7 +259,7 @@ class Relaxed_GroupConv(torch.nn.Module):
                 x_no_relax = x_no_relax.view(
                     x_no_relax.shape[0], self.out_channels, self.group_order, x_no_relax.shape[-2], x_no_relax.shape[-1]
                 )
-                
+
                 self.save_channel_magnitude_image(x_no_relax, output_dir=os.path.join('images', 'no_relax_output'))
                 self.save_channel_magnitude_image(x_in, output_dir=os.path.join('images', 'input'))
                 self.save_channel_magnitude_image(x, output_dir=os.path.join('images', 'output'))
