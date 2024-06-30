@@ -352,6 +352,7 @@ class Relaxed_LiftingConvolution(torch.nn.Module):
         """
         # Ensure the output directory exists
         os.makedirs(output_dir, exist_ok=True)
+        print('saved some images')
 
         # Select the first batch dimension
         for order in range(tensor.shape[2]):
