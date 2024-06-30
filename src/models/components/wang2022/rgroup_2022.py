@@ -239,7 +239,7 @@ class Relaxed_GroupConv(torch.nn.Module):
         # ========================
         
         if self.save_image:
-            if self.batch_number > 500:
+            if self.batch_number > 0:
                 #also do a forward where the relaxed weights are all one
                 """
                 relaxed_conv_weights = torch.ones_like(relaxed_conv_weights)
