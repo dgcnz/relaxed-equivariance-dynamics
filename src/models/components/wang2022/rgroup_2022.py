@@ -241,6 +241,7 @@ class Relaxed_GroupConv(torch.nn.Module):
         if self.save_image:
             if self.batch_number > (140*8):
                 #also do a forward where the relaxed weights are all one
+                """
                 relaxed_conv_weights = torch.ones_like(relaxed_conv_weights)
                 x_no_relax = torch.nn.functional.conv2d(
                     input=x.reshape(
@@ -259,8 +260,10 @@ class Relaxed_GroupConv(torch.nn.Module):
                 x_no_relax = x_no_relax.view(
                     x_no_relax.shape[0], self.out_channels, self.group_order, x_no_relax.shape[-2], x_no_relax.shape[-1]
                 )
+                
 
                 self.save_channel_magnitude_image(x_no_relax, output_dir=os.path.join('images', 'no_relax_output'))
+                """
                 self.save_channel_magnitude_image(x_in, output_dir=os.path.join('images', 'input'))
                 self.save_channel_magnitude_image(x, output_dir=os.path.join('images', 'output'))
 
