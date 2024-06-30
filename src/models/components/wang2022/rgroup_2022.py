@@ -48,6 +48,7 @@ class RelaxedGroupEquivariantCNN(torch.nn.Module):
                     group_order=group_order,
                     num_filter_banks=num_filter_banks,
                     activation=True,
+                    save_image=True
                 )
             ]
         else:
@@ -132,6 +133,7 @@ class Relaxed_GroupConv(torch.nn.Module):
         group_order,
         num_filter_banks,
         activation=True,
+        save_image = True
     ):
 
         super(Relaxed_GroupConv, self).__init__()
@@ -142,6 +144,8 @@ class Relaxed_GroupConv(torch.nn.Module):
         self.kernel_size = kernel_size
         self.group_order = group_order
         self.activation = activation
+        self.save_image = save_image
+        self.batch_number = 0
 
         ## Initialize weights
         self.combination_weights = torch.nn.Parameter(
@@ -203,6 +207,10 @@ class Relaxed_GroupConv(torch.nn.Module):
 
     def forward(self, x):
 
+        # input shape: [bz, #in, h, w]
+        x_in = copy.deepcopy(x)
+        self.batch_number += 1
+
         filter_bank = self.generate_filter_bank()
 
         relaxed_conv_weights = torch.einsum(
@@ -227,8 +235,43 @@ class Relaxed_GroupConv(torch.nn.Module):
             x.shape[0], self.out_channels, self.group_order, x.shape[-2], x.shape[-1]
         )
         # ========================
+        
+        if self.save_image:
+            self.save_channel_magnitude_image(x_in, output_dir=os.path.join('images', 'input'))
+            self.save_channel_magnitude_image(x, output_dir=os.path.join('images', 'output'))
+
 
         return x
+    
+    def save_channel_magnitude_image(self, tensor, output_dir='images'):
+        """
+        Calculate the magnitude of the output channel vectors and save the resulting image.
+
+        Parameters:
+        tensor (numpy.ndarray): Input tensor of shape [bz, #out, group order, h, w]
+        output_dir (str): Directory to save the resulting image
+        """
+        # Ensure the output directory exists
+        os.makedirs(output_dir, exist_ok=True)
+        print('saved some images')
+
+        # Select the first batch dimension
+        for order in range(tensor.shape[2]):
+            order_tensor = tensor[:, :, order, :, :]
+            tensor_first_batch = order_tensor[0]  # Shape: [#out, group order, h, w]
+
+            # Compute the magnitude of the vectors across the output channels
+            magnitude = np.linalg.norm(tensor_first_batch, axis=0)
+
+            # Normalize the magnitude to the range [0, 255]
+            magnitude_min = np.min(magnitude)
+            magnitude_max = np.max(magnitude)
+            magnitude_normalized = 255 * (magnitude - magnitude_min) / (magnitude_max - magnitude_min)
+            magnitude_normalized = magnitude_normalized.astype(np.uint8)
+
+            # Save the resulting image
+            output_path = os.path.join(output_dir, f'magnitude_image{order}-{self.batch_number}.png')
+            plt.imsave(output_path, magnitude_normalized, cmap='Reds')
 
 
 class Relaxed_LiftingConvolution(torch.nn.Module):
@@ -372,7 +415,7 @@ class Relaxed_LiftingConvolution(torch.nn.Module):
 
             # Save the resulting image
             output_path = os.path.join(output_dir, f'magnitude_image{order}-{self.batch_number}.png')
-            plt.imsave(output_path, magnitude_normalized, cmap='gray')
+            plt.imsave(output_path, magnitude_normalized, cmap='Reds')
 
 
 def get_weight_constraint(w: torch.Tensor):
