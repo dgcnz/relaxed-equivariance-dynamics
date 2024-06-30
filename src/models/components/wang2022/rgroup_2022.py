@@ -207,8 +207,8 @@ class Relaxed_GroupConv(torch.nn.Module):
 
     def forward(self, x):
 
-        # input shape: [bz, #in, h, w]
-        x_in = copy.deepcopy(x)
+        # input shape: [bz, #in, group_order, h, w]
+        x_in = x
         self.batch_number += 1
 
         filter_bank = self.generate_filter_bank()
@@ -253,7 +253,7 @@ class Relaxed_GroupConv(torch.nn.Module):
         """
         # Ensure the output directory exists
         os.makedirs(output_dir, exist_ok=True)
-        print('saved some images')
+        #print('saved some images')
 
         # Select the first batch dimension
         for order in range(tensor.shape[2]):
