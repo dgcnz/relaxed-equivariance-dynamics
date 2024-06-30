@@ -272,7 +272,7 @@ class Relaxed_GroupConv(torch.nn.Module):
             magnitude_normalized = magnitude_normalized.astype(np.uint8)
 
             # Save the resulting image
-            output_path = os.path.join(output_dir, order, f'magnitude_image{self.batch_number}.png')
+            output_path = os.path.join(output_dir, str(order), f'magnitude_image{self.batch_number}.png')
             plt.imsave(output_path, magnitude_normalized, cmap='Reds')
 
 
