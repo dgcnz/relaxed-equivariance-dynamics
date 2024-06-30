@@ -237,8 +237,9 @@ class Relaxed_GroupConv(torch.nn.Module):
         # ========================
         
         if self.save_image:
-            self.save_channel_magnitude_image(x_in, output_dir=os.path.join('images', 'input'))
-            self.save_channel_magnitude_image(x, output_dir=os.path.join('images', 'output'))
+            if self.batch_number > 140:
+                self.save_channel_magnitude_image(x_in, output_dir=os.path.join('images', 'input'))
+                self.save_channel_magnitude_image(x, output_dir=os.path.join('images', 'output'))
 
 
         return x
