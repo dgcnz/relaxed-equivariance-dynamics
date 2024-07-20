@@ -54,5 +54,4 @@ To maximize convenience, reproducibility and encourage usage of our modules (mod
 
 
 - [gconv: (Relaxed) Regular Group Convolutions package](https://github.com/dgcnz/gconv)
-- [neuralyze: Equivariance analysis package](https://github.com/dgcnz/neuralyze)
 - [JHTDB HuggingFace Dataset](https://huggingface.co/datasets/dl2-g32/jhtdb)
