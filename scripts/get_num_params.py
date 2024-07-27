@@ -3,6 +3,7 @@ from typing import Optional
 import hydra
 import rootutils
 from lightning import LightningModule
+from lightning.pytorch.utilities.model_summary.model_summary import ModelSummary
 from omegaconf import DictConfig
 
 rootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
@@ -29,9 +30,11 @@ def main(cfg: DictConfig) -> Optional[float]:
     # train the model
     log.info(f"Instantiating model <{cfg.model._target_}>")
     model: LightningModule = hydra.utils.instantiate(cfg.model)
+    summary = ModelSummary(model)
     log.info(
         f"Number of trainable parameters: {sum(p.numel() for p in model.parameters() if p.requires_grad)}"
     )
+    log.info(f"Model summary:\n{summary.total_parameters}")
 
 
 if __name__ == "__main__":
