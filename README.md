@@ -4,6 +4,14 @@ Our blogpost has been published at [GRaM Workshop @ ICML 2024](https://gram-blog
 
 Our extended blogpost can be found [here](blogpost.md).
 
+## Package contributions
+
+To maximize convenience, reproducibility and encourage usage of our modules (models, datasets, tools), we've package some of them separately.
+
+
+- [gconv: (Relaxed) Regular Group Convolutions package](https://github.com/dgcnz/gconv)
+- [JHTDB HuggingFace Dataset](https://huggingface.co/datasets/dl2-g32/jhtdb)
+
 ## Setup 
 
 Make virtual environment and install dependencies:
@@ -50,11 +58,3 @@ make slurmcat id=6246500
 ```
 
 The logs are stored at `scripts/slurm_logs/slurm_output_{id}.out`.
-
-## Package contributions
-
-To maximize convenience, reproducibility and encourage usage of our modules (models, datasets, tools), we've package some of them separately.
-
-
-- [gconv: (Relaxed) Regular Group Convolutions package](https://github.com/dgcnz/gconv)
-- [JHTDB HuggingFace Dataset](https://huggingface.co/datasets/dl2-g32/jhtdb)
