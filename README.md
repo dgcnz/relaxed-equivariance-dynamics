@@ -1,5 +1,8 @@
-# DL2
-Our blogpost can be found [here](blogpost.md).
+# Relaxed equivariance dynamics
+
+Our blogpost has been published at [GRaM Workshop @ ICML 2024](https://gram-blogposts.github.io/blog/2024/relaxed-equivariance/).
+
+Our extended blogpost can be found [here](blogpost.md).
 
 ## Setup 
 
