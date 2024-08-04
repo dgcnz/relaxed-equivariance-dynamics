@@ -1,5 +1,7 @@
 # Relaxed equivariance dynamics
 
+This repository contains the official implementation of our blogpost titled: **Effect of equivariance on training dynamics**.
+
 Our blogpost has been published at [GRaM Workshop @ ICML 2024](https://gram-blogposts.github.io/blog/2024/relaxed-equivariance/).
 
 Our extended blogpost can be found [here](blogpost.md).
