@@ -14,7 +14,7 @@ authors:
   given-names: "Sebastian"
 title: "Effect of equivariance on training dynamics"
 version: 2.0.4
-doi: 10.5281/zenodo.14283183
+doi: 10.5281/zenodo.14283519
 date-released: 2024-07-20
 url: "https://gram-blogposts.github.io/blog/2024/relaxed-equivariance/"
 preferred-citation:
@@ -31,7 +31,7 @@ preferred-citation:
     given-names: "Jiapeng"
   - family-names: "Arias"
     given-names: "Sebastian"
-  doi: "10.5281/zenodo.14283183"
+  doi: "10.5281/zenodo.14283519"
   journal: "GRaM Workshop, ICML 2024"
   month: 7
   title: "Effect of equivariance on training dynamics"
