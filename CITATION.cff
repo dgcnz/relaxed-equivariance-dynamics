@@ -32,8 +32,7 @@ preferred-citation:
   - family-names: "Arias"
     given-names: "Sebastian"
   doi: "10.5281/zenodo.14283183"
-  volume-title: "GRaM Workshop @ ICML 2024"
-  volume: 1
+  journal: "GRaM Workshop @ ICML 2024"
   month: 7
   title: "Effect of equivariance on training dynamics"
   year: 2024
