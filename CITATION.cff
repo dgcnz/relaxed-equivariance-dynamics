@@ -4,6 +4,14 @@ authors:
 - family-names: "Canez"
   given-names: "Diego"
   orcid: "https://orcid.org/0009-0002-9689-6050"
+- family-names: "Midavaine"
+  given-names: "Nesta"
+- family-names: "Stessen"
+  given-names: "Thijs"
+- family-names: "Fan"
+  given-names: "Jiapeng"
+- family-names: "Arias"
+  given-names: "Sebastian"
 title: "Effect of equivariance on training dynamics"
 version: 2.0.4
 doi: 10.5281/zenodo.14283183
@@ -15,12 +23,16 @@ preferred-citation:
   - family-names: "Canez"
     given-names: "Diego"
     orcid: "https://orcid.org/0009-0002-9689-6050"
+  - family-names: "Midavaine"
+    given-names: "Nesta"
+  - family-names: "Stessen"
+    given-names: "Thijs"
+  - family-names: "Fan"
+    given-names: "Jiapeng"
+  - family-names: "Arias"
+    given-names: "Sebastian"
   doi: "10.5281/zenodo.14283183"
-  journal: "GRaM Workshop @ ICML 2024",
+  volume-title: "GRaM Workshop @ ICML 2024"
   month: 7
-  start: 1
-  end: 1
   title: "Effect of equivariance on training dynamics"
-  issue: 1
-  volume: 1
   year: 2024
