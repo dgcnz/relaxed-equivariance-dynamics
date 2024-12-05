@@ -18,7 +18,7 @@ doi: 10.5281/zenodo.14283183
 date-released: 2024-07-20
 url: "https://gram-blogposts.github.io/blog/2024/relaxed-equivariance/"
 preferred-citation:
-  type: article
+  type: blog
   authors:
   - family-names: "Canez"
     given-names: "Diego"
