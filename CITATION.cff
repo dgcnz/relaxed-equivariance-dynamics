@@ -33,15 +33,6 @@ preferred-citation:
     given-names: "Sebastian"
   doi: "10.5281/zenodo.14283183"
   journal: "GRaM Workshop, ICML 2024"
-  volume-title: "GRaM Workshop, ICML 2024"
-  conference: 
-    name: "GRaM Workshop, ICML 2024"
-  publisher: 
-    name: "GRaM Workshop, ICML 2024"
   month: 7
-  start: 1
-  end: 1
-  issue: 1
-  volume: 1
   title: "Effect of equivariance on training dynamics"
   year: 2024
