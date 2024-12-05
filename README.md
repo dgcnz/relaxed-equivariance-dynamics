@@ -9,7 +9,7 @@ Our extended blogpost can be found [here](blogpost.md).
 To cite our work:
 
 ```
-@article{equivdyna_2024,
+@misc{equivdyna_2024,
 author = {Canez, Diego and Midavaine, Nesta and Stessen, Thijs and Fan, Jiapeng and Arias, Sebastian},
 doi = {10.5281/zenodo.14283183},
 journal = {GRaM Workshop, ICML 2024},
