@@ -10,7 +10,7 @@ To cite our work:
 
 ```
 @misc{equivdyna_2024,
-author = {Canez, Diego and Midavaine, Nesta and Stessen, Thijs and Fan, Jiapeng and Arias, Sebastian},
+author = {Canez, Diego and Midavaine, Nesta and Stessen, Thijs and Fan, Jiapeng, Arias, Sebastian and Garcia, Alejandro},
 doi = {10.5281/zenodo.14283519},
 journal = {GRaM Workshop, ICML 2024},
 month = jul,
